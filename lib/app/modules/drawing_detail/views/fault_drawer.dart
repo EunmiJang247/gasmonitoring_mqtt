@@ -28,6 +28,8 @@ import '../../../data/models/05_picture.dart';
 import '../../../widgets/custom_color_picker.dart';
 import '../../../widgets/selection_dialog/element_selection_dialog.dart';
 
+// TODO Jenny 뒤로가기 작업 시작
+
 class FaultDrawer extends StatefulWidget {
   const FaultDrawer({super.key});
 
@@ -485,8 +487,7 @@ class _FaultDrawerState extends State<FaultDrawer> {
                                                               .image,
                                                           size: 50,
                                                           color: Colors.black
-                                                              .withValues(
-                                                                  alpha: 0.2),
+                                                              .withOpacity(0.2),
                                                         ),
                                                       ),
                                                     ),
@@ -561,9 +562,8 @@ class _FaultDrawerState extends State<FaultDrawer> {
                                                       shadows: [
                                                         BoxShadow(
                                                             color: Colors.black
-                                                                .withValues(
-                                                                    alpha:
-                                                                        0.25),
+                                                                .withOpacity(
+                                                                    0.25),
                                                             offset:
                                                                 Offset(0, 4),
                                                             blurRadius: 4)
@@ -598,9 +598,8 @@ class _FaultDrawerState extends State<FaultDrawer> {
                                                       shadows: [
                                                         BoxShadow(
                                                             color: Colors.black
-                                                                .withValues(
-                                                                    alpha:
-                                                                        0.25),
+                                                                .withOpacity(
+                                                                    0.25),
                                                             offset:
                                                                 Offset(0, 4),
                                                             blurRadius: 4)

@@ -383,7 +383,7 @@ class _DrawingViewState extends State<DrawingView> {
             : getColorWithCache(marker.outline_color ?? "FF0000");
 
         if (fault.cloned == "Y") {
-          outlineColor = outlineColor.withValues(alpha: 0.4);
+          outlineColor = outlineColor.withOpacity(0.4);
         }
 
         Offset mP = convertDBtoDV(x: marker.x ?? "0", y: marker.y ?? "0");
@@ -417,7 +417,7 @@ class _DrawingViewState extends State<DrawingView> {
   Color getColorWithCache(String colorHex, {double opacity = 1.0}) {
     if (opacity < 1.0) {
       // 알파값이 있는 경우는 캐싱하지 않음
-      return Color(int.parse("0xFF$colorHex")).withValues(alpha: opacity);
+      return Color(int.parse("0xFF$colorHex")).withOpacity(opacity);
     }
 
     if (_colorCache.containsKey(colorHex)) {
@@ -461,8 +461,8 @@ class _DrawingViewState extends State<DrawingView> {
           : Colors.black;
 
       if (currentScale > scaleStd) {
-        outlineColor = outlineColor.withValues(alpha: opac);
-        textColor = textColor.withValues(alpha: opac);
+        outlineColor = outlineColor.withOpacity(opac);
+        textColor = textColor.withOpacity(opac);
       }
 
       result.add(Visibility(
@@ -656,11 +656,11 @@ class _DrawingViewState extends State<DrawingView> {
                     : getColorWithCache(marker.outline_color ?? "FF0000");
 
                 if (currentScale >= scaleStd) {
-                  faultColor = faultColor.withValues(alpha: opac);
+                  faultColor = faultColor.withOpacity(opac);
                 }
 
                 if (fault.cloned == "Y") {
-                  faultColor = faultColor.withValues(alpha: 0.4);
+                  faultColor = faultColor.withOpacity(0.4);
                 }
 
                 bool isMoveTogether = false;
@@ -899,8 +899,7 @@ class _DrawingViewState extends State<DrawingView> {
                                     color: faultColor,
                                     border: (fault.status == "보수완료")
                                         ? Border.all(
-                                            color: Colors.black
-                                                .withValues(alpha: 1),
+                                            color: Colors.black.withOpacity(1),
                                             width: 0.6)
                                         : Border.all(
                                             color: Colors.transparent,

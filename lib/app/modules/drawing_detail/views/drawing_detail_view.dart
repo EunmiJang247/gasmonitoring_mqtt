@@ -228,7 +228,7 @@ class DrawingDetailView extends GetView<DrawingDetailController> {
                           Transform.scale(
                             scale: 1.2,
                             child: CupertinoSwitch(
-                              activeTrackColor: AppColors.c4,
+                              // activeTrackColor: AppColors.c4,
                               value: !controller.isDrawingSelected.value,
                               onChanged: (value) =>
                                   controller.isDrawingSelected.value = !value,
