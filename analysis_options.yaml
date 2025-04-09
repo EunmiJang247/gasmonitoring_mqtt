@@ -1,0 +1,6 @@
+analyzer:
+    errors:
+        collection_methods_unrelated_type: ignore
+include: package:flutter_lints/flutter.yaml
+linter:
+    rules:
