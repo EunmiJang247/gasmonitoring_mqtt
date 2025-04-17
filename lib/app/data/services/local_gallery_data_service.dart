@@ -222,6 +222,7 @@ class LocalGalleryDataService extends GetxService {
     updatedPicture.kind = kind;
     print('?오죠?');
     await gallery_box.put(updatedPicture.pid, updatedPicture);
+    fetchGalleryPictures();
   }
 
   // 사진 위치 변경
