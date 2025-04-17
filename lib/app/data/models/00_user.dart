@@ -38,3 +38,13 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
   Map<String, dynamic> toJson() => _$UserToJson(this);
 }
+
+// 이렇게 @HiveType, @HiveField를 붙이면
+// build_runner가 user.g.dart 파일을 자동 생성함
+// 이 파일 안에 UserAdapter가 들어 있어
+
+// 흐름 요약
+// 1. user.dart → @HiveType + @HiveField → 모델에 어노테이션 붙임
+// 2. build_runner 실행 → user.g.dart 생성됨
+// 3. Hive.registerAdapter(UserAdapter()) 실행 → Hive에 등록
+// 4. Hive가 해당 타입(User)을 저장하거나 불러올 수 있게 됨!

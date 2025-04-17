@@ -285,6 +285,7 @@ class ProjectChecksController extends GetxController {
 
   // 전경사진 촬영
   takeProjectPicture() async {
+    print('여기요!');
     final ImagePicker imagePicker = ImagePicker();
     XFile? xFile = await imagePicker.pickImage(
       source: ImageSource.camera,
@@ -314,6 +315,7 @@ class ProjectChecksController extends GetxController {
       appService.curProject!.refresh();
       appService.projectList.refresh();
       appService.isLeftBarOpened.refresh();
+      print('여기요!');
 
       _localGalleryDataService.fetchGalleryPictures();
     }

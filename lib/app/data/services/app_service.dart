@@ -37,15 +37,34 @@ import '../repository/app_repository.dart';
 import 'local_app_data_service.dart';
 import 'local_gallery_data_service.dart';
 
+// 앱의 비즈니스 로직, 상태, 데이터 동기화 등 모든 핵심 기능을 전역적으로 다루는 중앙 서비스 레이어
+
+//  왜 AppService는 Controller랑 분리했을까?
+// 	데이터 처리, 비즈니스 로직, 저장소 접근, 유틸 기능
+// Service는 앱 전역에서 공통으로 필요한 기능/데이터를 제공해. 예를 들어:
+// 로그인 처리
+// 오프라인/온라인 모드 분기
+// 프로젝트/도면 목록 관리
+// 사진 업로드/삭제 로직 등
+// → 이걸 다 Controller 안에 넣으면 비대해지고 복잡해져서 유지보수가 어려움.
+
+// AppService는 전역(Global) 상태 및 기능을 담당
+// 앱 전체에서 공유되는 상태(예: 현재 로그인한 사용자, 현재 선택된 프로젝트 등)
+// 하나만 존재하면 되는 싱글톤 성격의 객체 (extends GetxService 로 선언됨)
+// 앱 실행 시 초기화되고, 어디서든 Get.find<AppService>()로 접근 가능
+
 class AppService extends GetxService {
+  // GetxService는 싱글톤 서비스야. 즉, 앱 전체에서 딱 하나만 존재하는 객체
   final AppRepository _appRepository;
   final LocalAppDataService _localAppDataService;
   final LocalGalleryDataService _localGalleryDataService;
 
-  User? user;
+  // 전역 상태 변수
+  User? user; // 로그인한 사용자 정보
   List? locationList = [];
   List? statusList = [];
   List? causeList = [];
+  // 1차/2차 결함 카테고리
   Map<String, String>? faultCate1;
   Map<String, String>? faultCate2;
   List<ElementList>? elements;
@@ -54,7 +73,7 @@ class AppService extends GetxService {
   // String? curProjectSeq;
   // String? curDrawingSeq;
 
-  Rx<Drawing> curDrawing = Drawing().obs;
+  Rx<Drawing> curDrawing = Drawing().obs; // 현재 선택된 도면, 프로젝트
 
   Map<String, List> faultImageInfo = {};
 
@@ -67,14 +86,19 @@ class AppService extends GetxService {
   Map<String, String> displayingFid = {};
 
   AppService({
+    // 외부에서 이 객체를 반드시 전달해야 함 (Dart의 required 키워드 사용)
     required AppRepository appRepository,
     required LocalAppDataService localAppDataService,
     required LocalGalleryDataService localGalleryDataService,
-  })  : _appRepository = appRepository,
+  })  : _appRepository =
+            appRepository, // 전달받은 객체를 클래스 내부의 private 필드에 할당 (생성자 초기화 리스트)
+        // 	클래스 내부에서 쓸 진짜 의존성 필드
         _localAppDataService = localAppDataService,
         _localGalleryDataService = localGalleryDataService;
 
   Rx<bool> isOfflineMode = false.obs;
+  // 오프라인 모드 여부
+  // AppService 객체에 붙어있는 속성이라서 어디서든 접근 가능
   Rx<UpdateHistoryItem?> lastUpdateHistory =
       Rx(UpdateHistoryItem(history: [], version: "", update_date: ""));
   DateTime? currentBackPressTime;
@@ -126,16 +150,22 @@ class AppService extends GetxService {
   }
 
   Future<String?> signIn({
+    // 단순 로그인뿐 아니라 전역 유저 상태 초기화, 로컬 저장, 서버 데이터 파싱까지 담당한다.
+    // 비동기 로그인 함수. 로그인 성공 여부나 에러 메시지를 String?으로 반환
     required String email,
     required String password,
     required bool offline,
   }) async {
-    isOfflineMode.value = offline;
+    // 로그인하는 서비스!
+    // 실제 로그인 로직, 로컬 저장, 서버 요청 등은 다 AppService에 있음
+    isOfflineMode.value = offline; // 전역 상태 isOfflineMode를 설정함
     String? result;
     SignInResponse? response;
 
     if (offline) {
       user = _localAppDataService.getLastLoginUser();
+      // 오프라인이면 로컬에 저장된 마지막 로그인 유저와 데이터 로드
+
       // if (password != user?.password) {
       //   result = '마지막으로 로그인했던 아이디와 비밀번호를 입력하세요.';
       //   return result;
@@ -144,14 +174,19 @@ class AppService extends GetxService {
       locationList = _localAppDataService.getLocationList();
     } else {
       await EasyLoading.show(dismissOnTap: true);
+      // 로딩 인디케이터 표시
       BaseResponse? baseResponse = await _appRepository.signIn(
         email: email,
         password: password,
       );
+      // 서버에 로그인 요청 (→ AppRepository가 실제 API 호출 담당)
       if (baseResponse?.result?.code != 100) {
+        // 100번이 아닌 경우 에러 발생한 것임
         result = baseResponse?.result?.message;
       } else {
+        // 정상적으로 로그인한 경우
         response = SignInResponse(
+            // 서버 응답 데이터를 model 객체로 파싱
             user: User.fromJson(baseResponse?.data?['user']),
             engineers: (baseResponse?.data?['engineer_list'])
                 .map((e) => Engineer.fromJson(e))
@@ -166,39 +201,54 @@ class AppService extends GetxService {
             locationList: baseResponse?.data?["location_list"],
             statusList: baseResponse?.data?["status_list"],
             causeList: baseResponse?.data?["cause_list"]);
+        // 서버 응답 데이터를 model 객체로 파싱
+
         if (response.user != null) {
+          // 응답에 사용자에 대한 정보가 있다면
           user = response.user!;
           if (user != null) {
             await _localAppDataService.writeLastLoginUser(user!);
+            // 로그인 성공 시, Hive의 user_box에 유저 정보를 저장함
           }
           if (response.faultCate1List != null) {
             faultCate1 = FaultCategory.listToMap(
                 response.faultCate1List?.fault_cate1_list ?? []);
             // await _localAppDataService.writ
           }
+          // 서버에서 1차 결함 카테고리 리스트가 왔다면 이걸 전역 변수 faultCate1에 저장
+
           if (response.faultCate2List != null) {
             faultCate2 = FaultCategory.listToMap(
                 response.faultCate2List?.fault_cate2_list ?? []);
             // await _localAppDataService.writ
           }
+          // 서버에서 2차 결함 카테고리 리스트가 왔다면 이걸 전역 변수 faultCate1에 저장
+
           if (response.elements != null) {
             elements = response.elements;
+            // elements는 어떤 구조물의 부재(요소) 리스트일 가능성 높음
+            // 서버에서 내려준 리스트를 앱 전역에 저장해서
+            // → 이후 드롭다운, 분석, 리스트 UI 등에서 사용 가능
           }
           if (response.locationList != null) {
             locationList = response.locationList;
           }
+          // 건물 내부 위치 정보 리스트 역시 전역에 저장해서 이후 페이지에서 반복 사용 가능
           // print(locationList);
           if (response.statusList != null) {
             statusList = response.statusList;
           }
+          // 결함 상태 리스트
           // print(statusList);
 
           if (response.causeList != null) {
             causeList = response.causeList;
           }
+          // 결함 원인 리스트
           // print(causeList);
           logSuccess(response.user!.toJson(),
               des: 'AppService.signIn($email / $password)');
+          // 로그인 결과를 성공적으로 로그로 남김 (디버깅 or 추적용)
         }
         // if (response.location_List != null) {
         //   location_list = response.location_List!;
@@ -427,6 +477,7 @@ class AppService extends GetxService {
     if (isOfflineMode.value) {
       // result = _localAppDataService.getProjectList(user!.seq);
     } else {
+      // 온라인 일때만
       result = await _appRepository.mergeMarker(
           fromSeq: fromSeq, toSeq: toSeq, lastFaultSeq: lastFaultSeq);
     }
@@ -499,6 +550,8 @@ class AppService extends GetxService {
           if (picState != null &&
               (picState == DataState.EDITED.index ||
                   picState == DataState.DELETED.index)) {
+            //  사진(CustomPicture)의 상태 관리를 위한 enum이야.
+            // 사진이 업로드된 상태인지, 수정되었는지, 삭제되었는지, 그대로인지를 구분하는 용도로 사용
             continue;
           }
           pic.state = DataState.NOT_CHANGED.index;
@@ -807,7 +860,10 @@ class AppService extends GetxService {
   }
 
   onTapSendDataToServer() async {
+    // 서버로 데이터 전송" 버튼을 눌렀을 때 실행되는 함수
+    // 앱에서 로컬에 저장된 변경된 데이터를 서버에 동기화(sync) 하는 핵심 함수
     isLeftBarOpened.value = false;
+    // Wi-Fi / LTE / Ethernet 연결 여부 확인
     List<ConnectivityResult> connectivityResult =
         await Connectivity().checkConnectivity();
     if (!connectivityResult.contains(ConnectivityResult.wifi) &&
@@ -821,6 +877,7 @@ class AppService extends GetxService {
         _localGalleryDataService.PictureList.where(
       (element) => element.state != DataState.NOT_CHANGED.index,
     ).toList();
+    // DataState.NEW, EDITED, DELETED 상태인 사진만 골라냄
 
     int totalCount = changedPictures.length;
     // print("TOTAL: $totalCount");
@@ -834,12 +891,18 @@ class AppService extends GetxService {
     //   (element) => element.state == DataState.DELETED.index,
     // ).length}");
 
+    print("changedPictures: ${changedPictures.toList()}");
+    print("changedPictures: ${changedPictures[0].toJson()}");
+    // 새로 추가된 경우 state : 0, 수정된 경우 state : 1, 삭제된 경우 state : 2
     if (totalCount < 1) {
       // initUpdateCheckList();
+      // 전송할 게 없으면 바로 리턴
+      Fluttertoast.showToast(msg: "변경할 리스트가 없습니다");
       return;
     }
 
     int currentCount = 0;
+    // 진행 상황 표시용 프로그레스 띄움
     await EasyLoading.showProgress(
       currentCount / totalCount,
       status: '서버 전송중...\n$currentCount/$totalCount',
@@ -855,18 +918,21 @@ class AppService extends GetxService {
     // }
 
     try {
+      // 1. 새로 추가된 사진 업로드
       int uploadedPicCount = await uploadPicture(
         totalCount: totalCount,
         currentCount: currentCount,
       );
       if (uploadedPicCount >= 0) currentCount = uploadedPicCount;
 
+      // 2. 수정된 사진 업데이트
       int updatedPicCount = await updatePicture(
         totalCount: totalCount,
         currentCount: currentCount,
       );
       if (updatedPicCount >= 0) currentCount = updatedPicCount;
 
+      // 3. 삭제된 사진 제거
       int deletedPicCount = await deletePicture(
         totalCount: totalCount,
         currentCount: currentCount,
@@ -880,14 +946,21 @@ class AppService extends GetxService {
     await uploadCompleted();
     // initUpdateCheckList();
     Fluttertoast.showToast(msg: "전송이 완료되었습니다!");
+    // 완료 메시지 표시
 
     // ProjectGalleryController projectGalleryController = Get.find();
     // projectGalleryController.fetchData();
     isLeftBarOpened.refresh();
 
+    // 좌측 바 상태 갱신 및 갤러리 다시 로드
     LocalGalleryDataService localGalleryDataService =
         Get.find<LocalGalleryDataService>();
+    // GetX에서 전역으로 등록된 클래스 인스턴스를 가져오는 의존성 주입(DI) 함수
+    // 앱 시작할 때 LocalGalleryDataService를 등록해놨기 때문에 (Get.put(...))
+    // 어디서든 Get.find()로 가져와서 사용할 수 있음
+
     localGalleryDataService.fetchGalleryPictures();
+    // 로컬에 저장된 사진들(PictureList 등)을 다시 불러오는 메서드
 
     await EasyLoading.dismiss();
   }

@@ -1,5 +1,9 @@
 // ignore_for_file: non_constant_identifier_names
 
+// 이 클래스는 Hive 로컬 DB (gallery_box)를 직접 다루는 서비스로,
+// 사진(CustomPicture)의 저장, 수정, 삭제, 종류 변경, 위치 변경 등
+// 모든 변경 사항을 Hive에 반영하는 코드야.
+
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:safety_check/app/data/models/05_picture.dart';
@@ -31,8 +35,10 @@ class LocalGalleryDataService extends GetxService {
     super.onInit();
   }
 
+  //  getter 함수
   List<CustomPicture> get PictureList =>
       gallery_box.values.cast<CustomPicture>().toList();
+  // gallery_box라는 Hive Box에 저장된 모든 CustomPicture들을 꺼내서 List로 반환하는 역할을 한다
 
   // pid 로 사진 가져오기
   CustomPicture? getPicture(String pid) => gallery_box.get(pid);
@@ -154,24 +160,37 @@ class LocalGalleryDataService extends GetxService {
 
   // 사진 종류 변경 (전경, 현황, 기타)
   Future<void> changePictureKind(
-      {required String pid, required String kind}) async {
+      // 사진의 종류(kind)를 바꾸고,
+      // 필요하면 프로젝트 썸네일(대표사진)도 갱신하고,
+      // 로컬에 저장된 데이터를 갱신하며,
+      // 갤러리도 새로고침 하는 거야.
+
+      // 유저가 프로젝트 대표 사진을 변경하려고 함
+      // 사진을 눌러 "전경"으로 바꾸면 → 대표 사진으로 반영됨
+      // "전경"을 "기타"로 바꾸면 → 대표 사진 제거되거ㄴ나 다른 "전경"으로 대체됨
+      {required String pid,
+      required String kind}) async {
     AppService appService = Get.find<AppService>();
 
     CustomPicture? updatedPicture = getPicture(pid);
+    // pid로 특정 사진 찾기
     if (updatedPicture == null) {
       return;
     }
 
     if (updatedPicture.kind == "전경") {
-      updatedPicture.kind = kind; // 종류 변경
+      // 현재 종류가 "전경"인 경우
+      updatedPicture.kind = kind; // 종류 변경 (예: "기타", "현황")
 
       List<CustomPicture> projectPictures = PictureList.where(
         (element) =>
             element.project_seq == updatedPicture.project_seq &&
             element.kind == "전경",
       ).toList();
+      // 같은 프로젝트 내 "전경" 사진들 리스트를 다시 구함
 
       if (projectPictures.isEmpty) {
+        // 만약 "전경"이 아예 없어졌다면: 프로젝트의 대표사진도 없애버림
         if (appService.curProject?.value.picture != "") {
           appService.curProject?.value.picture = "";
           appService.curProject?.value.picture_pid = "";
@@ -180,15 +199,18 @@ class LocalGalleryDataService extends GetxService {
                   .toString();
         }
       } else {
+        // 아직 다른 "전경" 사진이 있으면:
         appService.curProject?.value.picture = projectPictures.first.file_path;
         appService.curProject?.value.picture_pid = projectPictures.first.pid;
       }
 
       appService.curProject?.refresh();
       appService.projectList.refresh();
+      // .refresh()를 통해 GetX 상태 반영해줌!
     }
 
     if (kind == "전경") {
+      // 반대로, 새로 "전경"으로 바꾸는 경우
       if (appService.curProject?.value.picture == "") {
         appService.curProject?.value.picture = updatedPicture.file_path;
         appService.curProject?.value.picture_pid = updatedPicture.pid;
@@ -198,8 +220,8 @@ class LocalGalleryDataService extends GetxService {
     }
 
     updatedPicture.kind = kind;
+    print('?오죠?');
     await gallery_box.put(updatedPicture.pid, updatedPicture);
-    fetchGalleryPictures();
   }
 
   // 사진 위치 변경
@@ -225,8 +247,9 @@ class LocalGalleryDataService extends GetxService {
     return galleryInBox;
   }
 
-  // 사진을 종류별로 나누어 저장
+  // 전경/ 기타사진을 지정
   void fetchGalleryPictures() async {
+    // TODO
     AppService appService = Get.find<AppService>();
     List<CustomPicture>? searchResult = await appService.searchPicture(
         projectSeq: appService.curProject?.value.seq ?? "");

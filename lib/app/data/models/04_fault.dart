@@ -1,17 +1,21 @@
 // ignore_for_file: non_constant_identifier_names
+// 경고 무시하는 설정
 
-import 'package:hive/hive.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:hive/hive.dart'; // Hive: 로컬 DB
+import 'package:json_annotation/json_annotation.dart'; // json_annotation: JSON 자동 직렬화용
+import '05_picture.dart'; // 관련된 CustomPicture 클래스 정의 파일
 
-import '05_picture.dart';
+part '04_fault.g.dart'; // build_runner로 자동 생성되는 serialization 코드가 들어갈 파일
 
-part '04_fault.g.dart';
-
-@JsonSerializable()
-@HiveType(typeId: 4)
+// Hive + JSON 직렬화를 활용해 Fault라는 모델을 정의한 코드
+@JsonSerializable() // JSON → 객체 / 객체 → JSON 변환을 자동화해주는 패키지
+@HiveType(typeId: 4) // Hive 저장용. 고유 ID가 4인 테이블처럼 사용됨.
 class Fault {
+  // 각 필드에 고유 숫자 인덱스를 붙여서 Hive에서 직렬화 시 사용.
+  // 총 37개의 필드가 있고, 건물의 결함(Fault)을 정의하고 있어.
+  // (위치, 크기, 구조 상태, 사진 정보 등등…)
   @HiveField(0)
-  String? seq;
+  String? seq; // 고유한 ID
   @HiveField(1)
   String? marker_seq;
   @HiveField(2)
@@ -125,6 +129,9 @@ class Fault {
     this.floor_name,
   });
 
+  // copyWoPic 메소드
+  // picture_list만 제외한 복사본을 만들고 싶을 때 사용.
+  // ?? this.seq는 인자가 null이면 기존 값 유지.
   Fault copyWoPic({
     String? seq,
     String? marker_seq,
@@ -198,6 +205,8 @@ class Fault {
   }
 
   // copyWith 메소드
+  // 전체 복사하면서 선택적으로 필드를 수정할 수 있는 메소드.
+  // 불변성을 지키기 위한 Dart 스타일.
   Fault copyWith({
     String? seq,
     String? marker_seq,
@@ -278,6 +287,9 @@ class Fault {
     );
   }
 
+  // 두 개의 Fault 객체가 동일한지 비교하는 메소드.
+  // isEditingFault가 true면 더 많은 필드를 비교하고, false면 비교 범위를 줄임.
+  // 모두 다르면 true, 하나라도 다르면 false
   bool isSame(Fault compareObj, {required bool isEditingFault}) {
     if (isEditingFault && compareObj.fid != fid) {
       return false;
@@ -352,4 +364,6 @@ class Fault {
 
   factory Fault.fromJson(Map<String, dynamic> json) => _$FaultFromJson(json);
   Map<String, dynamic> toJson() => _$FaultToJson(this);
+  // json_serializable 패키지가 자동으로 구현해주는 JSON ↔ 객체 변환 함수
+  // _04_fault.g.dart 파일에 실제 구현이 들어감
 }

@@ -6,11 +6,20 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 
 Map<String, dynamic> responseConverter(String base64Data) {
+  // 받은 응답 데이터를 복호화 + 압축 해제 + JSON 디코딩 하는 로직
+  // Base64로 인코딩된 문자열을 받아서
   List<int> decodedData = base64.decode(base64Data);
+  // 서버에서 받은 데이터는 Base64 문자열
+  // 이걸 바이너리로 디코딩하면 List<int> 형태의 압축된 바이트 배열이 나와
   List<int> decompressedData = gzip.decode(decodedData);
+  // 위에서 나온 바이트 배열은 GZIP으로 압축된 데이터야
+  // gzip.decode를 통해 압축을 해제해 원래 JSON 형태의 바이트로 되돌림.
   String jsonEncoded = utf8.decode(decompressedData);
+  // 압축 해제된 바이트를 UTF-8 문자열로 변환. 이건 이제 "{"key":"value", ...}" 형태의 JSON 문자열이 됨.
   Map<String, dynamic> jsonDecoded = jsonDecode(jsonEncoded);
+  // JSON 문자열을 Dart에서 쓸 수 있도록 Map 형태로 디코딩
   return jsonDecoded;
+  // 결론: Base64 문자열 ➝ 바이너리 ➝ GZIP 압축 해제 ➝ UTF-8 문자열 ➝ JSON 파싱 ➝ Map
 }
 
 String sha1Encode(String input) {

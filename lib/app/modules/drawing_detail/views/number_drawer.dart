@@ -18,6 +18,10 @@ import '../../../data/models/04_fault.dart';
 import '../../../widgets/number_input_dialog2.dart';
 import '../../../widgets/two_button_dialog.dart';
 
+import 'dart:convert';
+
+// Todo 뒤로가기 작업
+
 class NumberDrawer extends StatefulWidget {
   const NumberDrawer({super.key});
 
@@ -34,7 +38,7 @@ class _NumberDrawerState extends State<NumberDrawer> {
 
   List<Fault> get faultList =>
       drawingDetailController.selectedMarker.value.fault_list ?? [];
-
+  // 이 getter는 현재 선택된 마커(selectedMarker.value)의 fault_list 속성을 반환합니다. 즉, 선택된 마커가 바뀔 때마다 자동으로 다른 결함 목록이 반환됩니다.
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -180,6 +184,7 @@ class _NumberDrawerState extends State<NumberDrawer> {
         _buildOutlineColorButton(),
         _buildForegroundColorButton(),
         _buildDeleteButton(),
+        _buildDetachButton(),
         _buildCloseButton(),
       ],
     );
@@ -267,10 +272,64 @@ class _NumberDrawerState extends State<NumberDrawer> {
     );
   }
 
+  // 분리 버튼
+  Widget _buildDetachButton() {
+    return InkWell(
+      onTap: () => _showDetachDialog(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 10.0),
+        child: Icon(
+          FontAwesomeIcons.linkSlash,
+          color: Colors.white,
+          size: 20,
+        ),
+      ),
+    );
+  }
+
+  // 분리 확인 다이얼로그
+  void _showDetachDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => TwoButtonDialog(
+        height: 200,
+        content: Column(
+          children: [
+            Text(
+              "마커 분리",
+              style: TextStyle(
+                fontFamily: "Pretendard",
+                color: AppColors.c1,
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+              ),
+            ),
+            Gaps.h16,
+            Text(
+              "'${drawingDetailController.selectedMarker.value.no}'번을 분리하시겠습니까? \n",
+              style: TextStyle(fontFamily: "Pretendard", fontSize: 18),
+              textAlign: TextAlign.center,
+            )
+          ],
+        ),
+        yes: "분리",
+        no: "취소",
+        onYes: () {
+          drawingDetailController.detachMarker(context);
+          Get.back();
+        },
+        onNo: () => Get.back(),
+      ),
+    );
+  }
+
   // 닫기 버튼
   Widget _buildCloseButton() {
     return InkWell(
-      onTap: () => drawingDetailController.closeNumberDrawer(context),
+      onTap: () {
+        drawingDetailController.closeNumberDrawer(context);
+        // drawingDetailController.isPointSelected.value = false;
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
         child: Icon(
@@ -318,16 +377,41 @@ class _NumberDrawerState extends State<NumberDrawer> {
     );
   }
 
+  void sortFaultsByCloneGroup(List<Fault> faults) {
+    faults.sort((a, b) {
+      // 1. group_fid를 기준으로 먼저 묶고
+      final groupCompare = (a.group_fid ?? '').compareTo(b.group_fid ?? '');
+      if (groupCompare != 0) return groupCompare;
+
+      // 2. 같은 그룹이라면 등록시간 순으로 정렬
+      return (a.reg_time ?? '').compareTo(b.reg_time ?? '');
+    });
+  }
+
+  List<Fault> _filterChildFaults(List<Fault> faults, String fid) {
+    return faults.where((fault) => fault.group_fid == fid).toList();
+  }
+
   // 결함 목록 위젯
+  // Todo Jenny Family로 묶기
   Widget _buildFaultList() {
+    List<Fault> sortedFaults = [...faultList];
+    sortFaultsByCloneGroup(sortedFaults);
+
+    // drawingDetailController.selectedMarker.value가 있을경우 해당 fid의 자식들만 나오기
+    if (drawingDetailController.appService.selectedFault.value.fid != null &&
+        drawingDetailController.isPointSelected.value) {
+      String fid = drawingDetailController.appService.selectedFault.value.fid!;
+      sortedFaults = _filterChildFaults(sortedFaults, fid);
+    }
     return Expanded(
       child: Container(
         padding: EdgeInsets.only(left: 16, top: 16, right: 16),
         child: ListView.builder(
           shrinkWrap: true,
-          itemCount: faultList.length,
+          itemCount: sortedFaults.length,
           itemBuilder: (context, index) => FaultItemCard(
-            fault: faultList[index],
+            fault: sortedFaults[index],
             drawingDetailController: drawingDetailController,
             appService: appService,
           ),
@@ -359,6 +443,7 @@ class FaultItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 결함 카드 1개를 의미함 Jenny
     final List<CustomPicture> faultPics =
         drawingDetailController.loadGallery(fault.fid!) ?? [];
     final String? thumb = faultPics.isNotEmpty
@@ -369,13 +454,13 @@ class FaultItemCard extends StatelessWidget {
       onTap: () {
         appService.selectedFault.value = fault;
         appService.isFaultSelected.value = true;
-        drawingDetailController.closeNumberDrawer(context);
+        // drawingDetailController.isPointSelected.value = false;
       },
       child: Container(
         height: _cardHeight,
         margin: const EdgeInsets.only(bottom: _cardMarginBottom),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.green,
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(

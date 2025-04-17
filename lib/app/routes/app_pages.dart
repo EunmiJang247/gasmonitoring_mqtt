@@ -36,9 +36,11 @@ class AppPages {
       binding: SplashBinding(),
     ),
     GetPage(
-      name: _Paths.LOGIN,
-      page: () => const LoginView(),
-      binding: LoginBinding(),
+      name: _Paths.LOGIN, // 1. 경로 이름
+      page: () => const LoginView(), // 2. 진입할 페이지 (View)
+      binding: LoginBinding(), // 3. 페이지 로드시 실행할 바인딩 클래스
+      // LoginView로 진입할 때, GetX가 먼저 LoginBinding의 dependencies()를 실행해.
+      // 그래서 이 View에서 사용될 컨트롤러들이 메모리에 등록돼 있는 상태가 되는 거야.
     ),
     GetPage(
       name: _Paths.FIND_PW,

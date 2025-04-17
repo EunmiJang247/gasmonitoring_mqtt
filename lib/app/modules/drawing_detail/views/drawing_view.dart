@@ -254,6 +254,7 @@ class _DrawingViewState extends State<DrawingView> {
   Widget build(BuildContext context) {
     // 디바이스 회전 또는 화면 크기 변경 감지
     final currentSize = MediaQuery.of(context).size;
+    print("context.size: ${currentSize}"); // context.size: Size(1006.6, 600.9)
 
     // 화면 크기 변경 시 캐시 초기화
     if (currentSize.width != drawingDetailController.lastScreenWidth ||
@@ -284,6 +285,7 @@ class _DrawingViewState extends State<DrawingView> {
                         children: <Widget>[
                               GestureDetector(
                                 onTapDown: (details) {
+                                  print("onTapDown: $details");
                                   if (drawingDetailController
                                       .addMemoMode.value) {
                                     Offset localPosition =
@@ -302,7 +304,7 @@ class _DrawingViewState extends State<DrawingView> {
                                   if (currentScale >= scaleStd) {
                                     Offset localPosition =
                                         details.localPosition;
-                                    // print(localPosition);
+                                    print("localPosition: $localPosition");
                                     List<String> newPosition = convertDVtoDB(
                                         x: localPosition.dx,
                                         y: localPosition.dy - verticalPadding);
@@ -455,8 +457,11 @@ class _DrawingViewState extends State<DrawingView> {
       Color foregroundColor =
           getColorWithCache(data.foreground_color ?? "FFFFFF");
 
+      // 마커 색깔에 따라 글자색 변경하는 코드 Jenny TODO
       Color textColor = foregroundColor == Color.fromARGB(255, 136, 136, 202) ||
-              foregroundColor == Color(0xffff0000)
+              foregroundColor == Color(0xffff0000) ||
+              foregroundColor == Color(0xff0909ff) ||
+              foregroundColor == Color(0xff4caf50)
           ? Colors.white
           : Colors.black;
 
@@ -477,6 +482,7 @@ class _DrawingViewState extends State<DrawingView> {
                 verticalPadding,
             child: GestureDetector(
               onTap: () {
+                // 번호를 눌렀을 때 나타남
                 // focusOnSpot(globalKey, Offset(double.parse(data.x!) - drawingDetailController.markerSize/2, double.parse(data.y!) - drawingDetailController.markerSize/2));
                 drawingDetailController.selectedMarker.value = data;
                 drawingDetailController.isNumberSelected.value = true;
@@ -524,6 +530,7 @@ class _DrawingViewState extends State<DrawingView> {
                 });
               },
               onLongPressEnd: (details) {
+                print('!!!!: ${details}');
                 if (currentScale < scaleStd) return;
                 drawingDetailController.isMovingNumOrFault.value = false;
 
@@ -710,12 +717,25 @@ class _DrawingViewState extends State<DrawingView> {
                           verticalPadding,
                       child: GestureDetector(
                         onTap: () {
+                          // TODO 점을 눌렀을 때 Jenny
+
                           // focusOnSpot(globalKey, Offset(double.parse(fault.x!) - drawingDetailController.markerSize/2, double.parse(fault.y!) - drawingDetailController.markerSize/2));
+                          // 1. 해당 마커를 선택 상태로 만듦
                           drawingDetailController.selectedMarker.value = marker;
+
+                          // 2. 선택된 결함을 설정
                           drawingDetailController
                               .appService.selectedFault.value = fault;
-                          drawingDetailController
-                              .appService.isFaultSelected.value = true;
+
+                          // 3. 결함 detail이 아닌 전체 리스트로 보여주기 위해 아래와 같이 변경.
+                          // drawingDetailController
+                          //     .appService.isFaultSelected.value = true;
+
+                          drawingDetailController.isNumberSelected.value = true;
+                          drawingDetailController.isPointSelected.value = true;
+
+                          print(marker);
+                          print("fault: ${fault.group_fid}");
                         },
                         onLongPressStart: (details) {
                           if (currentScale >= scaleStd) {
@@ -781,6 +801,8 @@ class _DrawingViewState extends State<DrawingView> {
 
                           // 함께 이동하는 경우
                           if (isMoveTogether) {
+                            // TODO Jenny
+                            fixRange = 0;
                             setState(() {
                               // 마커 이동
                               markerSnapped = moveMarker(
@@ -795,6 +817,7 @@ class _DrawingViewState extends State<DrawingView> {
                               fault.y =
                                   convertDVtoDB(y: newMarkerPos.dy + dY).first;
                             });
+                            fixRange = 5;
                           }
                           // 독립적으로 이동하는 경우 (기존 코드)
                           else {
@@ -993,6 +1016,8 @@ class _DrawingViewState extends State<DrawingView> {
       if (!xProcessed &&
           nextDx > faultPosition.dx - fixRange &&
           nextDx < faultPosition.dx + fixRange) {
+        // fixRange 값이 5로 설정되어 있어서, 마커나 결함이 fault와 x 또는 y 좌표에서 ±5 범위 내에 있으면 좌표가 스냅.
+        // 문제는 사용자가 자연스럽게 손가락을 미세하게 움직일 때도 이 스냅이 발동
         newMarkerX = fault.x;
         isSnapped = true;
         xProcessed = true;

@@ -50,6 +50,14 @@ Future<void> main() async {
     ),
     permanent: true,
   );
+  //AppService 인스턴스를 만들고 메모리에 한 번 생성
+  // GetX의 DI 컨테이너에 전역으로 등록.
+  // permanent: true 덕분에 앱이 꺼지기 전까지 절대 Dispose 되지 않아.
+  // → 즉, 앱 전 생애 주기 동안 살아있는 진짜 전역 객체야
+
+  // AppService는 이미 전역으로 등록했는데, 왜 LoginBinding에서 또 설정하냐?
+  // 바인딩에서는 AppService를 주입하는 게 아니라, 이미 등록된 인스턴스를 찾아서 LoginController에 “의존성 주입”하는 거야
+  // 페이지가 바뀔 때 마다 재등록/해제가 번거로움 → Binding이 자동으로 해줘서 편한 거야
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   await SystemChrome.setPreferredOrientations(

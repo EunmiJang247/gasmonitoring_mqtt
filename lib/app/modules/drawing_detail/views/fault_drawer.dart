@@ -28,8 +28,6 @@ import '../../../data/models/05_picture.dart';
 import '../../../widgets/custom_color_picker.dart';
 import '../../../widgets/selection_dialog/element_selection_dialog.dart';
 
-// TODO Jenny 뒤로가기 작업 시작
-
 class FaultDrawer extends StatefulWidget {
   const FaultDrawer({super.key});
 
@@ -103,6 +101,7 @@ class _FaultDrawerState extends State<FaultDrawer> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Visibility(
+                  // FaultDrawer가 열리려면 isFaultSelected.value == true여야 해.
                   visible: appService.isFaultSelected.value &&
                       drawingDetailController.clrPickerOpened.value,
                   child: CustomColorPicker()),
@@ -115,6 +114,7 @@ class _FaultDrawerState extends State<FaultDrawer> {
                 ),
                 margin: EdgeInsets.only(top: appBarHeight),
                 width: appService.isFaultSelected.value ? 136.w : 0,
+                // appService.isFaultSelected.value가 참일때만 136.w로 설정해서 drawer가 보이게 된다 Jenny
                 height: MediaQuery.of(context).size.height - appBarHeight,
                 child: Column(
                   children: [
@@ -127,8 +127,23 @@ class _FaultDrawerState extends State<FaultDrawer> {
                         child: ConstrainedBox(
                           constraints: BoxConstraints(minWidth: 136.w - 16),
                           child: Row(
+                            // Jenny 뒤로가기 버튼 완료
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              InkWell(
+                                onTap: () async {
+                                  drawingDetailController
+                                      .closeFaultDrawer(context);
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 12.0, horizontal: 10.0),
+                                  child: Icon(
+                                    Icons.arrow_back_ios,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
                               InkWell(
                                 onTap: () async {
                                   CustomPicture? newImage =
@@ -139,9 +154,11 @@ class _FaultDrawerState extends State<FaultDrawer> {
                                       appService
                                           .selectedFault.value.picture_list
                                           ?.add(newImage);
+                                      // setState()로 UI 갱신
 
                                       images = drawingDetailController
                                           .loadGallery(curFaultData.fid!);
+                                      // 해당 결함에 연결된 사진 리스트(images) 다시 불러오기
                                       carouselController.animateToPage(0);
                                     });
                                   }
@@ -410,6 +427,8 @@ class _FaultDrawerState extends State<FaultDrawer> {
                                   onTap: () {
                                     drawingDetailController
                                         .closeFaultDrawer(context);
+                                    drawingDetailController
+                                        .closeNumberDrawer(context);
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(

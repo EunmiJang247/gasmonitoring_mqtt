@@ -25,6 +25,12 @@ class SplashController extends GetxController {
   }) : _appService = appService;
 
   Rx<bool> needUpdate = Rx(false);
+  // Rx란 ? 반응형 변수 (Reactive Variable) 라는 뜻
+  // 값이 바뀌면 자동으로 "얘를 감지하고 있는 UI"가 업데이트됨.
+  // 즉, setState() 안 써도 됨
+
+  String test = "test"; // 얘는 변화가 추적되지 않음
+  Rx<String> test11 = Rx("test11"); // 이것도 가능!
 
   @override
   Future<void> onInit() async {

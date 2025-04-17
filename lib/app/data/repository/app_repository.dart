@@ -14,9 +14,15 @@ import '../models/03_marker.dart';
 import '../models/base_response.dart';
 import '../models/02_drawing.dart';
 import '../models/01_project.dart';
+import 'dart:convert';
+
+// AppRepository 은 API 호출을 전담하는 계층
 
 class AppRepository {
+  // AppRepository는 Repository 패턴을 적용한 클래스
+  // Service나 Controller와 API 또는 로컬 DB(Hive 등) 사이의 중간 다리 역할
   AppRepository({required AppAPI appAPI}) : _appAPI = appAPI;
+  // 생성자에서 AppAPI를 주입받아 _appAPI 필드에 저장.
   final AppAPI _appAPI;
 
   // Map<String, dynamic> readAndroidBuildData() {
@@ -341,7 +347,8 @@ class AppRepository {
       {required String fromSeq,
       required String toSeq,
       String? lastFaultSeq}) async {
-    Map? result;
+    print("fromSeq: $fromSeq, toSeq: $toSeq, lastFaultSeq: $lastFaultSeq");
+    Map? result; // 결과 담을 변수 선언
     try {
       Map<String, dynamic> body = {
         "from_seq": fromSeq,
@@ -349,9 +356,19 @@ class AppRepository {
         "last_fault_seq": lastFaultSeq,
       };
       BaseResponse? response = await _appAPI.client.mergeMarker(body);
+      // 병합 API 요청
+      final encoder = JsonEncoder.withIndent('  ');
       result?["marker"] = Marker.fromJson(response?.data["marker"]);
+      // 응답에 포함된 병합 후 마커 정보를 Marker 모델로 파싱해서 Map에 저장
       result?["fault"] = Fault.fromJson(response?.data["fault"]);
+      // 병합된 결함(또는 대표 결함)을 파싱
+      print("response?.data: ${encoder.convert(response?.data["marker"])}");
+      print("response?.data: ${encoder.convert(response?.data["fault"])}");
+      print("response?.data: ${encoder.convert(response?.data["appended"])}");
+
       if (response?.data["appended"] != null) {
+        // 서버에서 추가적으로 변경된 내용이 있을 경우(예: 새로운 결함, 업데이트된 마커 리스트 등)
+        //  Appended 모델로 파싱해서 함께 반환
         result?["appended"] = Appended.fromJson(response?.data["appended"]);
       }
     } catch (err) {
@@ -399,6 +416,7 @@ class AppRepository {
       }
 
       BaseResponse? response = await _appAPI.client.submitFault(body);
+      print("body: $body");
       result["fault"] = Fault.fromJson(response?.data["fault"]);
       if (response?.data["marker"] != null) {
         result["marker"] = Marker.fromJson(response?.data["marker"]);

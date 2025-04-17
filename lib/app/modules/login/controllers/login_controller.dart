@@ -19,12 +19,24 @@ class LoginController extends GetxController {
   LoginController({
     required this.appService,
     required LocalAppDataService localAppDataService,
-  })  : _localAppDataService = localAppDataService;
+  }) : _localAppDataService = localAppDataService;
 
   final List<Image> bannerImages = [
-    Image.asset("assets/images/601_Image1.jpg", fit: BoxFit.fill,width: 345.w,),
-    Image.asset("assets/images/601_Image2.jpg", fit: BoxFit.fill,width: 345.w,),
-    Image.asset("assets/images/601_Image3.jpg", fit: BoxFit.fill,width: 345.w,),
+    Image.asset(
+      "assets/images/601_Image1.jpg",
+      fit: BoxFit.fill,
+      width: 345.w,
+    ),
+    Image.asset(
+      "assets/images/601_Image2.jpg",
+      fit: BoxFit.fill,
+      width: 345.w,
+    ),
+    Image.asset(
+      "assets/images/601_Image3.jpg",
+      fit: BoxFit.fill,
+      width: 345.w,
+    ),
   ];
 
   TextEditingController idController = TextEditingController();
@@ -34,7 +46,6 @@ class LoginController extends GetxController {
   RxInt index = 0.obs;
 
   Rx<String?> errorText = Rx(null);
-
 
   @override
   void onInit() {
@@ -66,7 +77,7 @@ class LoginController extends GetxController {
     super.dispose();
   }
 
-  setIsSaveInfo (bool value) {
+  setIsSaveInfo(bool value) {
     isSaveLoginInfo.value = value;
   }
 
@@ -86,19 +97,21 @@ class LoginController extends GetxController {
         if (Get.isDialogOpen == true) Get.back();
       });
     } else {
-      // 아이디/비밀번호 저장
+      // 아이디/비밀번호 저장 버튼 클릭이 되어있다면
       if (isSaveLoginInfo.value) {
         _localAppDataService.setConfigValue('saved_pw', pwController.text);
       } else {
         _localAppDataService.setConfigValue('saved_pw', "");
       }
 
-      // 현장 목록으로 이동
+      // 현장 목록으로 이동(네비게이션)
+      // 현재 앱의 모든 페이지를 스택에서 제거하고,
+      // 지정한 라우트(routeName)로 이동한다.
       Get.offAllNamed(Routes.PROJECT_LIST);
     }
   }
 
-  onTapFindPw () {
+  onTapFindPw() {
     Get.toNamed(Routes.FIND_PW);
   }
 }

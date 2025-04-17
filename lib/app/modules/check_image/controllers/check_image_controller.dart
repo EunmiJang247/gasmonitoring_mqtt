@@ -113,17 +113,23 @@ class CheckImageController extends GetxController {
   }
 
   changeKind(String newKind) {
+    // 사진의 종류(kind)를 변경하는 사용자 액션을 처리하는 함수
+    // 사용자가 어떤 사진의 종류를 "현황" / "기타" / "전경" 중 하나로 변경할 때,
+    // 유효성 체크하고 로컬 상태를 변경하고  상태를 EDITED로 바꿔서 서버 동기화 대상으로 만든다.
     if (original!.kind != "현황" &&
         original!.drawing_seq == null &&
         newKind == "현황") {
       Fluttertoast.showToast(msg: "해당 사진은 현황 사진으로 변경할 수 없습니다!");
+      // drawing_seq == null이면 도면 없음 → 현황 변경 불가
       return;
     }
     _localGalleryDataService.changePictureKind(
+      // Hive에 저장된 사진의 kind 값을 새 값으로 변경
       pid: original!.pid!,
       kind: newKind,
     );
     _localGalleryDataService.changePictureState(
+      // 사진 상태를 EDITED로 변경
       pid: original!.pid!,
       state: DataState.EDITED,
     );
@@ -133,6 +139,7 @@ class CheckImageController extends GetxController {
     curKind.value = newKind;
 
     _appService.isLeftBarOpened.refresh();
+    //  현재 객체에도 값 반영 + UI 갱신
   }
 
   String makeCateString(String? cate1Seq, List<String>? cate2Seq) {
@@ -161,7 +168,7 @@ class CheckImageController extends GetxController {
     _appService.isLeftBarOpened.value = true;
     _appService.isLeftBarOpened.value = false;
     ProjectGalleryController projectGalleryController = Get.find();
-    projectGalleryController.localGalleryDataService.fetchGalleryPictures();
+    _localGalleryDataService.fetchGalleryPictures();
   }
 
   deletePicture() async {
