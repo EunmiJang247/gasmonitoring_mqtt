@@ -35,6 +35,7 @@ class _PhotoGridItemState extends State<PhotoGridItem> {
         picture: widget.picture,
         categoryIndex: widget.categoryIndex,
         controller: widget.controller);
+    print("photoInfo: ${photoInfo}");
 
     return IntrinsicHeight(
       child: Column(

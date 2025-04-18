@@ -24,7 +24,8 @@ class PhotoInfo extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: Text(
-            photoNo ?? "사진 업로드 필요",
+            // TODO Jenny
+            photoNo ?? "사진 업로드 필요???",
             style: TextStyle(
               fontFamily: "Pretendard",
               fontSize: 14,
@@ -83,6 +84,7 @@ class PhotoInfoData {
     required int categoryIndex,
     required ProjectGalleryController controller,
   }) {
+    print("picture : ${picture.toString()}");
     String locationInfo = '';
     String extraInfo = '';
 

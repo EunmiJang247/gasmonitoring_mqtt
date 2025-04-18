@@ -2,7 +2,8 @@
 
 // 이 클래스는 Hive 로컬 DB (gallery_box)를 직접 다루는 서비스로,
 // 사진(CustomPicture)의 저장, 수정, 삭제, 종류 변경, 위치 변경 등
-// 모든 변경 사항을 Hive에 반영하는 코드야.
+// 모든 변경 사항을 Hive에 반영하는 코드야. 4/18 이거 공부하기!
+// 그리고 어떤 원리로 로컬과 서버를 동기화하는지 이해하기!
 
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
