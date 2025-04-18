@@ -317,7 +317,7 @@ class ProjectChecksController extends GetxController {
       appService.isLeftBarOpened.refresh();
       print('여기요!');
 
-      _localGalleryDataService.fetchGalleryPictures();
+      _localGalleryDataService.loadGalleryFromHive();
     }
   }
 }

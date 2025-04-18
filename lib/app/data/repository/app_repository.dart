@@ -452,9 +452,10 @@ class AppRepository {
     return result;
   }
 
-  // 현장 목록 불러오기
+  // 현장 사진들
   Future<List<CustomPicture>?> searchPicture(
       {required String? projectSeq}) async {
+    // 현장 ID (또는 프로젝트 ID)
     List<CustomPicture>? result;
     try {
       Map<String, dynamic> body = {"project_seq": projectSeq};
