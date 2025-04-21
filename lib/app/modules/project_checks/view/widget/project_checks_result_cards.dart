@@ -4,11 +4,12 @@ import 'package:safety_check/app/data/models/12_building_safety_check.dart';
 import 'package:safety_check/app/modules/project_checks/view/widget/photo_box.dart';
 
 class ProjectChecksResultCards extends StatelessWidget {
-  final BuildingSafetyCheck? data;
+  final List<BuildingCardInfo>? data;
   const ProjectChecksResultCards({super.key, this.data});
 
   @override
   Widget build(BuildContext context) {
+    print(data?[0].toJson());
     return Column(
       children: [
         Container(

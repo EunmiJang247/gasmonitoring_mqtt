@@ -46,7 +46,6 @@ class CheckList extends GetView<ProjectChecksController> {
   @override
   Widget build(BuildContext context) {
     double infoFontSize = 16;
-    print(sample.toJson());
 
     RxString dtInfo = "".obs;
     String? fieldStDt = controller.appService.curProject!.value.field_bgn_dt;
@@ -98,7 +97,7 @@ class CheckList extends GetView<ProjectChecksController> {
                                 buildingName: sample.buildingName,
                                 type: sample.type,
                               ),
-                              ProjectChecksResultCards(data: sample),
+                              ProjectChecksResultCards(data: sample.data),
                             ],
                           ),
                         ),
