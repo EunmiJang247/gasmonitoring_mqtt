@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:safety_check/app/constant/app_color.dart';
 import 'package:safety_check/app/constant/gaps.dart';
+import 'package:safety_check/app/data/models/12_building_safety_check.dart';
 import 'package:safety_check/app/modules/drawing_detail/views/fault_table.dart';
 import 'package:safety_check/app/modules/project_info/views/info_table_row.dart';
 import 'package:safety_check/app/utils/formatter.dart';

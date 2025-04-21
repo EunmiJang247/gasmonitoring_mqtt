@@ -212,10 +212,11 @@ class ProjectListView extends GetView<ProjectListController> {
                       ),
                     )),
                 Container(
+                    // 여기가 전체현장 리스트 나오는 곳! Jenny TODO
                     padding:
                         EdgeInsets.only(left: leftBarWidth, top: appBarHeight),
                     child: Container(
-                      color: Colors.white,
+                      color: Colors.yellow,
                       padding: EdgeInsets.only(top: 8, left: 16, right: 8),
                       child: Column(
                         children: [
@@ -472,7 +473,7 @@ class ProjectListView extends GetView<ProjectListController> {
                                                                         index]
                                                                     .gross_area ==
                                                                 null
-                                                            ? "연면적 정보 없음"
+                                                            ? "연면적 정보 없음 Jenny"
                                                             : "${formatNumberWithComma(controller.appService.projectList[index].gross_area!)} ㎡",
                                                         style: TextStyle(
                                                           fontFamily:

@@ -1,0 +1,104 @@
+{
+  "inspectorName": "홍길동",
+  "inspectionDate": "2023-10-01",
+  "buildingName": "건물명",
+  "type": "1종",
+  "inspectionItem": "정기안전점검",
+  "data": [
+    {
+      "caption": "외벽마감재",
+      "children": [
+        {
+          "kind": "치장벽돌",
+          "pictures": [
+            {
+              "title": "정면",
+              "pid": "123",
+              "remark": "메모입니다"
+            },
+            {
+              "title": "측면",
+              "pid": "124",
+              "remark": "메모입니다"
+            }
+          ],
+          "remark": "보수필요시 사유"
+        }
+      ]
+    },
+    {
+      "caption": "부대시설",
+      "children": [
+        {
+          "kind": "환기구(덮개상태)",
+          "pictures": [
+            {
+              "title": "바닥형",
+              "pid": "123",
+              "remark": "메모입니다"
+            },
+            {
+              "title": "측면",
+              "pid": "124",
+              "remark": "메모입니다"
+            }
+          ],
+          "remark": "보수 사유"
+        },
+        {
+          "kind": "지반침하 및 도로포장상태",
+          "pictures": [
+            {
+              "title": "정면",
+              "pid": "123",
+              "remark": "메모입니다"
+            },
+            {
+              "title": "측면",
+              "pid": "124",
+              "remark": "메모입니다"
+            }
+          ],
+          "remark": "보수필요시 사유"
+        },
+        {
+          "kind": "옹벽",
+          "pictures": [
+            {
+              "title": "정면",
+              "pid": "123",
+              "remark": "메모입니다"
+            },
+            {
+              "title": "측면",
+              "pid": "124",
+              "remark": "메모입니다"
+            }
+          ],
+          "remark": "보수필요시 사유"
+        }
+      ]
+    },
+    {
+      "caption": "외관사진",
+      "children": [
+        {
+          "kind": "옥탑지붕층",
+          "pictures": [
+            {
+              "title": "헬리포트",
+              "pid": "123",
+              "remark": "메모입니다"
+            },
+            {
+              "title": "옥탑",
+              "pid": "124",
+              "remark": "메모입니다"
+            }
+          ],
+          "remark": "보수필요시 사유"
+        }
+      ]
+    }
+  ]
+}
