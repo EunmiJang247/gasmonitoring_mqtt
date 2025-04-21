@@ -520,7 +520,7 @@ class AppService extends GetxService {
     try {
       List<CustomPicture>? pictures =
           await _appRepository.searchPicture(projectSeq: projectSeq) ?? [];
-      // 서버에서 해당 프로젝트의 사진 리스트를 받아옴
+      // 서버에서 사진 리스트를 받아옴
 
       List pidList = pictures
           .map(
