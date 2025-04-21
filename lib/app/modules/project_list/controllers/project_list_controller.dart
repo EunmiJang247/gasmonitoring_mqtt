@@ -43,27 +43,39 @@ class ProjectListController extends GetxController {
   }
 
   Future fetchData() async {
+    // 전체현장 리스트에서 데이터 가져오는 부분임
+    // 서버에서 전체 현장 리스트 받아옴 → appService.projectList 갱신
     await EasyLoading.show();
     appService.projectList.value = await appService.getProjectList(
-            my: isMyPlace.value, q: searchKeyword) ??
+            // 서버에서 전체 현장 리스트 (Project 목록) 를 받아옴
+            my: isMyPlace.value,
+            q: searchKeyword) ??
         [];
+    print(appService.projectList[0].toJson());
 
     // 전경사진이 삭제된 상태면 프로젝트에서 삭제
     bool pictureDeleted = false;
     for (var project in appService.projectList) {
       if (project.picture_pid == "") {
+        // 프로젝트에 전경사진이 없으면
+        print('와요!');
         List<CustomPicture> pictures = localLocalGalleryDataService
             .getPictureInProject(projectSeq: project.seq!);
+        // hive에있는 사진 중에서 같은 프로젝트 seq를 가진 사진들만 가져옴
+        print(pictures);
 
         // 전경사진 찾기
         CustomPicture? projectPicture =
             pictures.where((element) => element.kind == "전경").firstOrNull;
 
         if (projectPicture != null) {
+          print("projectPicture ? : ${projectPicture.toJson()}");
           project.picture = projectPicture.file_path;
           project.picture_pid = projectPicture.pid;
+          // project에 사진과 pid를 강제로 넣음
         }
       } else {
+        // 프로젝트에 전경사진이 있으면
         CustomPicture? picture =
             localLocalGalleryDataService.getPicture(project.picture_pid!);
         if (picture != null) {

@@ -285,17 +285,28 @@ class ProjectInfoController extends GetxController {
 
   // 전경사진 촬영
   takeProjectPicture() async {
-    print('여기요!2222');
+    // 👉 사진 파일을 저장하고
+    // 👉 Hive에 추가하고
+    // 👉 UI 상태를 갱신해서
+    // 👉 나중에 서버에 업로드할 수 있도록 DataState.NEW 상태로 등록하는 과정
+
     final ImagePicker imagePicker = ImagePicker();
+    // image_picker 패키지로 카메라 촬영을 시작
     XFile? xFile = await imagePicker.pickImage(
       source: ImageSource.camera,
       imageQuality: imageQuality,
       maxWidth: imageMaxWidth,
     );
+    print('여기요!2222');
+    // 촬영 완료 시 XFile 객체로 사진 정보 획득
     if (xFile != null) {
       // File file = await appService.compressImage(xImage);
       String savedFilePath =
           await appService.savePhotoToExternal(File(xFile.path));
+      print('여기요!3333');
+      // 원래 카메라에서 생성된 임시 사진 파일을
+      // 앱이 관리하는 디렉토리로 복사 → 파일을 안전하게 관리하기 위함
+      //  "savePhotoToExternal()까지가 사진을 파일 시스템에 안전하게 저장하는 과정"
 
       CustomPicture projectPicture = appService.makeNewPicture(
         pid: appService.createId(),
@@ -307,16 +318,16 @@ class ProjectInfoController extends GetxController {
         floorName: "",
         dataState: DataState.NEW,
       );
+      print('여기요!4444');
       appService.curProject!.value.picture = savedFilePath;
       appService.curProject!.value.picture_pid = projectPicture.pid;
       appService.curProject!.value.picture_cnt =
           (int.parse(appService.curProject!.value.picture_cnt!) + 1).toString();
 
+      _localGalleryDataService.loadGalleryFromHive();
       appService.curProject!.refresh();
       appService.projectList.refresh();
       appService.isLeftBarOpened.refresh();
-
-      _localGalleryDataService.fetchGalleryPictures();
     }
   }
 }

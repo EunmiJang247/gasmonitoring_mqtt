@@ -116,15 +116,20 @@ class CheckImageController extends GetxController {
     // 사진의 종류(kind)를 변경하는 사용자 액션을 처리하는 함수
     // 사용자가 어떤 사진의 종류를 "현황" / "기타" / "전경" 중 하나로 변경할 때,
     // 유효성 체크하고 로컬 상태를 변경하고  상태를 EDITED로 바꿔서 서버 동기화 대상으로 만든다.
-    if (original!.kind != "현황" &&
-        original!.drawing_seq == null &&
+    // 유효성 검사 → 로컬(Hive) 상태 변경 → 상태를 EDITED로 바꾸고 → UI/서버 동기화를 유도하는 작업을 수행
+    if (original!.kind != "현황" && // 사진 종류가 원래 현황이 아니고
+        original!.drawing_seq ==
+            null && // 이 사진에 연결된 도면이 없고 (drawing_seq == null)
         newKind == "현황") {
+      // 근데 사용자가 "현황"으로 바꾸려 한다면?
       Fluttertoast.showToast(msg: "해당 사진은 현황 사진으로 변경할 수 없습니다!");
       // drawing_seq == null이면 도면 없음 → 현황 변경 불가
+      // "현황 사진은 도면이 연결되어 있어야 한다"는 도메인 로직이 적용된 조건!
       return;
     }
     _localGalleryDataService.changePictureKind(
       // Hive에 저장된 사진의 kind 값을 새 값으로 변경
+      // Hive에 저장된 CustomPicture 객체의 kind 값을 새로 바꿈 (예: "기타" → "전경")
       pid: original!.pid!,
       kind: newKind,
     );
@@ -133,7 +138,7 @@ class CheckImageController extends GetxController {
       pid: original!.pid!,
       state: DataState.EDITED,
     );
-    _localGalleryDataService.fetchGalleryPictures();
+    _localGalleryDataService.loadGalleryFromHive();
 
     original?.kind = newKind;
     curKind.value = newKind;
@@ -168,7 +173,7 @@ class CheckImageController extends GetxController {
     _appService.isLeftBarOpened.value = true;
     _appService.isLeftBarOpened.value = false;
     ProjectGalleryController projectGalleryController = Get.find();
-    _localGalleryDataService.fetchGalleryPictures();
+    _localGalleryDataService.loadGalleryFromHive();
   }
 
   deletePicture() async {
@@ -177,7 +182,7 @@ class CheckImageController extends GetxController {
         pid: original!.pid!, state: DataState.DELETED);
 
     // 갤러리 새로고침
-    _localGalleryDataService.fetchGalleryPictures();
+    _localGalleryDataService.loadGalleryFromHive();
 
     // 결함에서 사진 제거
     _appService.selectedFault.value.picture_list?.removeWhere(

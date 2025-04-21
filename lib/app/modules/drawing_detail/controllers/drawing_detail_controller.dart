@@ -1020,7 +1020,7 @@ class DrawingDetailController extends GetxController {
           .refresh(); // GetX의 .refresh()를 통해 바인딩된 UI 갱신 트리거
       appService.isLeftBarOpened.refresh();
       appService.curProject?.refresh();
-      _localGalleryDataService.fetchGalleryPictures();
+      _localGalleryDataService.loadGalleryFromHive();
 
       return newPicture;
       // 사진을 찍고 저장하면 → CustomPicture 객체를 반환,
@@ -1123,7 +1123,7 @@ class DrawingDetailController extends GetxController {
       curDrawingMemo.value!.pid = memoPicture.value!.pid;
 
       appService.isLeftBarOpened.refresh();
-      _localGalleryDataService.fetchGalleryPictures();
+      _localGalleryDataService.loadGalleryFromHive();
     }
   }
 

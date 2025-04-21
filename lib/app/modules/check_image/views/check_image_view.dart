@@ -216,7 +216,7 @@ class CheckImageView extends GetView<CheckImageController> {
                                     alignment: Alignment.centerLeft,
                                     child: AutoSizeText(
                                       controller.curLocation.value.isEmpty
-                                          ? "부위"
+                                          ? "부위(저에요)"
                                           : controller.curLocation.value,
                                       style: TextStyle(
                                           color: controller

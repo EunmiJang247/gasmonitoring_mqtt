@@ -227,6 +227,7 @@ class AppRepository {
     String? drawingSeq,
     String? mid,
   }) async {
+    // 전체 marketer 목록을 가져온다.
     List<Marker>? result;
     try {
       Map<String, dynamic> body = {
@@ -452,9 +453,10 @@ class AppRepository {
     return result;
   }
 
-  // 현장 목록 불러오기
+  // 현장 사진들
   Future<List<CustomPicture>?> searchPicture(
       {required String? projectSeq}) async {
+    // 현장 ID (또는 프로젝트 ID)
     List<CustomPicture>? result;
     try {
       Map<String, dynamic> body = {"project_seq": projectSeq};
@@ -475,6 +477,7 @@ class AppRepository {
   }) async {
     BaseResponse? result;
     try {
+      // 사진 정보 + 실제 파일(userfile)을 포함한 Map을 만든다.
       Map<String, dynamic> data = {
         'pid': newPicture.pid,
         'project_seq': newPicture.project_seq,
@@ -485,9 +488,11 @@ class AppRepository {
         'kind': newPicture.kind,
         'location': newPicture.location
       };
+      // Dio에서 파일 포함된 POST 전송을 위해 사용하는 포맷
       FormData formData = FormData.fromMap(data);
 
       result = await _appAPI.client.uploadPicture(formData);
+      // /upload/safety/picture 로 POST 요청을 보낸다.
     } catch (err) {
       logError(err,
           des:

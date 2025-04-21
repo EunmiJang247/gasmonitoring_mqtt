@@ -37,6 +37,8 @@ class _LeftMenuBarState extends State<LeftMenuBar> {
 
   @override
   Widget build(BuildContext context) {
+    // JENNY 갤러리를 열었을 때 왼쪽에 메뉴바! TODO
+
     return Obx(() {
       double menuPaddingV = _appService.isLeftBarOpened.value ? 10 : 13;
 

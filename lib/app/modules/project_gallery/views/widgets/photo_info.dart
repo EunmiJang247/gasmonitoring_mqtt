@@ -25,6 +25,7 @@ class PhotoInfo extends StatelessWidget {
           padding: const EdgeInsets.only(top: 8.0),
           child: Text(
             // TODO Jenny
+            // photoNo가 없으면 사진 업로드 필요로 표시된다
             photoNo ?? "사진 업로드 필요???",
             style: TextStyle(
               fontFamily: "Pretendard",

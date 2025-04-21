@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:safety_check/app/constant/constants.dart';
 import 'package:safety_check/app/widgets/custom_app_bar.dart';
 
+// JENNY TODO
+// 갤러리 상단에 위치하는 앱 바(Tabs 상단 or 그 자체) 역할을 하는 커스텀 AppBar 위젯
 class GalleryAppBar extends StatelessWidget {
   final String projectName;
   final VoidCallback onBackPressed;
@@ -21,6 +23,7 @@ class GalleryAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomAppBar(
+      // 프로젝트명 + 뒤로 가기 버튼
       leftSide: Stack(
         children: [
           Align(
@@ -54,6 +57,7 @@ class GalleryAppBar extends StatelessWidget {
         ],
       ),
       rightSide: Row(
+        // 카테고리 선택용 드롭다운 (전경, 결함 등등)
         children: [
           _buildCategoryDropdown(),
         ],
@@ -62,6 +66,7 @@ class GalleryAppBar extends StatelessWidget {
   }
 
   Widget _buildCategoryDropdown() {
+    // 카테고리 선택용 드롭다운 (전경, 결함 등등)
     return Container(
       width: 110,
       height: 40,

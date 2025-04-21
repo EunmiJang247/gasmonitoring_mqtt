@@ -377,6 +377,7 @@ class AppService extends GetxService {
     if (isOfflineMode.value) {
       result = _localAppDataService.MarkerList;
     } else {
+      // 온라인 일때
       result = await _appRepository.searchMarkerList(
         projectSeq: projectSeq,
         drawingSeq: drawingSeq,
@@ -519,21 +520,30 @@ class AppService extends GetxService {
     try {
       List<CustomPicture>? pictures =
           await _appRepository.searchPicture(projectSeq: projectSeq) ?? [];
+      // 서버에서 해당 프로젝트의 사진 리스트를 받아옴
+
       List pidList = pictures
           .map(
             (e) => e.pid,
           )
           .toList();
       for (CustomPicture pic in _localGalleryDataService.PictureList) {
-        if (pic.project_seq == projectSeq &&
-            !pidList.contains(pic.pid) &&
+        // 로컬(Hive)에 저장된 모든 사진들을 하나씩 검사해.
+        if (pic.project_seq == projectSeq && // 로컬(Hive)에 저장된 모든 사진들을 하나씩 검사해.
+            !pidList.contains(pic.pid) && // 서버에서 내려온 사진 pid 리스트에는 없는 사진이며
             pic.seq != null) {
+          // 서버에 한번은 등록됐던 사진임 (즉, 완전한 신규 로컬 임시 사진은 아님)
           _localGalleryDataService.removePicture(pic.pid!);
+          // 로컬에만 있고, 서버에서는 이미 삭제된 사진이다 -> 삭제 진행
         }
       }
       for (CustomPicture pic in pictures) {
+        // 서버에 있는 사진들을 모두 순회함
         if (!_localGalleryDataService.isPictureInBox(pic.pid!)) {
+          // Hive에 이 pid 사진이 없다면 (= 처음 받는 사진이라면),
+          // 서버에서 받은 사진 데이터를 makeNewPicture()로 변환해서,
           _localGalleryDataService.addPicture(makeNewPicture(
+              // Hive에 새로 추가함 (addPicture() → put(pid, picture) 내부적으로 실행)
               seq: pic.seq!,
               pid: pic.pid!,
               projectSeq: pic.project_seq!,
@@ -550,11 +560,22 @@ class AppService extends GetxService {
           if (picState != null &&
               (picState == DataState.EDITED.index ||
                   picState == DataState.DELETED.index)) {
-            //  사진(CustomPicture)의 상태 관리를 위한 enum이야.
-            // 사진이 업로드된 상태인지, 수정되었는지, 삭제되었는지, 그대로인지를 구분하는 용도로 사용
+            // Hive에 저장된 이 사진이 EDITED(수정됨) 이거나 DELETED(삭제됨)이면,
+            //  "이 사진이 로컬에서 수정되었거나 삭제 표시된 상태면, 서버 데이터로 덮어쓰지 마!"
+            // 서버에서 내려온 사진 정보로 덮어쓰지 않고 건너뛴다 (continue)
+            // 즉, 서버에 있고, 로컬에서 삭제 표시만 한 사진은 그냥 놔둠
             continue;
           }
+          // 이건 앞의 조건에서 continue에 안 걸린 사진들, 즉:
+          // Hive에도 있고
+          // 로컬에서 EDITED 또는 DELETED 상태가 아니고
+          // 서버에서 새로 내려온 사진 데이터가 존재하는 경우
+          // 로컬 상태를 최신 서버 상태로 덮어쓰는 로직
           pic.state = DataState.NOT_CHANGED.index;
+          // 여기는 NOT_CHANGED or NEW 상태인 사진만 도달함
+          // 서버에서 받은 사진(pic)이 현재 로컬에도 있고,
+          // 수정되지도 삭제되지도 않았으니,
+          // 상태를 "변경 없음"(NOT_CHANGED)으로 리셋해주는 거
           _localGalleryDataService.updatePicture(
               pid: pic.pid!, changedPicture: pic);
         }
@@ -565,10 +586,16 @@ class AppService extends GetxService {
     result = _localGalleryDataService.PictureList.where((element) =>
         element.project_seq == projectSeq &&
         element.state != DataState.DELETED.index).toList();
+    // PictureList : Hive에 저장된 모든 사진을 리스트로 가져오는 getter야.
+    // 즉, 현재 로컬에 존재하는 모든 사진 리스트
+    // 해당 프로젝트(현장)에 속하고
+    // 상태가 DELETED가 아닌 사진만 필터링
+    // ==>  즉, 사용자가 보게 될 "정상 사진 목록"을 추리는 필터링 작업
     return result;
   }
 
   Future<int> uploadPicture({
+    // 로컬에 저장된 사진 리스트를 서버로 업로드하는 기능
     required int currentCount,
     required int totalCount,
   }) async {
@@ -577,6 +604,7 @@ class AppService extends GetxService {
 
     for (CustomPicture picture in pictureList) {
       if (picture.state == DataState.NEW.index) {
+        // 사진 상태가 NEW(신규)인 경우에만 업로드 진행
         BaseResponse? response =
             await _appRepository.uploadPicture(newPicture: picture);
         if (response?.result?.code != 100) {
@@ -587,15 +615,23 @@ class AppService extends GetxService {
             await _localGalleryDataService.removePicture(picture.pid!);
           }
         } else {
+          // 업로드 성공했을 경우
           CustomPicture uploadedPicture =
               CustomPicture.fromJson(response?.data);
+          // 서버가 업로드 후에 새로운 no, fid, 상태 등을 포함한 완성된 데이터를 주는 구조로 보임
           // print(uploadedPicture.no);
           uploadedPicture.state = DataState.NOT_CHANGED.index;
+          // 이제 "신규 업로드됨"이 아니라, 서버와 동기화 완료된 상태라는 뜻
           _localGalleryDataService.updatePicture(
               pid: uploadedPicture.pid!, changedPicture: uploadedPicture);
+          // 로컬 DB 또는 메모리 리스트 갱신
+          // 이걸 통해 로컬 DB(Hive 등)에 업로드된 사진의 no 포함된 버전으로 갱신하는 거야.
+          print("업로드된 사진 : ${uploadedPicture.toJson()}");
           if (uploadedPicture.fid != null) {
+            // fid는 사진이 어떤 고장(Fault)과 연결돼 있다는 의미
             for (Marker marker in markerList) {
               for (Fault fault in marker.fault_list ?? []) {
+                // 해당하는 fault를 찾아서 그 안에 사진을 넣어줌
                 if (fault.fid == uploadedPicture.fid) {
                   fault.picture_list ??= [];
                   fault.picture_list?.add(uploadedPicture);
@@ -603,7 +639,9 @@ class AppService extends GetxService {
                   if (Get.isRegistered<DrawingDetailController>()) {
                     DrawingDetailController drawingDetailController =
                         Get.find();
+                    // GetX 컨테이너에 등록되어 있는 DrawingDetailController 인스턴스를 찾아서 가져온다는 뜻
                     drawingDetailController.countFaults();
+                    // DrawingDetailController가 등록되어 있다면 countFaults() 호출해서 UI 갱신 유도
                   }
                 }
               }
@@ -750,23 +788,29 @@ class AppService extends GetxService {
   }
 
   CustomPicture makeNewPicture(
-      {String? seq,
-      required String pid,
-      required String projectSeq,
+      // 사진이 Hive에 없다면 (= 처음 받는 사진이라면), Hive에 추가하는 함수
+      // 새 사진(CustomPicture)을 생성하고 로컬(Hive)에 등록하는 핵심 팩토리 함수
+      {String? seq, // 서버에 저장된 사진일 경우 부여되는 고유 ID
+      required String pid, // 로컬에서 생성되는 사진의 고유 식별자 (중복 없는 값)
+      required String projectSeq, // 	어떤 현장(프로젝트)에 속한 사진인지
       String? fid,
-      required String filePath,
-      required String thumb,
-      required String kind,
-      DataState dataState = DataState.NOT_CHANGED,
+      required String filePath, // 	원본 사진 경로 (파일 시스템 상 위치)
+      required String thumb, // 썸네일 이미지 경로
+      required String kind, // 	사진 종류: "전경", "결함", "기타", "현황"
+      DataState dataState =
+          DataState.NOT_CHANGED, // 초기 상태: NEW, EDITED, NOT_CHANGED 등
       String? dong,
       String? floorName,
-      String? no,
+      String? no, // 이 시점에는 서버에 업로드되지 않았기 때문에 no가 null이거나 없음.
       String? location,
       String? cate1Seq,
       List<String>? cate2Seq,
       String? width,
       String? length}) {
+    // drawing_seq는 현재 선택된 도면의 ID를 자동으로 넣음
+    // state는 enum에서 .index로 변환해서 저장 (Hive는 enum 저장 못하니까 숫자로 저장)
     CustomPicture newPicture = CustomPicture(
+      // CustomPicture는 Hive 모델이라, 이 구조 그대로 gallery_box에 저장 가능함
       seq: seq,
       pid: pid,
       file_path: filePath,
@@ -796,6 +840,9 @@ class AppService extends GetxService {
       // }
     }
     _localGalleryDataService.addPicture(newPicture);
+    // 완성된 사진 모델을 gallery_box에 저장 (key는 pid, value는 CustomPicture)
+    // 내부에서는 gallery_box.put(pid, picture) 수행
+
     // print("NEW PICTURE ADDED!!");
     // print("PRO_SEQ: $projectSeq");
     // print("DRAW_SEQ: $curDrawingSeq");
@@ -891,8 +938,6 @@ class AppService extends GetxService {
     //   (element) => element.state == DataState.DELETED.index,
     // ).length}");
 
-    print("changedPictures: ${changedPictures.toList()}");
-    print("changedPictures: ${changedPictures[0].toJson()}");
     // 새로 추가된 경우 state : 0, 수정된 경우 state : 1, 삭제된 경우 state : 2
     if (totalCount < 1) {
       // initUpdateCheckList();
@@ -900,6 +945,9 @@ class AppService extends GetxService {
       Fluttertoast.showToast(msg: "변경할 리스트가 없습니다");
       return;
     }
+
+    // no는 서버에서 사진을 업로드한 후 응답으로 내려주는 고유 번호야.
+    // 서버에 업로드가 성공하면 no가 부여돼서 그걸 로컬에 다시 반영해.
 
     int currentCount = 0;
     // 진행 상황 표시용 프로그레스 띄움
@@ -920,6 +968,7 @@ class AppService extends GetxService {
     try {
       // 1. 새로 추가된 사진 업로드
       int uploadedPicCount = await uploadPicture(
+        // 이때 서버에서 응답으로 내려주는 JSON 안에 no가 들어 있어.
         totalCount: totalCount,
         currentCount: currentCount,
       );
@@ -1055,23 +1104,44 @@ class AppService extends GetxService {
 
   Future<String> savePhotoToExternal(File photo) async {
     // 사진 저장할 디렉토리 경로 생성
+    // 이 함수는 촬영한 사진 파일을 기기 저장소의 특정 폴더에 복사해서 영구 보관하는 역할을 해!
+    // 실제로 Android 기기에서 사진을 외부 저장소(=사용자 파일 시스템) 에 저장해두는 로직
+    //  photo → 방금 촬영한 사진 파일
+    // Future 비동기 함수: 파일 시스템 접근과 디렉토리 생성, 복사 등이 async이기 때문
     final Directory? appPicturesDir = await getExternalStorageDirectory();
+    // 외부 저장소 디렉토리 접근
+    // getExternalStorageDirectory()는 안드로이드 기준으로 다음 경로를 반환해:
+    // /storage/emulated/0/Android/data/com.your.app.name/files
     final String rootPath =
         appPicturesDir!.path.split("/").sublist(0, 4).join('/');
+    // 결국 rootPath는: /storage/emulated/0
     final String targetPath = join(rootPath, 'Pictures/Elim/Safety');
+    // 이 경로는 실제로 사진이 저장될 경로야:
+    // /storage/emulated/0/Pictures/Elim/Safety
+    // 사진 앱에서 접근 가능하게 하려는 목적도 있음 (갤러리 앱에서 보이도록)
     final Directory targetDir = Directory(targetPath);
 
     // 디렉토리가 없으면 생성
     if (!await targetDir.exists()) {
       await targetDir.create(recursive: true);
+      // 해당 폴더가 없으면 생성
+      // 중간 경로(Pictures, Elim)가 없어도 함께 생성
     }
 
     // 촬영된 사진 파일 저장
     final String fileName = basename(photo.path); // 원본 파일 이름 가져오기
+    // 파일명 추출
     final String savedFilePath = join(targetDir.path, fileName);
+    // 이런느낌으로 변한다 -> savedFilePath: /storage/emulated/0/Pictures/Elim/Safety/123456.jpg
 
     // 파일 복사
-    await File(photo.path).copy(savedFilePath);
+    try {
+      await File(photo.path).copy(savedFilePath);
+    } catch (e) {
+      print('파일 저장 중 오류: $e');
+      Fluttertoast.showToast(msg: '사진 저장 실패!');
+      return ''; // 혹은 적절한 fallback
+    }
     Fluttertoast.showToast(msg: "사진이 태블릿에 저장되었습니다.");
     return savedFilePath;
   }
