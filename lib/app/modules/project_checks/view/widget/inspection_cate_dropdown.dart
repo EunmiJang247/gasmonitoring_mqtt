@@ -72,9 +72,6 @@ final List<InspectionData> categories = [
       Children(
         kind: "채광창",
       ),
-      Children(
-        kind: "현장 메모사항",
-      ),
     ],
   ),
   InspectionData(
