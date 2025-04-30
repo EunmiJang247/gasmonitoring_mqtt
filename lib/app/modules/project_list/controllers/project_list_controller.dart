@@ -51,19 +51,15 @@ class ProjectListController extends GetxController {
             my: isMyPlace.value,
             q: searchKeyword) ??
         [];
-    print(appService.projectList[0].toJson());
 
     // 전경사진이 삭제된 상태면 프로젝트에서 삭제
     bool pictureDeleted = false;
     for (var project in appService.projectList) {
       if (project.picture_pid == "") {
         // 프로젝트에 전경사진이 없으면
-        print('와요!');
         List<CustomPicture> pictures = localLocalGalleryDataService
             .getPictureInProject(projectSeq: project.seq!);
         // hive에있는 사진 중에서 같은 프로젝트 seq를 가진 사진들만 가져옴
-        print(pictures);
-
         // 전경사진 찾기
         CustomPicture? projectPicture =
             pictures.where((element) => element.kind == "전경").firstOrNull;
@@ -124,6 +120,7 @@ class ProjectListController extends GetxController {
   onTapProject(index) {
     appService.isProjectSelected = true;
     appService.curProject?.value = appService.projectList[index];
+    // 여기서 현재 프로젝트 값을 변경!! Jenny
     Get.toNamed(Routes.PROJECT_INFO);
   }
 }

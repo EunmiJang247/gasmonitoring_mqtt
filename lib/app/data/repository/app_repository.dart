@@ -112,6 +112,8 @@ class AppRepository {
   // 현장 목록 불러오기
   Future<List<Project>?> searchProjectList(
       {required String? q, int my = 0}) async {
+    logInfo('들어왔어용 ${q} !');
+    logInfo('들어왔어용 ${my} !');
     List<Project>? result;
     try {
       Map<String, dynamic> body = {"my": my};
@@ -119,8 +121,10 @@ class AppRepository {
         body["q"] = q;
       }
       BaseResponse? response = await _appAPI.client.getProjectList(body);
+      logInfo(response?.data);
       result =
           (response?.data as List).map((e) => Project.fromJson(e)).toList();
+      logInfo("result: ${result}");
     } catch (err) {
       logError(err, des: 'AppRepository.searchProjectList(my: $my, q:$q)');
     }
@@ -136,20 +140,23 @@ class AppRepository {
   }
 
   Future<Map?> submitProject({required Project project}) async {
+    logInfo("저는: ${project.site_check_form?.toJson()}");
     Map result = {};
     try {
       Map<String, dynamic> body = {
         "seq": project.seq,
         "requirement": project.requirement,
+        "siteCheckForm": jsonEncode(project.site_check_form?.toJson()),
       };
       BaseResponse? response = await _appAPI.client.submitProject(body);
-      project = Project.fromJson(response?.data);
+      // project = Project.fromJson(response?.data);
     } catch (err) {
       logError(err, des: 'AppRepository.submitProject()');
     }
 
     return result;
   }
+  // TODO submitCheckList 보내는 것 만들기!!
 
   Future<List<Drawing>?> searchDrawingList(
       {required String? projectSeq}) async {

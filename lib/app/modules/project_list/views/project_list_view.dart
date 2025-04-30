@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:get/get.dart';
@@ -216,7 +214,7 @@ class ProjectListView extends GetView<ProjectListController> {
                     padding:
                         EdgeInsets.only(left: leftBarWidth, top: appBarHeight),
                     child: Container(
-                      color: Colors.yellow,
+                      color: Colors.green,
                       padding: EdgeInsets.only(top: 8, left: 16, right: 8),
                       child: Column(
                         children: [
@@ -301,7 +299,6 @@ class ProjectListView extends GetView<ProjectListController> {
                                             border: Border(
                                                 bottom: BorderSide(
                                                     color: Colors.black12))),
-                                        // margin: EdgeInsets.symmetric(vertical: 12),
                                         padding:
                                             EdgeInsets.symmetric(vertical: 16),
                                         child: Row(

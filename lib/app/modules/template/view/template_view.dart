@@ -77,13 +77,12 @@ class TemplateView extends GetView<ProjectInfoController> {
                         child: Container(
                           color: Colors.white,
                           width: double.infinity,
-                          // isFaultListAll 에 따라 UI를 변경하는 부분만 Obx로 감싸기
                           child: Obx(
                             () => controller.isFaultListAll.value
                                 ? FaultTable(
                                     tableData: controller.tableData,
                                     onTapRow: controller.onTapRow,
-                                  ) // Show FaultTable when isDrawingSelected is true
+                                  )
                                 : Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,

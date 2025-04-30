@@ -1,38 +1,27 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:safety_check/app/data/models/12_building_safety_check.dart';
-import 'package:safety_check/app/modules/project_checks/view/widget/photo_box.dart';
+import 'package:safety_check/app/data/models/site_check_form.dart';
+import 'package:safety_check/app/modules/project_checks/view/widget/photo_check_row.dart';
 
 class ProjectChecksResultCards extends StatelessWidget {
-  final List<BuildingCardInfo>? data;
+  final InspectionData? data;
   const ProjectChecksResultCards({super.key, this.data});
 
   @override
   Widget build(BuildContext context) {
-    print(data?[0].toJson());
     return Column(
       children: [
         Container(
           alignment: Alignment.centerLeft,
-          margin: EdgeInsets.only(bottom: 10.h),
           child: Text(
-            '외벽마감재',
+            data?.toJson()['caption'] ?? "",
             style: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 16,
             ),
           ),
         ),
-        SizedBox(
-          width: double.infinity,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              PhotoBox(),
-              PhotoBox(),
-            ],
-          ),
-        )
+        if (data?.children != null)
+          ...data!.children.map((v) => PhotoCheckRow(data: v)),
       ],
     );
   }

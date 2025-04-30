@@ -604,6 +604,7 @@ class AppService extends GetxService {
 
     for (CustomPicture picture in pictureList) {
       if (picture.state == DataState.NEW.index) {
+        print("picture.toJson(): ${picture.toJson()}");
         // 사진 상태가 NEW(신규)인 경우에만 업로드 진행
         BaseResponse? response =
             await _appRepository.uploadPicture(newPicture: picture);
@@ -829,7 +830,9 @@ class AppService extends GetxService {
       length: length,
       state: dataState.index,
     );
+    print("newPicture : ${newPicture.toJson()}");
     if (curDrawing.value.seq != null) {
+      print("curDrawing.value.seq != null");
       // Drawing curDrawing = drawingList.singleWhere(
       //     (element) => element.seq == curDrawingSeq,
       //     orElse: () => Drawing());

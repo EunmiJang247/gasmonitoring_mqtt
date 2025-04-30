@@ -78,6 +78,7 @@ class ProjectInfoController extends GetxController {
           }
         });
       } else {
+        // 키보드가 내려갔을 때
         if (isRequirementChanged.value) {
           appService.curProject!.value.requirement =
               requirementTextController.text;

@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:safety_check/app/constant/app_color.dart';
 import 'package:safety_check/app/constant/data_state.dart';
+import 'package:safety_check/app/constant/gaps.dart';
 import 'package:safety_check/app/data/models/05_picture.dart';
+import 'package:safety_check/app/data/models/site_check_form.dart';
 import 'package:safety_check/app/data/services/app_service.dart';
 import 'package:safety_check/app/data/services/local_gallery_data_service.dart';
+import 'package:safety_check/app/modules/project_checks/controllers/project_checks_controller.dart';
+import 'package:safety_check/app/utils/log.dart';
+import 'package:safety_check/app/widgets/two_button_dialog.dart';
 
 import '../../project_gallery/controllers/project_gallery_controller.dart';
 
@@ -190,29 +196,79 @@ class CheckImageController extends GetxController {
     );
     _appService.selectedFault.refresh();
 
-    // if (_appService.isProjectInfoPage || _appService.isGalleryOpened) {
-    //   // 갤러리 들어가서 삭제
-    //   ProjectGalleryController projectGalleryController = Get.find();
-    //   projectGalleryController.fetchData();
-    // } else {
-    //   // 도면 들어가서 삭제
-    //   DrawingDetailController drawingDetailController =
-    //       Get.find<DrawingDetailController>();
-    //   // print("DELETE PICTURE!!!!!!");
-    //   _appService.selectedFault.value.picture_list?.removeWhere(
-    //     (element) => element.pid == original?.pid,
-    //   );
-    //   drawingDetailController.countFaults();
-    //   _appService.isFaultSelected.value = false;
-    //   _appService.selectedFault.value = Fault();
+    // 성능점검표의 사진에 해당한다면, 서버에서도 삭제되도록
+    // final form = _appService.curProject?.value.site_check_form;
+    // if (form == null) {
+    //   EasyLoading.showError('폼이 없습니다.');
+    //   return;
     // }
 
-    // if (_appService.isProjectInfoPage) {
-    //   ProjectInfoController projectInfoController = Get.find();
-    //   projectInfoController.fetchData();
-    // }
+    // // 삭제 대상 사진을 가진 child와 data를 추적하기 위한 임시 변수
+    // List<InspectionData> dataToRemove = [];
 
-    Get.back();
+    // for (var data in form.data) {
+    //   List<Children> childrenToRemove = [];
+    //   for (var child in data.children) {
+    //     child.pictures.removeWhere((picture) => picture.pid == original?.pid);
+    //   }
+    // }
+    // _appService.submitProject(_appService.curProject!.value);
+    logInfo('original: ${original?.toJson()}');
+
+    // if (original?.kind == "현황") {
+    //   // 알림창에서 확인 클릭 시 삭제.
+    //   // ✅ 현장점검표 갱신
+    //   if (Get.isRegistered<ProjectChecksController>()) {
+    //     final checksController = Get.find<ProjectChecksController>();
+    //     checksController.onDeletePicture(original);
+    //   }
+    // }
+    if (original?.kind == "현황") {
+      showDialog(
+        context: Get.context!,
+        builder: (context) {
+          return TwoButtonDialog(
+            height: 200,
+            content: Column(
+              children: [
+                Text(
+                  "사진 삭제",
+                  style: TextStyle(
+                      fontFamily: "Pretendard",
+                      color: AppColors.c1,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22),
+                ),
+                Gaps.h16,
+                Text(
+                  "현장점검표의 사진의 경우 \n 보고서에서도 삭제됩니다.",
+                  style: TextStyle(
+                    fontFamily: "Pretendard",
+                    fontSize: 18,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            yes: "삭제",
+            no: "취소",
+            onYes: () {
+              if (Get.isRegistered<ProjectChecksController>()) {
+                final checksController = Get.find<ProjectChecksController>();
+                checksController.onDeletePicture(original!);
+                Get.back(); // 다이얼로그 닫기
+              }
+              Get.back(); // 다이얼로그 닫기
+            },
+            onNo: () => Get.back(),
+          );
+        },
+      );
+    } else {
+      Get.back();
+    }
+
+    _localGalleryDataService.loadGalleryFromHive();
     EasyLoading.dismiss();
   }
 }

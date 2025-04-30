@@ -12,7 +12,7 @@ class ProjectGalleryView extends GetView<ProjectGalleryController> {
 
   @override
   Widget build(BuildContext context) {
-    // print(controller.localGalleryDataService.GalleryPictures);
+    print("갤러리: ${controller.localGalleryDataService.GalleryPictures}");
     // 현재 프로젝트의 사진을 가져옴
     return Obx(() => PopScope(
           canPop: false,
@@ -62,6 +62,8 @@ class ProjectGalleryView extends GetView<ProjectGalleryController> {
                               itemCount: controller.localGalleryDataService
                                   .GalleryPictures.length,
                               itemBuilder: (context, index) {
+                                print(controller.localGalleryDataService
+                                    .GalleryPictures[index]);
                                 // 카테고리 섹션 (전경, 현황, 기타, 결함)
                                 return CategorySection(
                                   index: index,
@@ -75,7 +77,6 @@ class ProjectGalleryView extends GetView<ProjectGalleryController> {
                           ),
                         ),
                       )),
-
                   // 왼쪽 메뉴바
                   LeftMenuBar(),
                 ],

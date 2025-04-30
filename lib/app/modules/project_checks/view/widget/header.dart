@@ -1,6 +1,5 @@
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:safety_check/app/constant/app_color.dart';
 import 'package:safety_check/app/constant/constants.dart';
@@ -52,7 +51,6 @@ class ProjectChecksHeader extends GetView<ProjectChecksController> {
         children: [
           MaterialButton(
             onPressed: () {
-              controller.requirementFocus.unfocus();
               controller.goDrawingList();
             },
             color: AppColors.button,

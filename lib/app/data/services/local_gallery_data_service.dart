@@ -79,8 +79,10 @@ class LocalGalleryDataService extends GetxService {
 
   // 사진을 갤러리박스에 추가
   // 사진을 pid 키로 저장
-  Future<void> addPicture(CustomPicture Picture) async =>
-      await gallery_box.put(Picture.pid, Picture);
+  Future<void> addPicture(CustomPicture Picture) async {
+    print("addPicture: ${Picture.toJson()}");
+    await gallery_box.put(Picture.pid, Picture);
+  }
 
   // 사진 수정
   Future<void> updatePicture({
@@ -300,7 +302,6 @@ class LocalGalleryDataService extends GetxService {
       return;
     }
     print("searchResult.length: ${searchResult.length}");
-    print("searchResult: ${searchResult}");
 
     // searchResult.map(
     //   // 서버에서 내려온 사진 리스트(searchResult)를 Hive 로컬 DB(gallery_box)에 저장하는 작업이야
@@ -372,11 +373,12 @@ class LocalGalleryDataService extends GetxService {
     curPictures.sort(
       (a, b) => int.parse(a.no ?? "0").compareTo(int.parse(b.no ?? "0")),
     );
+
     GalleryPictures.value = [
       bgPictures,
       curPictures,
       etcPictures,
-      faultPictures
+      faultPictures,
     ];
     GalleryPictures.refresh();
     // .value를 바꾸긴 했지만 내부의 RxList가 변했을 수도 있기 때문에,
@@ -413,7 +415,7 @@ class LocalGalleryDataService extends GetxService {
       bgPictures,
       curPictures,
       etcPictures,
-      faultPictures
+      faultPictures,
     ];
     GalleryPictures.refresh();
   }

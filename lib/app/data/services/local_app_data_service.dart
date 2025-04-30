@@ -11,7 +11,6 @@ import 'package:safety_check/app/data/models/06_engineer.dart';
 import 'package:safety_check/app/data/models/07_fault_cate1_list.dart';
 import 'package:safety_check/app/data/models/08_fault_cate2_list.dart';
 import 'package:safety_check/app/data/models/11_drawing_memo.dart';
-import 'package:safety_check/app/data/models/12_building_safety_check.dart';
 
 import '../../utils/converter.dart';
 import '../models/01_project.dart';
@@ -44,7 +43,6 @@ class LocalAppDataService extends GetxService {
   late Box<List> engineer_box;
   late Box<List> fault_cate1_box;
   late Box<List> fault_cate2_box;
-  late Box<BuildingSafetyCheck> building_safety_check_box;
 
   @override
   Future<void> onInit() async {
@@ -61,7 +59,6 @@ class LocalAppDataService extends GetxService {
     Hive.registerAdapter(FaultCate1ListAdapter());
     Hive.registerAdapter(FaultCate2ListAdapter());
     Hive.registerAdapter(DrawingMemoAdapter());
-    Hive.registerAdapter(BuildingSafetyCheckAdapter());
     // 실제로 Box들을 열어서 읽고 쓸 수 있게 준비함
 
     setting_box = await Hive.openBox<String?>('setting_box_1_0_0');
@@ -73,8 +70,6 @@ class LocalAppDataService extends GetxService {
     engineer_box = await Hive.openBox('engineer_box_1_0_0');
     fault_cate1_box = await Hive.openBox('fault_cate1_box_1_0_1');
     fault_cate2_box = await Hive.openBox('fault_cate2_box_1_0_1');
-    building_safety_check_box =
-        await Hive.openBox('building_safety_check_box_1_0_1');
 
     super.onInit();
   }
