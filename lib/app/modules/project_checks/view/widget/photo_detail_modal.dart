@@ -74,19 +74,25 @@ class _PhotoDetailModalState extends State<PhotoDetailModal> {
                         maxScale: 4.0,
                         child: widget.picture.file_path != null
                             ? (widget.picture.file_path!.startsWith('http')
-                                ? Image.network(
-                                    widget.picture.file_path!,
-                                    fit: BoxFit.contain,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Icon(Icons.error);
-                                    },
+                                ? SizedBox.expand(
+                                    child: Image.network(
+                                      widget.picture.file_path!,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return const Icon(Icons.error);
+                                      },
+                                    ),
                                   )
-                                : Image.file(
-                                    File(widget.picture.file_path!),
-                                    fit: BoxFit.contain,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Icon(Icons.error);
-                                    },
+                                : SizedBox.expand(
+                                    child: Image.file(
+                                      File(widget.picture.file_path!),
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return const Icon(Icons.error);
+                                      },
+                                    ),
                                   ))
                             : const Icon(Icons.image_not_supported),
                       ),
@@ -193,6 +199,7 @@ class _PhotoDetailModalState extends State<PhotoDetailModal> {
                   ],
                 ),
               ),
+              SizedBox(height: 20),
             ],
           ),
         ),
