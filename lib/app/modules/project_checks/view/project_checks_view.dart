@@ -65,21 +65,27 @@ class _CheckListState extends State<CheckList> {
                   ),
                 ),
                 Expanded(
-                  child: Obx(() => ListView.builder(
-                        padding: EdgeInsets.only(top: 16.h),
-                        itemCount: controller.curProject.value?.site_check_form
-                                ?.data.length ??
-                            0,
-                        itemBuilder: (context, index) {
-                          final item = controller
-                              .curProject.value?.site_check_form?.data[index];
-                          return Padding(
-                            padding: EdgeInsets.only(
-                                bottom: 16.h, left: 16, right: 16),
-                            child: ProjectChecksResultCards(data: item),
-                          );
-                        },
-                      )),
+                  child: Container(
+                    color: Colors.grey[50], // 밝은 회색 배경
+                    child: Obx(() => ListView.builder(
+                          padding: EdgeInsets.only(top: 16.h),
+                          itemCount: controller.curProject.value
+                                  ?.site_check_form?.data.length ??
+                              0,
+                          itemBuilder: (context, index) {
+                            final item = controller
+                                .curProject.value?.site_check_form?.data[index];
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                bottom: 16.h,
+                                left: 16,
+                                right: 16,
+                              ),
+                              child: ProjectChecksResultCards(data: item),
+                            );
+                          },
+                        )),
+                  ),
                 ),
               ],
             ),
