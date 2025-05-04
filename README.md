@@ -90,3 +90,9 @@ changeKind과중복이니까.
 로그를 보면 Flutter 앱의 SurfaceView가 사라지면서 연결이 끊기고 종료되는 상황이야.
 surfaceDestroyed
 이건 사진 찍는 도중 또는 직후에 Flutter 뷰가 파괴되면서 앱이 비정상 종료됐다는 의미야.
+
+# 깃풀받고 할것
+1. org.gradle.java.home=C:\\Program Files\\Java\\jdk-17 -> 이거 주석 처리 
+
+아디: test@eleng.co.kr 
+비번: test12345
