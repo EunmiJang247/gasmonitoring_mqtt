@@ -7,6 +7,7 @@ import 'package:safety_check/app/data/models/04_fault.dart';
 import 'package:safety_check/app/data/models/05_picture.dart';
 import 'package:safety_check/app/data/models/09_appended.dart';
 import 'package:safety_check/app/data/models/11_drawing_memo.dart';
+import 'package:safety_check/app/data/models/music.dart';
 
 import '../../utils/log.dart';
 import '../api/app_api.dart';
@@ -137,6 +138,23 @@ class AppRepository {
               .millisecondsSinceEpoch));
     }
     return result;
+  }
+
+  // 음악리스트 불러오기
+  Future<List<Music>?> searchMusicList() async {
+    try {
+      final response = await _appAPI.client.getMusicList();
+      final data = response?.data;
+      final musicListRaw = data['music_list'] as List<dynamic>;
+      final musicList = musicListRaw
+          .map((e) => Music.fromJson(e as Map<String, dynamic>))
+          .toList();
+      return musicList;
+    } catch (err, stack) {
+      logError(err, des: 'searchMusicList Error!');
+      logError(stack);
+      return null;
+    }
   }
 
   Future<Map?> submitProject({required Project project}) async {

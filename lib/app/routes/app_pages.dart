@@ -1,4 +1,8 @@
 import 'package:get/get.dart';
+import 'package:safety_check/app/modules/meditation_home/bindings/meditation_home_binding.dart';
+import 'package:safety_check/app/modules/meditation_home/view/meditation_home.dart';
+import 'package:safety_check/app/modules/music_detail/bindings/music_detail_binding.dart';
+import 'package:safety_check/app/modules/music_detail/views/music_detail.dart';
 import 'package:safety_check/app/modules/project_checks/bindings/project_checks_binding.dart';
 import 'package:safety_check/app/modules/project_info/bindings/project_info_binding.dart';
 import 'package:safety_check/app/modules/project_checks/view/project_checks_view.dart';
@@ -81,6 +85,16 @@ class AppPages {
       name: _Paths.CHECK_IMGAGE,
       page: () => const CheckImageView(),
       binding: CheckImageBinding(),
+    ),
+    GetPage(
+      name: _Paths.MEDITATION_HOME,
+      page: () => const MeditationHome(),
+      binding: MeditationHomeBinding(),
+    ),
+    GetPage(
+      name: _Paths.MUSIC_DETAIL,
+      page: () => const MusicDetailView(),
+      binding: MusicDetailBinding(),
     ),
   ];
 }

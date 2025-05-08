@@ -10,10 +10,13 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
     <application
-        android:label="스마트 안전진단"
+        android:label="명상친구"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:requestLegacyExternalStorage="true">
+        android:requestLegacyExternalStorage="true"
+        android:usesCleartextTraffic="true"
+        >
+        <!-- http를 쓰기위해: android:requestLegacyExternalStorage="true" -->
         <activity
             android:name=".MainActivity"
             android:exported="true"

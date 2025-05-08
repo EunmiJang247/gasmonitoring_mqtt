@@ -16,6 +16,9 @@ abstract class Routes {
   static const PROJECT_GALLERY = _Paths.PROJECT_GALLERY;
   static const DRAWING_DETAIL = _Paths.DRAWING_DETAIL;
   static const CHECK_IMGAGE = _Paths.CHECK_IMGAGE;
+  static const MEDITATION_HOME = _Paths.MEDITATION_HOME;
+  static const MUSIC_LISTEN = _Paths.MUSIC_LISTEN;
+  static const MUSIC_DETAIL = _Paths.MUSIC_DETAIL;
 }
 
 abstract class _Paths {
@@ -31,4 +34,7 @@ abstract class _Paths {
   static const PROJECT_GALLERY = '/project-gallery';
   static const DRAWING_DETAIL = '/drawing-detail';
   static const CHECK_IMGAGE = '/check-imgage';
+  static const MEDITATION_HOME = '/meditation-home';
+  static const MUSIC_LISTEN = '/music-listen';
+  static const MUSIC_DETAIL = '/music-detail';
 }

@@ -25,7 +25,6 @@ Future<void> main() async {
   HttpOverrides.global = MyHttpOverrides();
 
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await initializeDateFormatting('ko');
 
   Get.put<LocalAppDataService>(
@@ -45,6 +44,7 @@ Future<void> main() async {
     permanent: true,
   );
 
+  // Get.put이 호출되는 시점에 AppService가 생성되며, 즉시 onInit()이 실행
   Get.put<AppService>(
     AppService(
       appRepository: Get.find<AppRepository>(),
@@ -53,7 +53,8 @@ Future<void> main() async {
     ),
     permanent: true,
   );
-  //AppService 인스턴스를 만들고 메모리에 한 번 생성
+
+  // AppService 인스턴스를 만들고 메모리에 한 번 생성
   // GetX의 DI 컨테이너에 전역으로 등록.
   // permanent: true 덕분에 앱이 꺼지기 전까지 절대 Dispose 되지 않아.
   // → 즉, 앱 전 생애 주기 동안 살아있는 진짜 전역 객체야
@@ -64,14 +65,15 @@ Future<void> main() async {
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   await SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  // 세로모드 고정
 
   runApp(
     ScreenUtilInit(
         designSize: const Size(360, 690),
         builder: (BuildContext context, Widget? child) {
           return GetMaterialApp(
-            title: "Application",
+            title: "meditationFriend",
             locale: const Locale('ko'),
             supportedLocales: const [
               Locale('ko'), // ✅ 한국어 지원
@@ -82,7 +84,7 @@ Future<void> main() async {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            initialRoute: AppPages.INITIAL,
+            initialRoute: AppPages.INITIAL, // 첫 화면으로 띄웁니다
             getPages: AppPages.routes,
             defaultTransition: Transition.rightToLeftWithFade,
             theme: ThemeData(
@@ -100,7 +102,7 @@ Future<void> main() async {
               ),
               scrollbarTheme: ScrollbarThemeData(
                   thickness: WidgetStatePropertyAll(8),
-                  thumbColor: WidgetStatePropertyAll(AppColors.c4),
+                  thumbColor: WidgetStatePropertyAll(AppColors.kOrange),
                   radius: Radius.circular(4)),
             ),
             builder: EasyLoading.init(),
@@ -110,6 +112,7 @@ Future<void> main() async {
 }
 
 class MyHttpOverrides extends HttpOverrides {
+  // 모든 SSL 인증 오류를 무시하도록 설정
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)

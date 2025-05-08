@@ -116,7 +116,6 @@ class AppAPI extends GetxService {
               }
               cookie = "ci_session=$session; _device=$device";
             }
-            response.data = responseConverter(response.data);
             // 응답 데이터를 유저 정의 포맷으로 변환 (ex. Map → DTO 등).
           } catch (e) {
             final errorMessage = e.toString();
@@ -130,20 +129,11 @@ class AppAPI extends GetxService {
               response.data = null;
             }
           }
-
+          // {count: 1, music_list: [{id: 1, title: 2, description: 1, image_url: 2, music_url: 1, duration: 600}]}
           handler.next(response);
         },
       ),
     );
-
-    // 통신기록 응답보기
-    // dio.interceptors.add(
-    //   PrettyDioLogger(
-    //       requestHeader: true,
-    //       request: false,
-    //       requestBody: true,
-    //       responseHeader: true),
-    // );
 
     if (dotenv.env['ENVIRONMENT'] == 'development') {
       // .env 파일을 기반으로 dev / prod 서버를 자동으로 분기

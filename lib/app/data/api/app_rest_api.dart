@@ -23,8 +23,11 @@ abstract class AppRestAPI {
   @POST("/find_pw")
   Future<BaseResponse?> findPw(@Queries() Map<String, dynamic> queries);
 
-  @GET("/safety/project_list")
+  @GET("/safety/project_list/")
   Future<BaseResponse?> getProjectList(@Queries() Map<String, dynamic> queries);
+
+  @GET("/meditation-muics/list")
+  Future<BaseResponse?> getMusicList();
 
   @POST("/safety/project_submit") // 수정
   Future<BaseResponse?> submitProject(@Queries() Map<String, dynamic> queries);

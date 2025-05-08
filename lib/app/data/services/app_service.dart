@@ -18,6 +18,7 @@ import 'package:safety_check/app/data/models/08_fault_cate2_list.dart';
 import 'package:safety_check/app/data/models/09_appended.dart';
 import 'package:safety_check/app/data/models/11_drawing_memo.dart';
 import 'package:safety_check/app/data/models/fault_category.dart';
+import 'package:safety_check/app/data/models/music.dart';
 import 'package:safety_check/app/modules/drawing_detail/controllers/drawing_detail_controller.dart';
 import 'package:safety_check/app/widgets/web_3d_view.dart';
 import 'package:image/image.dart' as img; // image 패키지
@@ -36,6 +37,8 @@ import '../models/00_user.dart';
 import '../repository/app_repository.dart';
 import 'local_app_data_service.dart';
 import 'local_gallery_data_service.dart';
+
+import 'package:just_audio/just_audio.dart';
 
 // 앱의 비즈니스 로직, 상태, 데이터 동기화 등 모든 핵심 기능을 전역적으로 다루는 중앙 서비스 레이어
 
@@ -58,6 +61,11 @@ class AppService extends GetxService {
   final AppRepository _appRepository;
   final LocalAppDataService _localAppDataService;
   final LocalGalleryDataService _localGalleryDataService;
+  final AudioPlayer audioPlayer = AudioPlayer();
+  final RxBool isSliding = false.obs;
+  final RxBool isPlaying = false.obs;
+  final RxDouble sliderValue = 0.0.obs;
+  final Rx<Duration> currentPosition = Duration.zero.obs;
 
   // 전역 상태 변수
   User? user; // 로그인한 사용자 정보
@@ -116,6 +124,9 @@ class AppService extends GetxService {
       .toList();
   Rx<Project>? curProject = Project().obs;
 
+  RxList<Music> musicList = <Music>[].obs;
+  Rx<Music>? curMusic = Music().obs;
+
   Future<BaseResponse?> init() async {
     BaseResponse? response = await _appRepository.init();
     return response;
@@ -124,6 +135,12 @@ class AppService extends GetxService {
   Future<BaseResponse?> test() async {
     BaseResponse? response = await _appRepository.test();
     return response;
+  }
+
+  @override
+  Future<void> onInit() async {
+    super.onInit();
+    getMusicList();
   }
 
   void onPop(context) {
@@ -294,6 +311,19 @@ class AppService extends GetxService {
       // }
     }
     return result;
+  }
+
+  // 음악 리스트 가져오는 부분
+  Future<List<Music>?> getMusicList() async {
+    List<Music>? musicResult;
+    if (isOfflineMode.value) {
+      // 오프라인 일때
+    } else {
+      // 인터넷 연결이 있을 때
+      musicResult = await _appRepository.searchMusicList();
+      musicList.value = musicResult ?? [];
+    }
+    return musicResult;
   }
 
   Future<Map?> submitProject(Project project) async {

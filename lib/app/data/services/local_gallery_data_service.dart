@@ -41,14 +41,14 @@ class LocalGalleryDataService extends GetxService {
     // await new_gallery_box.deleteFromDisk();
     // await edited_gallery_box.deleteFromDisk();
     // await deleted_gallery_box.deleteFromDisk();
-    for (var pic in gallery_box.values) {
-      print(pic.toJson());
-    }
+    // for (var pic in gallery_box.values) {
+    //   print(pic.toJson());
+    // }
     print("총 사진 수: ${gallery_box.length}");
     // 특정 사진을 보고싶으면: print(gallery_box.get('pid123')?.toJson());
 
     super.onInit();
-    fetchGalleryPictures();
+    // fetchGalleryPictures();
   }
 
   //  getter 함수

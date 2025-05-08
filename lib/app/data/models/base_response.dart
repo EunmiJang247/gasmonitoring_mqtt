@@ -9,7 +9,9 @@ class BaseResponse {
 
   BaseResponse({this.result, this.data});
 
-  factory BaseResponse.fromJson(Map<String, dynamic> json) => _$BaseResponseFromJson(json);
+  factory BaseResponse.fromJson(Map<String, dynamic> json) =>
+      _$BaseResponseFromJson(json);
+
   Map<String, dynamic> toJson() => _$BaseResponseToJson(this);
 }
 
@@ -22,6 +24,7 @@ class BaseResult {
     required this.message,
   });
 
-  factory BaseResult.fromJson(Map<String, dynamic> json) => _$BaseResultFromJson(json);
+  factory BaseResult.fromJson(Map<String, dynamic> json) =>
+      _$BaseResultFromJson(json);
   Map<String, dynamic> toJson() => _$BaseResultToJson(this);
 }
