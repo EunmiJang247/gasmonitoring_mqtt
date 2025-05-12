@@ -46,3 +46,13 @@ app.*.map.json
 
 # Jenny Add
 **/.cxx/
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+linux/flutter/generated_plugin_registrant.*
+linux/flutter/ephemeral/
+macos/Flutter/GeneratedPluginRegistrant.swift
+android/app/build/

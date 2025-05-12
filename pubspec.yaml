@@ -52,7 +52,7 @@ dependencies:
   webview_flutter: ^4.10.0
   flutter_image_slideshow: ^0.1.6
   just_audio: ^0.9.46
-  audio_service: ^0.18.18
+  audio_service: 0.18.17
 
 dev_dependencies:
   flutter_test:
