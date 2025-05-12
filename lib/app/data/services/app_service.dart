@@ -36,7 +36,6 @@ class AppService extends GetxService {
     super.onInit();
     audioPlayer.playerStateStream.listen((state) {
       isPlaying.value = state.playing;
-      logInfo('Player State Changed: ${state.playing}');
     });
 
     final musics = await _getMusicList();
