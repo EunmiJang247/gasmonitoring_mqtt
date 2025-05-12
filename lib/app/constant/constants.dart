@@ -5,7 +5,6 @@ const double imageMaxWidth = 1200; // 사진의 가로 최대 크기를 1200px �
 const double photoAspectRatio = 342 / 230;
 const double leftBarWidth = 64;
 const double appBarHeight = 70;
-const String updateUrl = 'https://work.eleng.co.kr';
 const Map<String, double> tableSize = {
   "header_height": 42,
   "row_height": 38,

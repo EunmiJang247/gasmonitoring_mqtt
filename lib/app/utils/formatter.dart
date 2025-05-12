@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:get/route_manager.dart';
 import 'package:intl/intl.dart';
-import 'package:safety_check/app/data/models/04_fault.dart';
 import 'package:safety_check/app/data/services/app_service.dart';
 
 /// 전화번호를 3-4-4 형식으로 변환 (010-1234-5678)
@@ -54,22 +53,4 @@ String formatNumberWithComma(dynamic value) {
     formattedNumber = formatter.format(number);
   }
   return formattedNumber;
-}
-
-// 유형 및 형상을 문자열로 변환
-String makeCateString(Fault? fault) {
-  final appService = Get.find<AppService>();
-  String cate1 = appService.faultCate1?[fault?.cate1_seq] ?? "";
-  String cate2 = fault?.cate2
-          ?.split(', ')
-          .map(
-            (e) => appService.faultCate2?[e] ?? "",
-          )
-          .join(", ") ??
-      "";
-  String result = "$cate1 $cate2";
-  if (cate1 == "" || cate2 == "") {
-    result = result.trim();
-  }
-  return result;
 }

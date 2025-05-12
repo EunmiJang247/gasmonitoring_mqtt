@@ -107,7 +107,7 @@ class LoginController extends GetxController {
       // 현장 목록으로 이동(네비게이션)
       // 현재 앱의 모든 페이지를 스택에서 제거하고,
       // 지정한 라우트(routeName)로 이동한다.
-      Get.offAllNamed(Routes.PROJECT_LIST);
+      // Get.offAllNamed(Routes.PROJECT_LIST);
     }
   }
 

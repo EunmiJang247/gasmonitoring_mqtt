@@ -12,8 +12,6 @@ import 'package:safety_check/app/constant/server.dart';
 // 서버 주소, 키 같은 상수값들을 정의한 파일
 import 'package:safety_check/app/data/api/app_rest_api.dart';
 // 실제 API 메서드들을 정의해둔 Dio 래퍼 클래스.
-import 'package:safety_check/app/utils/converter.dart';
-// 응답 데이터 포맷을 변환해주는 유틸 함수.
 import 'package:safety_check/app/utils/log.dart';
 // 에러 로그 찍는 유틸.
 import 'package:flutter_dotenv/flutter_dotenv.dart';

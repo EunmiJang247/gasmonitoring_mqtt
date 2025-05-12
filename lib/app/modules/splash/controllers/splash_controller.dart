@@ -41,8 +41,11 @@ class SplashController extends GetxController {
       }
 
       if (Get.find<LocalAppDataService>().initialized) {
+        print('로컬 데이터 서비스 초기화 완료');
         Get.offAllNamed(Routes.MEDITATION_HOME);
+        // 메인화면으로 라우트 이동
       } else {
+        print('로컬 데이터 서비스 초기화 실패');
         EasyLoading.showError('데이터 서비스 초기화 실패');
       }
     });

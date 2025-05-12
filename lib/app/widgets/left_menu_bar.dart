@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:safety_check/app/constant/constants.dart';
 import 'package:safety_check/app/data/services/app_service.dart';
-import 'package:safety_check/app/widgets/app_info_dialog.dart';
 import 'package:safety_check/app/widgets/two_button_dialog.dart';
 
 import '../constant/app_color.dart';
@@ -40,23 +38,23 @@ class _LeftMenuBarState extends State<LeftMenuBar> {
     // JENNY 갤러리를 열었을 때 왼쪽에 메뉴바! TODO
 
     return Obx(() {
-      double menuPaddingV = _appService.isLeftBarOpened.value ? 10 : 13;
+      // double menuPaddingV = _appService.isLeftBarOpened.value ? 10 : 13;
 
       return Row(
         children: [
           GestureDetector(
             onHorizontalDragUpdate: (details) {
               if (details.primaryDelta! > 0) {
-                _appService.isLeftBarOpened.value = true;
+                // _appService.isLeftBarOpened.value = true;
               } else if (details.primaryDelta! < 0) {
-                _appService.isLeftBarOpened.value = false;
+                // _appService.isLeftBarOpened.value = false;
               }
             },
             child: AnimatedContainer(
               duration: changeDuration,
               curve: Curves.easeIn,
               color: AppColors.c4,
-              width: _appService.isLeftBarOpened.value ? 240 : leftBarWidth,
+              // width: _appService.isLeftBarOpened.value ? 240 : leftBarWidth,
               height: MediaQuery.of(context).size.height,
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: SingleChildScrollView(
@@ -71,24 +69,24 @@ class _LeftMenuBarState extends State<LeftMenuBar> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // 사용자 프로필 섹션
-                          UserProfileSection(
-                            user: user,
-                            isMenuOpen: _appService.isLeftBarOpened.value,
-                            onToggleMenu: () =>
-                                _appService.toggleLeftBarCollapsed(),
-                            onLogout: () => _appService.logOut(),
-                            duration: changeDuration,
-                          ),
+                          // UserProfileSection(
+                          //   user: user,
+                          //   isMenuOpen: _appService.isLeftBarOpened.value,
+                          //   onToggleMenu: () =>
+                          //       _appService.toggleLeftBarCollapsed(),
+                          //   onLogout: () => _appService.logOut(),
+                          //   duration: changeDuration,
+                          // ),
                         ],
                       ),
                       // 메뉴 아이템 섹션
-                      MenuItemsSection(
-                        isMenuOpen: _appService.isLeftBarOpened.value,
-                        isProjectSelected: _appService.isProjectSelected,
-                        verticalPadding: menuPaddingV,
-                        appService: _appService,
-                        duration: changeDuration,
-                      ),
+                      // MenuItemsSection(
+                      //   isMenuOpen: _appService.isLeftBarOpened.value,
+                      //   isProjectSelected: _appService.isProjectSelected,
+                      //   verticalPadding: menuPaddingV,
+                      //   appService: _appService,
+                      //   duration: changeDuration,
+                      // ),
                     ],
                   ),
                 ),
@@ -96,13 +94,13 @@ class _LeftMenuBarState extends State<LeftMenuBar> {
             ),
           ),
           // 오버레이 영역
-          if (_appService.isLeftBarOpened.value)
-            Expanded(
-              child: GestureDetector(
-                onTap: () => _appService.isLeftBarOpened.value = false,
-                child: Container(color: Colors.black38),
-              ),
-            ),
+          // if (_appService.isLeftBarOpened.value)
+          //   Expanded(
+          //     child: GestureDetector(
+          //       onTap: () => _appService.isLeftBarOpened.value = false,
+          //       child: Container(color: Colors.black38),
+          //     ),
+          //   ),
         ],
       );
     });
@@ -336,15 +334,15 @@ class MenuItemsSection extends StatelessWidget {
     return Column(
       children: [
         // 홈 메뉴 아이템
-        if (isProjectSelected)
-          MenuItem(
-            icon: Icons.home,
-            label: "초기 화면",
-            isMenuOpen: isMenuOpen,
-            verticalPadding: verticalPadding,
-            onTap: () => appService.onTapHome(),
-            duration: duration,
-          ),
+        // if (isProjectSelected)
+        //   MenuItem(
+        //     icon: Icons.home,
+        //     label: "초기 화면",
+        //     isMenuOpen: isMenuOpen,
+        //     verticalPadding: verticalPadding,
+        //     onTap: () => appService.onTapHome(),
+        //     duration: duration,
+        //   ),
 
         // 프로젝트 선택된 경우에만 표시되는 메뉴들
         if (isProjectSelected)
@@ -372,11 +370,11 @@ class MenuItemsSection extends StatelessWidget {
           bottomPadding: 20,
           onTap: () {
             appService.test();
-            showDialog(
-              context: context,
-              builder: (context) =>
-                  AppInfoDialog(updateHistory: appService.updateHistory),
-            );
+            // showDialog(
+            //   context: context,
+            //   builder: (context) =>
+            // AppInfoDialog(updateHistory: appService.updateHistory),
+            // );
           },
           duration: duration,
         ),
@@ -416,27 +414,27 @@ class ProjectMenuItems extends StatelessWidget {
           isMenuOpen: isMenuOpen,
           verticalPadding: verticalPadding,
           onTap: () async {
-            await appService.cameraSelected();
+            // await appService.cameraSelected();
           },
           duration: duration,
         ),
         // 갤러리 메뉴 아이템
-        MenuItem(
-          icon: Icons.photo_outlined,
-          label: "갤러리",
-          isMenuOpen: isMenuOpen,
-          verticalPadding: verticalPadding,
-          onTap: () => appService.onTapGallery(),
-          duration: duration,
-        ),
-        // 3D 투어 메뉴 아이템
-        if (appService.liveTourUrl.isNotEmpty)
-          LiveTourMenuItem(
-            isMenuOpen: isMenuOpen,
-            verticalPadding: verticalPadding,
-            appService: appService,
-            duration: duration,
-          ),
+        // MenuItem(
+        //   icon: Icons.photo_outlined,
+        //   label: "갤러리",
+        //   isMenuOpen: isMenuOpen,
+        //   verticalPadding: verticalPadding,
+        //   onTap: () => appService.onTapGallery(),
+        //   duration: duration,
+        // ),
+        // // 3D 투어 메뉴 아이템
+        // if (appService.liveTourUrl.isNotEmpty)
+        //   LiveTourMenuItem(
+        //     isMenuOpen: isMenuOpen,
+        //     verticalPadding: verticalPadding,
+        //     appService: appService,
+        //     duration: duration,
+        //   ),
 
         Divider(
           color: Colors.white,
@@ -466,7 +464,7 @@ class LiveTourMenuItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => appService.onTapViewer(context, appService.liveTourUrl),
+      // onTap: () => appService.onTapViewer(context, appService.liveTourUrl),
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: verticalPadding.h),
         child: AnimatedCrossFade(
@@ -531,7 +529,7 @@ class FileUploadMenuItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        appService.onTapSendDataToServer();
+        // appService.onTapSendDataToServer();
       },
       child: Padding(
           padding: EdgeInsets.symmetric(vertical: verticalPadding.h),
@@ -550,17 +548,6 @@ class FileUploadMenuItem extends StatelessWidget {
                         size: (kIconSize - 5).h,
                         color: Colors.white,
                       )),
-                      if (appService.needUpdate)
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: Container(
-                            width: 10,
-                            height: 10,
-                            decoration: BoxDecoration(
-                                color: Color(0xffff0000),
-                                borderRadius: BorderRadius.circular(10)),
-                          ),
-                        )
                     ],
                   ),
                 ),
@@ -588,17 +575,6 @@ class FileUploadMenuItem extends StatelessWidget {
                     size: (kIconSize - 5).h,
                     color: Colors.white,
                   )),
-                  if (appService.needUpdate)
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: Container(
-                        width: 10,
-                        height: 10,
-                        decoration: BoxDecoration(
-                            color: Color(0xffff0000),
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                    )
                 ],
               ),
             ),

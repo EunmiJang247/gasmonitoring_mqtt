@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
-import 'package:safety_check/app/data/services/local_gallery_data_service.dart';
 
 import 'app/constant/app_color.dart';
 import 'app/data/api/app_api.dart';
@@ -24,16 +22,11 @@ Future<void> main() async {
 
   HttpOverrides.global = MyHttpOverrides();
 
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('ko');
 
   Get.put<LocalAppDataService>(
     LocalAppDataService(),
-    permanent: true,
-  );
-
-  Get.put<LocalGalleryDataService>(
-    LocalGalleryDataService(),
     permanent: true,
   );
 
@@ -44,29 +37,17 @@ Future<void> main() async {
     permanent: true,
   );
 
-  // Get.put이 호출되는 시점에 AppService가 생성되며, 즉시 onInit()이 실행
   Get.put<AppService>(
     AppService(
       appRepository: Get.find<AppRepository>(),
       localAppDataService: Get.find<LocalAppDataService>(),
-      localGalleryDataService: Get.find<LocalGalleryDataService>(),
     ),
     permanent: true,
   );
 
-  // AppService 인스턴스를 만들고 메모리에 한 번 생성
-  // GetX의 DI 컨테이너에 전역으로 등록.
-  // permanent: true 덕분에 앱이 꺼지기 전까지 절대 Dispose 되지 않아.
-  // → 즉, 앱 전 생애 주기 동안 살아있는 진짜 전역 객체야
-
-  // AppService는 이미 전역으로 등록했는데, 왜 LoginBinding에서 또 설정하냐?
-  // 바인딩에서는 AppService를 주입하는 게 아니라, 이미 등록된 인스턴스를 찾아서 LoginController에 “의존성 주입”하는 거야
-  // 페이지가 바뀔 때 마다 재등록/해제가 번거로움 → Binding이 자동으로 해줘서 편한 거야
-
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  // 세로모드 고정
 
   runApp(
     ScreenUtilInit(
@@ -76,15 +57,15 @@ Future<void> main() async {
             title: "meditationFriend",
             locale: const Locale('ko'),
             supportedLocales: const [
-              Locale('ko'), // ✅ 한국어 지원
-              Locale('en'), // (선택) 영어도 같이
+              Locale('ko'),
+              Locale('en'),
             ],
             localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            initialRoute: AppPages.INITIAL, // 첫 화면으로 띄웁니다
+            initialRoute: AppPages.INITIAL,
             getPages: AppPages.routes,
             defaultTransition: Transition.rightToLeftWithFade,
             theme: ThemeData(
