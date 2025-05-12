@@ -362,22 +362,22 @@ class MenuItemsSection extends StatelessWidget {
         ),
 
         // 앱 정보 메뉴 아이템
-        MenuItem(
-          icon: Icons.info_outline,
-          label: "업데이트 정보",
-          isMenuOpen: isMenuOpen,
-          verticalPadding: verticalPadding,
-          bottomPadding: 20,
-          onTap: () {
-            appService.test();
-            // showDialog(
-            //   context: context,
-            //   builder: (context) =>
-            // AppInfoDialog(updateHistory: appService.updateHistory),
-            // );
-          },
-          duration: duration,
-        ),
+        // MenuItem(
+        //   icon: Icons.info_outline,
+        //   label: "업데이트 정보",
+        //   isMenuOpen: isMenuOpen,
+        //   verticalPadding: verticalPadding,
+        //   bottomPadding: 20,
+        //   onTap: () {
+        //     appService.test();
+        //     // showDialog(
+        //     //   context: context,
+        //     //   builder: (context) =>
+        //     // AppInfoDialog(updateHistory: appService.updateHistory),
+        //     // );
+        //   },
+        //   duration: duration,
+        // ),
       ],
     );
   }
