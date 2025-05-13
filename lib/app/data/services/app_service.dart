@@ -19,7 +19,7 @@ class AppService extends GetxService {
   final LocalAppDataService _localAppDataService;
 
   final AudioPlayer audioPlayer = AudioPlayer();
-  Rx<User?> user = Rx<User?>(null);
+  Rx<MeditationFriendUser?> user = Rx<MeditationFriendUser?>(null);
   Rx<bool> isOfflineMode = false.obs;
   DateTime? currentBackPressTime;
   RxList<Music> musicList = <Music>[].obs;
@@ -101,7 +101,7 @@ class AppService extends GetxService {
       } else {
         // 로그인 성공 시 사용자 정보 저장
         response = SignInResponse(
-          user: User.fromJson(baseResponse?.data?['user']),
+          user: MeditationFriendUser.fromJson(baseResponse?.data?['user']),
         );
         user.value = response.user!;
         // appService에 user정보 저장

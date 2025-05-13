@@ -3,7 +3,7 @@
 import 'package:meditation_friend/app/data/models/00_user.dart';
 
 class SignInResponse {
-  User? user;
+  MeditationFriendUser? user;
   SignInResponse({
     required this.user,
   });

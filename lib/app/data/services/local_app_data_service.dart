@@ -23,7 +23,7 @@ import '../models/update_history.dart';
 class LocalAppDataService extends GetxService {
   // GetxService로 선언되어 있어서 앱 전역에서 사용 가능
   // LocalAppDataService는 “앱의 로컬 캐시 계층”
-  late Box<User> user_box;
+  late Box<MeditationFriendUser> user_box;
   late Box<String?> setting_box;
   late Box<List> template_box;
   late Box<List> project_box;
@@ -40,7 +40,7 @@ class LocalAppDataService extends GetxService {
     await Hive.initFlutter();
 
     Hive.registerAdapter(UpdateHistoryItemAdapter());
-    Hive.registerAdapter(UserAdapter());
+    Hive.registerAdapter(MeditationFriendUserAdapter());
     // 실제로 Box들을 열어서 읽고 쓸 수 있게 준비함
 
     setting_box = await Hive.openBox<String?>('setting_box_1_0_0');
@@ -55,12 +55,12 @@ class LocalAppDataService extends GetxService {
     super.onInit();
   }
 
-  Future<void> writeLastLoginUser(User userData) async {
+  Future<void> writeLastLoginUser(MeditationFriendUser userData) async {
     // 로그인 성공 시, Hive의 user_box에 유저 정보를 저장함
     await user_box.put('last_logged_in_user', userData);
   }
 
-  User? getLastLoginUser() {
+  MeditationFriendUser? getLastLoginUser() {
     // 저장된 유저 정보를 읽어와서 반환
     // 오프라인 로그인이나 자동 로그인 시 사용됨
     return user_box.get('last_logged_in_user');

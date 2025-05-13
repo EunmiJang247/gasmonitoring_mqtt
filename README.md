@@ -100,3 +100,5 @@ surfaceDestroyed
 
 아디: test@eleng.co.kr
 비번: test12345
+
+flutter pub run build_runner build --delete-conflicting-outputs

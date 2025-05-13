@@ -22,76 +22,6 @@ class _AppRestAPI implements AppRestAPI {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<BaseResponse?> init(Map<String, dynamic> queries) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    queryParameters.addAll(queries);
-    final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<BaseResponse>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/safety/init',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
-    final _result = await _dio.fetch<Map<String, dynamic>?>(_options);
-    late BaseResponse? _value;
-    try {
-      _value =
-          _result.data == null ? null : BaseResponse.fromJson(_result.data!);
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
-  }
-
-  @override
-  Future<BaseResponse?> test(Map<String, dynamic> queries) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    queryParameters.addAll(queries);
-    final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<BaseResponse>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/safety/test',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
-    final _result = await _dio.fetch<Map<String, dynamic>?>(_options);
-    late BaseResponse? _value;
-    try {
-      _value =
-          _result.data == null ? null : BaseResponse.fromJson(_result.data!);
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
-  }
-
-  @override
   Future<BaseResponse?> signIn(Map<String, dynamic> queries) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -105,7 +35,7 @@ class _AppRestAPI implements AppRestAPI {
     )
         .compose(
           _dio.options,
-          '/safety/signin',
+          '/signin',
           queryParameters: queryParameters,
           data: _data,
         )

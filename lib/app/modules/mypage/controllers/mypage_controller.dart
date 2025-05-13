@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
+import 'package:meditation_friend/app/data/models/00_user.dart';
 
 import '../../../data/services/app_service.dart';
 import '../../../data/services/local_app_data_service.dart';
@@ -89,9 +90,25 @@ class MypageController extends GetxController {
         print('카카오 계정으로 로그인 성공');
       }
 
-      // 로그인 성공 처리
-      final user = await UserApi.instance.me();
-      print('사용자 정보: ${user.id}');
+      // 사용자 정보 가져오기
+      final kakaoUser = await UserApi.instance.me();
+      print('user 정보: $kakaoUser');
+
+      // User 모델로 변환
+      final user = MeditationFriendUser(
+        id: kakaoUser.id.toString(),
+        nickname: kakaoUser.properties?['nickname'] ?? '',
+        profileImageUrl: kakaoUser.properties?['profile_image'] ?? '',
+        thumbnailImageUrl: kakaoUser.properties?['thumbnail_image'] ?? '',
+        connectedAt: kakaoUser.connectedAt,
+      );
+
+      // AppService에 사용자 정보 저장
+      appService.user.value = user;
+      await _localAppDataService.writeLastLoginUser(user);
+
+      // 로그인 성공 시 홈 화면으로 이동
+      Get.offAllNamed('/meditation-home');
     } catch (error) {
       print('카카오 로그인 실패: $error');
       Get.snackbar(

@@ -6,48 +6,39 @@ part of '00_user.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
-class UserAdapter extends TypeAdapter<User> {
+class MeditationFriendUserAdapter extends TypeAdapter<MeditationFriendUser> {
   @override
   final int typeId = 0;
 
   @override
-  User read(BinaryReader reader) {
+  MeditationFriendUser read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return User(
-      seq: fields[0] as String,
-      email: fields[1] as String,
-      name: fields[2] as String,
-      company_name: fields[3] as String,
-      avatar_file: fields[4] as String,
-      role: fields[5] as String,
-      machine_engineer_grade: fields[6] as String?,
-      machine_engineer_license_no: fields[7] as String?,
+    return MeditationFriendUser(
+      id: fields[0] as String,
+      nickname: fields[1] as String,
+      profileImageUrl: fields[2] as String,
+      thumbnailImageUrl: fields[3] as String,
+      connectedAt: fields[4] as DateTime?,
     );
   }
 
   @override
-  void write(BinaryWriter writer, User obj) {
+  void write(BinaryWriter writer, MeditationFriendUser obj) {
     writer
-      ..writeByte(8)
-      ..writeByte(0)
-      ..write(obj.seq)
-      ..writeByte(1)
-      ..write(obj.email)
-      ..writeByte(2)
-      ..write(obj.name)
-      ..writeByte(3)
-      ..write(obj.company_name)
-      ..writeByte(4)
-      ..write(obj.avatar_file)
       ..writeByte(5)
-      ..write(obj.role)
-      ..writeByte(6)
-      ..write(obj.machine_engineer_grade)
-      ..writeByte(7)
-      ..write(obj.machine_engineer_license_no);
+      ..writeByte(0)
+      ..write(obj.id)
+      ..writeByte(1)
+      ..write(obj.nickname)
+      ..writeByte(2)
+      ..write(obj.profileImageUrl)
+      ..writeByte(3)
+      ..write(obj.thumbnailImageUrl)
+      ..writeByte(4)
+      ..write(obj.connectedAt);
   }
 
   @override
@@ -56,7 +47,7 @@ class UserAdapter extends TypeAdapter<User> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is UserAdapter &&
+      other is MeditationFriendUserAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
@@ -65,25 +56,24 @@ class UserAdapter extends TypeAdapter<User> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-User _$UserFromJson(Map<String, dynamic> json) => User(
-      seq: json['seq'] as String,
-      email: json['email'] as String,
-      name: json['name'] as String,
-      company_name: json['company_name'] as String,
-      avatar_file: json['avatar_file'] as String,
-      role: json['role'] as String,
-      machine_engineer_grade: json['machine_engineer_grade'] as String?,
-      machine_engineer_license_no:
-          json['machine_engineer_license_no'] as String?,
+MeditationFriendUser _$MeditationFriendUserFromJson(
+        Map<String, dynamic> json) =>
+    MeditationFriendUser(
+      id: json['id'] as String,
+      nickname: json['nickname'] as String,
+      profileImageUrl: json['profileImageUrl'] as String,
+      thumbnailImageUrl: json['thumbnailImageUrl'] as String,
+      connectedAt: json['connectedAt'] == null
+          ? null
+          : DateTime.parse(json['connectedAt'] as String),
     );
 
-Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
-      'seq': instance.seq,
-      'email': instance.email,
-      'name': instance.name,
-      'company_name': instance.company_name,
-      'avatar_file': instance.avatar_file,
-      'role': instance.role,
-      'machine_engineer_grade': instance.machine_engineer_grade,
-      'machine_engineer_license_no': instance.machine_engineer_license_no,
+Map<String, dynamic> _$MeditationFriendUserToJson(
+        MeditationFriendUser instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'nickname': instance.nickname,
+      'profileImageUrl': instance.profileImageUrl,
+      'thumbnailImageUrl': instance.thumbnailImageUrl,
+      'connectedAt': instance.connectedAt?.toIso8601String(),
     };
