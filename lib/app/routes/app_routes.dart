@@ -4,6 +4,7 @@ part of 'app_pages.dart';
 
 abstract class Routes {
   Routes._();
+  static const HOME = _Paths.HOME;
   static const LOGIN = _Paths.LOGIN;
   static const FIND_PW = _Paths.FIND_PW;
   static const SPLASH = _Paths.SPLASH;
@@ -14,10 +15,11 @@ abstract class Routes {
 
 abstract class _Paths {
   _Paths._();
+  static const HOME = '/home';
   static const LOGIN = '/login';
   static const FIND_PW = '/find-pw';
   static const SPLASH = '/splash';
   static const MEDITATION_HOME = '/meditation-home';
   static const MUSIC_DETAIL = '/music-detail';
-  static const MYPAGE = '/music-detail';
+  static const MYPAGE = '/mypage';
 }

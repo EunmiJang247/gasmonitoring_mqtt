@@ -19,7 +19,7 @@ class _UnderTabBarState extends State<UnderTabBar> {
 
     switch (index) {
       case 0:
-        Get.offNamed('/home'); // 홈 화면
+        Get.offNamed('/meditation-home'); // 홈 화면
         break;
       case 1:
         Get.toNamed('/music-detail'); // 음악 목록 화면
@@ -77,7 +77,7 @@ class _UnderTabBarState extends State<UnderTabBar> {
                     color:
                         _selectedIndex == 1 ? AppColors.kOrange : Colors.grey,
                   ),
-                  label: '음악',
+                  label: '명상하기',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(

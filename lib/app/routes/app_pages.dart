@@ -3,6 +3,8 @@ import 'package:safety_check/app/modules/meditation_home/bindings/meditation_hom
 import 'package:safety_check/app/modules/meditation_home/view/meditation_home.dart';
 import 'package:safety_check/app/modules/music_detail/bindings/music_detail_binding.dart';
 import 'package:safety_check/app/modules/music_detail/views/music_detail.dart';
+import 'package:safety_check/app/modules/mypage/bindings/mypage_binding.dart';
+import 'package:safety_check/app/modules/mypage/views/mypage_view.dart';
 import '../modules/find_pw/bindings/find_pw_binding.dart';
 import '../modules/find_pw/views/find_pw_view.dart';
 import '../modules/login/bindings/login_binding.dart';
@@ -45,6 +47,11 @@ class AppPages {
       name: _Paths.MUSIC_DETAIL,
       page: () => const MusicDetailView(),
       binding: MusicDetailBinding(),
+    ),
+    GetPage(
+      name: _Paths.MYPAGE,
+      page: () => const MypageView(),
+      binding: MypageBinding(),
     ),
   ];
 }

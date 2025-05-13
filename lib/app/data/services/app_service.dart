@@ -88,14 +88,6 @@ class AppService extends GetxService {
 
     if (offline) {
       user = _localAppDataService.getLastLoginUser();
-      // 오프라인이면 로컬에 저장된 마지막 로그인 유저와 데이터 로드
-
-      // if (password != user?.password) {
-      //   result = '마지막으로 로그인했던 아이디와 비밀번호를 입력하세요.';
-      //   return result;
-      // }
-
-      // locationList = _localAppDataService.getLocationList();
     } else {
       await EasyLoading.show(dismissOnTap: true);
       // 로딩 인디케이터 표시
@@ -103,11 +95,21 @@ class AppService extends GetxService {
         email: email,
         password: password,
       );
-      // 서버에 로그인 요청 (→ AppRepository가 실제 API 호출 담당)
-      if (baseResponse?.result?.code != 100) {
+      if (baseResponse?.result?.code != 200) {
         // 100번이 아닌 경우 에러 발생한 것임
         result = baseResponse?.result?.message;
-      } else {}
+      } else {
+        // 로그인 성공 시 사용자 정보 저장
+        response = SignInResponse(
+          user: User.fromJson(baseResponse?.data?['user']),
+        );
+        user = response.user!;
+        if (user != null) {
+          // 응답에 사용자에 대한 정보가 있다면
+          await _localAppDataService.writeLastLoginUser(user!);
+        }
+        logSuccess(response.user!.toJson(), des: 'AppService.signIn($email)');
+      }
     }
     return result;
   }
