@@ -3,14 +3,24 @@ import 'package:get/get.dart';
 import 'package:safety_check/app/constant/app_color.dart';
 
 class UnderTabBar extends StatefulWidget {
-  const UnderTabBar({super.key});
+  final int? initialIndex;
+  const UnderTabBar({
+    super.key,
+    this.initialIndex,
+  });
 
   @override
   State<UnderTabBar> createState() => _UnderTabBarState();
 }
 
 class _UnderTabBarState extends State<UnderTabBar> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex ?? 0; // 초기값 설정
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -22,10 +32,10 @@ class _UnderTabBarState extends State<UnderTabBar> {
         Get.offNamed('/meditation-home'); // 홈 화면
         break;
       case 1:
-        Get.toNamed('/music-detail'); // 음악 목록 화면
+        Get.offNamed('/music-detail'); // 음악 목록 화면
         break;
       case 2:
-        Get.toNamed('/mypage'); // 마이페이지
+        Get.offNamed('/mypage'); // 마이페이지
         break;
     }
   }
