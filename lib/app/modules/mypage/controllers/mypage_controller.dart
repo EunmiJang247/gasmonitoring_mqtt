@@ -68,32 +68,37 @@ class MypageController extends GetxController {
     }
   }
 
-  onKakaoLogin(BuildContext context, {required bool offline}) async {
-    print('카카오 로그인 클릭!');
-    FocusScope.of(context).unfocus();
-    if (EasyLoading.isShow) return;
+  Future<void> onKakaoLogin() async {
+    try {
+      print('카카오 로그인 클릭!');
 
-    bool isInstalled = await isKakaoTalkInstalled();
-    OAuthToken token = isInstalled
-        ? await UserApi.instance.loginWithKakaoTalk()
-        : await UserApi.instance.loginWithKakaoAccount();
-    print('로그인 성공: ${token.accessToken}');
-    await _getUserInfo(); // 로그인 성공 후 유저 정보 가져오기
-    // if (errorMsg != null) {
-    //   errorText.value = errorMsg;
-    //   await EasyLoading.showError(errorMsg);
+      // 카카오톡 설치 여부 확인
+      if (await isKakaoTalkInstalled()) {
+        try {
+          await UserApi.instance.loginWithKakaoTalk();
+          print('카카오톡으로 로그인 성공');
+        } catch (error) {
+          print('카카오톡 로그인 실패: $error');
+          // 카카오톡 로그인 실패 시 카카오 계정으로 로그인 시도
+          await UserApi.instance.loginWithKakaoAccount();
+          print('카카오 계정으로 로그인 성공');
+        }
+      } else {
+        // 카카오톡 미설치: 카카오 계정으로 로그인
+        await UserApi.instance.loginWithKakaoAccount();
+        print('카카오 계정으로 로그인 성공');
+      }
 
-    //   Timer(const Duration(seconds: 1), () {
-    //     if (Get.isDialogOpen == true) Get.back();
-    //   });
-    // } else {
-    //   // 아이디/비밀번호 저장
-    //   if (isSaveLoginInfo.value) {
-    //     _localAppDataService.setConfigValue('saved_pw', pwController.text);
-    //   } else {
-    //     _localAppDataService.setConfigValue('saved_pw', "");
-    //   }
-    //   Get.offAllNamed(Routes.MEDITATION_HOME);
-    // }
+      // 로그인 성공 처리
+      final user = await UserApi.instance.me();
+      print('사용자 정보: ${user.id}');
+    } catch (error) {
+      print('카카오 로그인 실패: $error');
+      Get.snackbar(
+        '로그인 실패',
+        '카카오 로그인 중 오류가 발생했습니다.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
 }

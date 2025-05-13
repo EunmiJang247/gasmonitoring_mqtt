@@ -29,29 +29,6 @@ class AppRepository {
   //   };
   // }
 
-  // 시작
-  Future<BaseResponse?> init() async {
-    BaseResponse? response;
-    try {
-      var body = <String, dynamic>{};
-      response = await _appAPI.client.init(body);
-    } catch (err) {
-      logError(err, des: 'AppRepository.init()');
-    }
-    return response;
-  }
-
-  Future<BaseResponse?> test() async {
-    BaseResponse? response;
-    try {
-      var body = <String, dynamic>{};
-      response = await _appAPI.client.test(body);
-    } catch (err) {
-      logError(err, des: 'AppRepository.test()');
-    }
-    return response;
-  }
-
   // 카카오 로그인
   Future<BaseResponse?> signIn({
     required String kakaoToken,

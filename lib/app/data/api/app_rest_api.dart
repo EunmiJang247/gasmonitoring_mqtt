@@ -8,13 +8,7 @@ part 'app_rest_api.g.dart';
 abstract class AppRestAPI {
   factory AppRestAPI(Dio dio, {String baseUrl}) = _AppRestAPI;
 
-  @GET("/safety/init")
-  Future<BaseResponse?> init(@Queries() Map<String, dynamic> queries);
-
-  @GET("/safety/test")
-  Future<BaseResponse?> test(@Queries() Map<String, dynamic> queries);
-
-  @POST("/safety/signin")
+  @POST("/signin")
   Future<BaseResponse?> signIn(@Queries() Map<String, dynamic> queries);
 
   @POST("/logout")

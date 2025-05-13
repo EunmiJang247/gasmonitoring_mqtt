@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
@@ -12,8 +12,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
-        android:label="명상친구"
         android:name="${applicationName}"
+        android:label="명상친구"
         android:icon="@mipmap/ic_launcher"
         android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true"
@@ -26,6 +26,22 @@
             android:exported="true"
             android:foregroundServiceType="mediaPlayback"
         />
+        <!-- 카카오 인증 액티비티 추가 -->
+        <activity 
+            android:name="com.kakao.sdk.flutter.AuthCodeCustomTabsActivity"
+            android:exported="true">
+            <intent-filter android:label="flutter_web_auth">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                
+                <!-- 카카오 로그인 스킴 설정 -->
+                <data 
+                    android:scheme="kakao41fc802ab8a066fcc2b3016fb2c5fb98" 
+                    android:host="oauth"/>
+            </intent-filter>
+        </activity>
+        <!-- ...existing activities... -->
         <activity
             android:name=".MainActivity"
             android:exported="true"

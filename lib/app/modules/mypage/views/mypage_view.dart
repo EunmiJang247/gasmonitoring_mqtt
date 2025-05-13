@@ -117,7 +117,7 @@ class MypageView extends GetView<MypageController> {
               Center(
                 child: GestureDetector(
                   onTap: () async {
-                    await controller.onKakaoLogin(context, offline: false);
+                    await controller.onKakaoLogin();
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 20),
