@@ -29,7 +29,7 @@ class _LeftMenuBarState extends State<LeftMenuBar> {
 
   @override
   void initState() {
-    user = _appService.user;
+    user = _appService.user.value;
     super.initState();
   }
 

@@ -19,7 +19,7 @@ class AppService extends GetxService {
   final LocalAppDataService _localAppDataService;
 
   final AudioPlayer audioPlayer = AudioPlayer();
-  User? user;
+  Rx<User?> user = Rx<User?>(null);
   Rx<bool> isOfflineMode = false.obs;
   DateTime? currentBackPressTime;
   RxList<Music> musicList = <Music>[].obs;
@@ -77,9 +77,9 @@ class AppService extends GetxService {
     return DateTime.now().toString().replaceAll(RegExp(r"[\s-:.]"), "");
   }
 
+  // 카카오 로그인
   Future<String?> signIn({
-    required String email,
-    required String password,
+    required String kakaoToken,
     required bool offline,
   }) async {
     isOfflineMode.value = offline;
@@ -87,13 +87,13 @@ class AppService extends GetxService {
     SignInResponse? response;
 
     if (offline) {
-      user = _localAppDataService.getLastLoginUser();
+      user.value = _localAppDataService.getLastLoginUser();
     } else {
+      // 온라인 일경우
       await EasyLoading.show(dismissOnTap: true);
       // 로딩 인디케이터 표시
       BaseResponse? baseResponse = await _appRepository.signIn(
-        email: email,
-        password: password,
+        kakaoToken: kakaoToken,
       );
       if (baseResponse?.result?.code != 200) {
         // 100번이 아닌 경우 에러 발생한 것임
@@ -103,12 +103,14 @@ class AppService extends GetxService {
         response = SignInResponse(
           user: User.fromJson(baseResponse?.data?['user']),
         );
-        user = response.user!;
-        if (user != null) {
+        user.value = response.user!;
+        // appService에 user정보 저장
+        if (user.value != null) {
           // 응답에 사용자에 대한 정보가 있다면
-          await _localAppDataService.writeLastLoginUser(user!);
+          await _localAppDataService.writeLastLoginUser(user.value!);
         }
-        logSuccess(response.user!.toJson(), des: 'AppService.signIn($email)');
+        logSuccess(response.user!.toJson(),
+            des: 'AppService.signIn($kakaoToken)');
       }
     }
     return result;

@@ -52,21 +52,19 @@ class AppRepository {
     return response;
   }
 
-  // 로그인
+  // 카카오 로그인
   Future<BaseResponse?> signIn({
-    required String email,
-    required String password,
+    required String kakaoToken,
   }) async {
     //String sha1Pw = sha1Encode(password);
     BaseResponse? response;
     try {
       Map<String, dynamic> body = {
-        "email": email,
-        "passwd": password,
+        "kakaoToken": kakaoToken,
       };
       response = await _appAPI.client.signIn(body);
     } catch (err) {
-      logError(err, des: 'AppRepository.signIn(email:$email)');
+      logError(err, des: 'AppRepository.signIn(email:$kakaoToken)');
     }
     return response;
   }
