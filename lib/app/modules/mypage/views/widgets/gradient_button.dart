@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:safety_check/app/constant/app_color.dart';
+import 'package:meditation_friend/app/constant/app_color.dart';
 
 class GradientBtn extends StatelessWidget {
   const GradientBtn({

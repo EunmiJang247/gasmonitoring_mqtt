@@ -1,8 +1,8 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:safety_check/app/data/models/music.dart';
-import 'package:safety_check/app/data/services/app_service.dart';
-import 'package:safety_check/app/utils/log.dart';
+import 'package:meditation_friend/app/data/models/music.dart';
+import 'package:meditation_friend/app/data/services/app_service.dart';
+import 'package:meditation_friend/app/utils/log.dart';
 
 class MusicDetailController extends GetxController {
   MusicDetailController({required this.appService});

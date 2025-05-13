@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:safety_check/app/data/models/music.dart';
+import 'package:meditation_friend/app/data/models/music.dart';
 
 import '../../utils/log.dart';
 import '../api/app_api.dart';

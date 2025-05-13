@@ -1,10 +1,10 @@
 import 'package:get/get.dart';
-import 'package:safety_check/app/modules/meditation_home/bindings/meditation_home_binding.dart';
-import 'package:safety_check/app/modules/meditation_home/view/meditation_home.dart';
-import 'package:safety_check/app/modules/music_detail/bindings/music_detail_binding.dart';
-import 'package:safety_check/app/modules/music_detail/views/music_detail.dart';
-import 'package:safety_check/app/modules/mypage/bindings/mypage_binding.dart';
-import 'package:safety_check/app/modules/mypage/views/mypage_view.dart';
+import 'package:meditation_friend/app/modules/meditation_home/bindings/meditation_home_binding.dart';
+import 'package:meditation_friend/app/modules/meditation_home/view/meditation_home.dart';
+import 'package:meditation_friend/app/modules/music_detail/bindings/music_detail_binding.dart';
+import 'package:meditation_friend/app/modules/music_detail/views/music_detail.dart';
+import 'package:meditation_friend/app/modules/mypage/bindings/mypage_binding.dart';
+import 'package:meditation_friend/app/modules/mypage/views/mypage_view.dart';
 import '../modules/find_pw/bindings/find_pw_binding.dart';
 import '../modules/find_pw/views/find_pw_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';

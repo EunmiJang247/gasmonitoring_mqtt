@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:safety_check/app/data/models/music.dart';
+import 'package:meditation_friend/app/data/models/music.dart';
 
 import '../../routes/app_pages.dart';
 import '../../utils/log.dart';

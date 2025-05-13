@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:safety_check/app/constant/app_color.dart';
+import 'package:meditation_friend/app/constant/app_color.dart';
 import 'package:get/get.dart';
-import 'package:safety_check/app/constant/constants.dart';
-import 'package:safety_check/app/modules/meditation_home/controllers/home_controller.dart';
+import 'package:meditation_friend/app/constant/constants.dart';
+import 'package:meditation_friend/app/modules/meditation_home/controllers/home_controller.dart';
 
 class StartMeditationPlayerBtn extends GetView<HomeController> {
   const StartMeditationPlayerBtn({super.key});

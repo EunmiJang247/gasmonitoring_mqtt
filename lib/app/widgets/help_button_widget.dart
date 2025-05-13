@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:safety_check/app/constant/app_color.dart';
+import 'package:meditation_friend/app/constant/app_color.dart';
 
 class HelpButtonWidget extends StatelessWidget {
   final double currentScale;

@@ -8,11 +8,11 @@ import 'package:dio/io.dart';
 import 'package:flutter/cupertino.dart';
 // iOS 스타일 위젯들을 쓸 수 있게 해주는 기본 Flutter 패키지
 // import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-import 'package:safety_check/app/constant/server.dart';
+import 'package:meditation_friend/app/constant/server.dart';
 // 서버 주소, 키 같은 상수값들을 정의한 파일
-import 'package:safety_check/app/data/api/app_rest_api.dart';
+import 'package:meditation_friend/app/data/api/app_rest_api.dart';
 // 실제 API 메서드들을 정의해둔 Dio 래퍼 클래스.
-import 'package:safety_check/app/utils/log.dart';
+import 'package:meditation_friend/app/utils/log.dart';
 // 에러 로그 찍는 유틸.
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 // .env 환경변수 파일을 읽기 위한 패키지. dev/prod 서버 분기 처리할 때 유용.

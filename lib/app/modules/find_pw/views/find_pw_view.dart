@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
-import 'package:safety_check/app/constant/app_color.dart';
+import 'package:meditation_friend/app/constant/app_color.dart';
 
 import '../../../constant/gaps.dart';
 import '../controllers/find_pw_controller.dart';
@@ -18,19 +18,19 @@ class FindPwView extends GetView<FindPwController> {
       },
       child: Scaffold(
         appBar: AppBar(
-            title: const Text(
-              '비밀번호 찾기',
-              style: TextStyle(
-                  color:Colors.white,
-                  fontWeight: FontWeight.bold
-              ),
+          title: const Text(
+            '비밀번호 찾기',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: AppColors.c4,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: Colors.white,
             ),
-            backgroundColor: AppColors.c4,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.white,),
-              onPressed: Get.back,
-            ),
-            centerTitle: true,
+            onPressed: Get.back,
+          ),
+          centerTitle: true,
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -57,9 +57,11 @@ class FindPwView extends GetView<FindPwController> {
                   width: double.infinity,
                   height: 60.h,
                   child: Obx(
-                        () => CupertinoButton(
+                    () => CupertinoButton(
                       color: AppColors.c4,
-                      onPressed: controller.isActiveButton.value ? controller.onTapConfirm : null,
+                      onPressed: controller.isActiveButton.value
+                          ? controller.onTapConfirm
+                          : null,
                       borderRadius: BorderRadius.circular(15),
                       child: Text(
                         '확인',
@@ -67,7 +69,9 @@ class FindPwView extends GetView<FindPwController> {
                           fontFamily: "Pretendard",
                           fontWeight: FontWeight.w600,
                           fontSize: 18,
-                          color: controller.isActiveButton.value ? Colors.white : Colors.black54,
+                          color: controller.isActiveButton.value
+                              ? Colors.white
+                              : Colors.black54,
                         ),
                       ),
                     ),

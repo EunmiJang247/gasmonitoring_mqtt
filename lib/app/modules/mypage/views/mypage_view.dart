@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:safety_check/app/constant/app_color.dart';
-import 'package:safety_check/app/modules/mypage/controllers/mypage_controller.dart';
-import 'package:safety_check/app/modules/mypage/views/widgets/gradient_button.dart';
-import 'package:safety_check/app/modules/mypage/views/widgets/meditation_duration_sheet.dart';
-import 'package:safety_check/app/modules/mypage/views/widgets/tile_widget.dart';
-import 'package:safety_check/app/widgets/under_tab_bar.dart';
+import 'package:meditation_friend/app/constant/app_color.dart';
+import 'package:meditation_friend/app/modules/mypage/controllers/mypage_controller.dart';
+import 'package:meditation_friend/app/modules/mypage/views/widgets/gradient_button.dart';
+import 'package:meditation_friend/app/modules/mypage/views/widgets/meditation_duration_sheet.dart';
+import 'package:meditation_friend/app/modules/mypage/views/widgets/tile_widget.dart';
+import 'package:meditation_friend/app/widgets/under_tab_bar.dart';
 
 class MypageView extends GetView<MypageController> {
   const MypageView({super.key});
@@ -14,8 +14,7 @@ class MypageView extends GetView<MypageController> {
   @override
   Widget build(BuildContext context) {
     print(controller.appService.user.value);
-    // if (controller.appService.user.value != null) {
-    if (true) {
+    if (controller.appService.user.value != null) {
       // 로그인 개발하고 위에꺼로 바꾸기, 아래꺼 주석 풀기
       return Scaffold(
         backgroundColor: AppColors.kSkyBlue,
@@ -102,46 +101,46 @@ class MypageView extends GetView<MypageController> {
         ),
       );
     }
-    // return Scaffold(
-    //   backgroundColor: AppColors.kSkyBlue,
-    //   body: PopScope(
-    //     canPop: true,
-    //     onPopInvoked: (didPop) {
-    //       if (didPop) return;
+    return Scaffold(
+      backgroundColor: AppColors.kSkyBlue,
+      body: PopScope(
+        canPop: true,
+        onPopInvoked: (didPop) {
+          if (didPop) return;
 
-    //       controller.appService.onPop(context);
-    //     },
-    //     child: SafeArea(
-    //       child: Stack(
-    //         fit: StackFit.expand, // Stack이 전체 화면을 차지하도록
-    //         children: [
-    //           Center(
-    //             child: GestureDetector(
-    //               onTap: () async {
-    //                 await controller.onKakaoLogin(context, offline: false);
-    //               },
-    //               child: Container(
-    //                 margin: const EdgeInsets.symmetric(horizontal: 20),
-    //                 // 가로 크기를 화면의 80%로 설정
-    //                 width: MediaQuery.of(context).size.width * 0.8,
-    //                 // 세로 크기를 48로 고정
-    //                 height: 48,
-    //                 decoration: BoxDecoration(
-    //                   borderRadius: BorderRadius.circular(12),
-    //                   image: const DecorationImage(
-    //                     image:
-    //                         AssetImage('assets/images/kakao_login_button.png'),
-    //                     fit: BoxFit.contain,
-    //                   ),
-    //                 ),
-    //               ),
-    //             ),
-    //           ),
-    //           const UnderTabBar(),
-    //         ],
-    //       ),
-    //     ),
-    //   ),
-    // );
+          controller.appService.onPop(context);
+        },
+        child: SafeArea(
+          child: Stack(
+            fit: StackFit.expand, // Stack이 전체 화면을 차지하도록
+            children: [
+              Center(
+                child: GestureDetector(
+                  onTap: () async {
+                    await controller.onKakaoLogin(context, offline: false);
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    // 가로 크기를 화면의 80%로 설정
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    // 세로 크기를 48로 고정
+                    height: 48,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      image: const DecorationImage(
+                        image:
+                            AssetImage('assets/images/kakao_login_button.png'),
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const UnderTabBar(),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

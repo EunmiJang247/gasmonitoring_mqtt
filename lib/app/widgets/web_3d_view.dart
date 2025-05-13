@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:safety_check/app/constant/constants.dart';
+import 'package:meditation_friend/app/constant/constants.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class Web3dView extends StatefulWidget {
@@ -11,7 +11,6 @@ class Web3dView extends StatefulWidget {
 }
 
 class _Web3dViewState extends State<Web3dView> {
-
   late WebViewController webViewController;
 
   @override
@@ -39,7 +38,6 @@ class _Web3dViewState extends State<Web3dView> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -49,9 +47,8 @@ class _Web3dViewState extends State<Web3dView> {
       alignment: Alignment.bottomRight,
       elevation: 0,
       child: Container(
-        color: Colors.transparent,
-          child: WebViewWidget(controller: webViewController)
-      ),
+          color: Colors.transparent,
+          child: WebViewWidget(controller: webViewController)),
     );
   }
 }

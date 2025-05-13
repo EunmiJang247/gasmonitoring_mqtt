@@ -1,4 +1,4 @@
-import 'package:safety_check/app/data/models/quote.dart';
+import 'package:meditation_friend/app/data/models/quote.dart';
 
 const int imageQuality = 100; // 0~100(%)
 const double imageMaxWidth = 1200; // 사진의 가로 최대 크기를 1200px 로 제한

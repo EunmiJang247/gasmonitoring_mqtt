@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:safety_check/app/constant/app_color.dart';
-import 'package:safety_check/app/constant/gaps.dart';
+import 'package:meditation_friend/app/constant/app_color.dart';
+import 'package:meditation_friend/app/constant/gaps.dart';
 
 class TwoButtonDialog extends StatelessWidget {
   const TwoButtonDialog({

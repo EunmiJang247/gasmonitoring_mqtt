@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:safety_check/app/data/models/base_response.dart';
+import 'package:meditation_friend/app/data/models/base_response.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'app_rest_api.g.dart';

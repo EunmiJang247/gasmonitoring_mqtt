@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:safety_check/app/modules/mypage/views/widgets/time_duration_select.dart';
+import 'package:meditation_friend/app/modules/mypage/views/widgets/time_duration_select.dart';
 
 Future<dynamic> meditationDurationBottomSheet(BuildContext context) {
   return showModalBottomSheet<void>(

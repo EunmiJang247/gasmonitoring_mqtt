@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:safety_check/app/data/services/app_service.dart';
-import 'package:safety_check/app/widgets/two_button_dialog.dart';
+import 'package:meditation_friend/app/data/services/app_service.dart';
+import 'package:meditation_friend/app/widgets/two_button_dialog.dart';
 
 import '../constant/app_color.dart';
 import '../constant/gaps.dart';

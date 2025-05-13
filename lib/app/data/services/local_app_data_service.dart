@@ -1,6 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:safety_check/app/data/models/00_user.dart';
+import 'package:meditation_friend/app/data/models/00_user.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 

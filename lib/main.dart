@@ -16,6 +16,7 @@ import 'app/data/services/local_app_data_service.dart';
 import 'app/routes/app_pages.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
@@ -24,6 +25,7 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('ko');
+  KakaoSdk.init(nativeAppKey: '41fc802ab8a066fcc2b3016fb2c5fb98'); // 네이티브 앱 키
 
   Get.put<LocalAppDataService>(
     LocalAppDataService(),

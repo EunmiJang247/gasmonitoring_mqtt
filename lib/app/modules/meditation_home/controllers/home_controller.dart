@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:safety_check/app/data/services/app_service.dart';
-import 'package:safety_check/app/routes/app_pages.dart';
+import 'package:meditation_friend/app/data/services/app_service.dart';
+import 'package:meditation_friend/app/routes/app_pages.dart';
 
 class HomeController extends GetxController {
   final AppService appService;

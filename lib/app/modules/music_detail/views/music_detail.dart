@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:safety_check/app/constant/app_color.dart';
-import 'package:safety_check/app/constant/constants.dart';
-import 'package:safety_check/app/modules/music_detail/controllers/music_detail_controller.dart';
-import 'package:safety_check/app/widgets/under_tab_bar.dart';
+import 'package:meditation_friend/app/constant/app_color.dart';
+import 'package:meditation_friend/app/constant/constants.dart';
+import 'package:meditation_friend/app/modules/music_detail/controllers/music_detail_controller.dart';
+import 'package:meditation_friend/app/widgets/under_tab_bar.dart';
 
 class MusicDetailView extends GetView<MusicDetailController> {
   const MusicDetailView({super.key});

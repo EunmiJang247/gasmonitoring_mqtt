@@ -2,10 +2,10 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:safety_check/app/data/services/local_app_data_service.dart';
-import 'package:safety_check/app/routes/app_pages.dart';
-import 'package:safety_check/app/utils/helper.dart';
-import 'package:safety_check/app/utils/log.dart';
+import 'package:meditation_friend/app/data/services/local_app_data_service.dart';
+import 'package:meditation_friend/app/routes/app_pages.dart';
+import 'package:meditation_friend/app/utils/helper.dart';
+import 'package:meditation_friend/app/utils/log.dart';
 
 class SplashController extends GetxController {
   @override

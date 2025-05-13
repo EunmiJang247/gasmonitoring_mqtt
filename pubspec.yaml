@@ -1,4 +1,4 @@
-name: safety_check
+name: meditation_friend
 description: "A new Flutter project."
 
 publish_to: "none"
@@ -53,6 +53,7 @@ dependencies:
   flutter_image_slideshow: ^0.1.6
   just_audio: ^0.9.46
   audio_service: 0.18.17
+  kakao_flutter_sdk_user: ^1.9.7+3
 
 dev_dependencies:
   flutter_test:
