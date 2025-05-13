@@ -10,4 +10,9 @@ class HomeController extends GetxController {
   onMusicListen() {
     Get.toNamed(Routes.MUSIC_DETAIL);
   }
+
+  // 출석체크
+  onAttendanceCheck() {
+    // 출석체크 API 호출
+  }
 }

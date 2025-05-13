@@ -54,6 +54,7 @@ class AppService extends GetxService {
   }
 
   void onPop(context) {
+    // 뒤로가기 두 번 클릭으로 앱 종료하기 기능
     DateTime now = DateTime.now();
     if (currentBackPressTime == null ||
         now.difference(currentBackPressTime!) >
