@@ -25,6 +25,7 @@ class AppService extends GetxService {
   RxList<Music> musicList = <Music>[].obs;
   Rx<Music>? curMusic = Music().obs;
   RxBool isPlaying = false.obs;
+  RxInt currentIndex = 0.obs;
 
   AppService({
     required AppRepository appRepository,

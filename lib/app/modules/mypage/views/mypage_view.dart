@@ -92,9 +92,7 @@ class MypageView extends GetView<MypageController> {
                             // context.go('/home');
                           }))
                 ]),
-                const UnderTabBar(
-                  initialIndex: 2,
-                ),
+                UnderTabBar(),
               ],
             ),
           ),
@@ -136,7 +134,7 @@ class MypageView extends GetView<MypageController> {
                   ),
                 ),
               ),
-              const UnderTabBar(),
+              UnderTabBar(),
             ],
           ),
         ),

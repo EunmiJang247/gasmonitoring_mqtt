@@ -44,7 +44,7 @@ class MeditationHome extends GetView<HomeController> {
                   ],
                 ),
               ),
-              const UnderTabBar(),
+              UnderTabBar(),
             ],
           ),
         ),

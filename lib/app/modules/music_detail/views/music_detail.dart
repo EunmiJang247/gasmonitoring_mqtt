@@ -170,9 +170,7 @@ class MusicDetailView extends GetView<MusicDetailController> {
                   }),
                 ),
               ),
-              const UnderTabBar(
-                initialIndex: 1,
-              ),
+              UnderTabBar(),
             ],
           ),
         ),
