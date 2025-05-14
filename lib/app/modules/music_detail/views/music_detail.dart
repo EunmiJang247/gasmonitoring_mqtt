@@ -136,15 +136,10 @@ class MusicDetailView extends GetView<MusicDetailController> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             IconButton(
-                                icon: const Icon(Icons.skip_previous, size: 48),
-                                onPressed: () async {
-                                  try {
-                                    await controller.playNextMusic();
-                                  } catch (e) {
-                                    print('Error playing music: $e');
-                                  }
-                                }),
-                            if (!isPlaying.value!)
+                              icon: const Icon(Icons.stop, size: 48),
+                              onPressed: controller.stopMusic,
+                            ),
+                            if (!isPlaying.value)
                               IconButton(
                                   icon: const Icon(Icons.play_arrow, size: 48),
                                   onPressed: () async {
@@ -160,9 +155,14 @@ class MusicDetailView extends GetView<MusicDetailController> {
                                 onPressed: controller.pauseMusic,
                               ),
                             IconButton(
-                              icon: const Icon(Icons.stop, size: 48),
-                              onPressed: controller.stopMusic,
-                            ),
+                                icon: const Icon(Icons.skip_next, size: 48),
+                                onPressed: () async {
+                                  try {
+                                    await controller.playNextMusic();
+                                  } catch (e) {
+                                    print('Error playing music: $e');
+                                  }
+                                }),
                           ],
                         ),
                       ],
