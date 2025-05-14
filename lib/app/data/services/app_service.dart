@@ -42,6 +42,12 @@ class AppService extends GetxService {
     final musics = await _getMusicList();
     musicList.value = musics ?? [];
     curMusic?.value = await getRandomMusic();
+    user.value = _localAppDataService.getLastLoginUser();
+  }
+
+  clearLastLoginUser() {
+    _localAppDataService.clearLastLoginUser();
+    user.value = null;
   }
 
   Future<Music> getRandomMusic() async {
@@ -119,11 +125,25 @@ class AppService extends GetxService {
 
   Future<String?> logOut() async {
     String? result;
-    BaseResponse? baseResponse = await _appRepository.logOut();
-    if (baseResponse?.result?.code != 100) {
-      result = baseResponse?.result?.message;
-    } else {}
-    Get.offAllNamed(Routes.LOGIN);
+    try {
+      user.value = null;
+      currentIndex.value = 0;
+      // 1. 로컬 데이터 정리
+      await clearLastLoginUser();
+
+      // 2. 서버 로그아웃 요청
+      // BaseResponse? baseResponse = await _appRepository.logOut();
+      // if (baseResponse?.result?.code != 100) {
+      //   result = baseResponse?.result?.message;
+      // }
+
+      // 3. 로그인 페이지로 이동
+      await Get.offAllNamed(Routes.MEDITATION_HOME);
+    } catch (e) {
+      print('로그아웃 실패: $e');
+      result = '로그아웃 중 오류가 발생했습니다.';
+    }
+
     return result;
   }
 

@@ -13,6 +13,7 @@ class GradientBtn extends StatelessWidget {
     this.borderColor,
     this.radius,
     this.btnColor,
+    this.textColor,
   });
 
   final void Function()? onTap;
@@ -23,28 +24,35 @@ class GradientBtn extends StatelessWidget {
   final double? textSize;
   final Color? borderColor;
   final Color? btnColor;
+  final Color? textColor;
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(radius ?? 30),
-        child: Container(
-          width: btnWidth ?? ScreenUtil().screenWidth / 2,
-          height: btnHieght ?? 60.h,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(radius ?? 30),
-            color: btnColor ?? AppColors.kOrange,
-          ),
-          child: Center(
-            child: Padding(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(radius ?? 30),
+          child: Container(
+            width: btnWidth ?? ScreenUtil().screenWidth / 2,
+            height: btnHieght ?? 60.h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(radius ?? 30),
+              color: btnColor ?? AppColors.kOrange,
+            ),
+            child: Center(
+              child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.w),
-                child: Text("!")),
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    color: textColor ?? Colors.white, // 기본값은 흰색
+                    fontSize: textSize,
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

@@ -27,14 +27,6 @@ class MypageController extends GetxController {
 
   @override
   void onInit() {
-    // User? savedUser = _localAppDataService.getLastLoginUser();
-    String? savedPw = _localAppDataService.getConfigValue('saved_pw');
-    // if (savedUser != null && savedPw != null && savedPw != "") {
-    //   idController.text = savedUser.email;
-    //   pwController.text = savedPw;
-    //   isSaveLoginInfo.value = true;
-    // }
-
     super.onInit();
   }
 
@@ -50,29 +42,13 @@ class MypageController extends GetxController {
   }
 
   Future<void> _getUserInfo() async {
-    try {
-      User user = await UserApi.instance.me();
-
-      // setState(() {
-      //   _nickname = user.kakaoAccount?.profile?.nickname ?? '닉네임 없음';
-      //   _email = user.kakaoAccount?.email ?? '이메일 없음';
-      //   _profileImageUrl = user.kakaoAccount?.profile?.profileImageUrl ?? '';
-      //   _status = "로그인 성공";
-      // });
-
-      print('user: $user');
-    } catch (e) {
+    try {} catch (e) {
       print('유저 정보 가져오기 실패: $e');
-      // setState(() {
-      //   _status = '유저 정보 가져오기 실패';
-      // });
     }
   }
 
   Future<void> onKakaoLogin() async {
     try {
-      print('카카오 로그인 클릭!');
-
       // 카카오톡 설치 여부 확인
       if (await isKakaoTalkInstalled()) {
         try {
@@ -102,12 +78,12 @@ class MypageController extends GetxController {
         thumbnailImageUrl: kakaoUser.properties?['thumbnail_image'] ?? '',
         connectedAt: kakaoUser.connectedAt,
       );
-
       // AppService에 사용자 정보 저장
       appService.user.value = user;
+      // 로컬 DB에 사용자 정보 저장
       await _localAppDataService.writeLastLoginUser(user);
-
       // 로그인 성공 시 홈 화면으로 이동
+      appService.currentIndex.value = 0;
       Get.offAllNamed('/meditation-home');
     } catch (error) {
       print('카카오 로그인 실패: $error');

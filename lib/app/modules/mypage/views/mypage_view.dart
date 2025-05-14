@@ -13,7 +13,6 @@ class MypageView extends GetView<MypageController> {
 
   @override
   Widget build(BuildContext context) {
-    print(controller.appService.user.value);
     if (controller.appService.user.value != null) {
       // 로그인 개발하고 위에꺼로 바꾸기, 아래꺼 주석 풀기
       return Scaffold(
@@ -83,13 +82,13 @@ class MypageView extends GetView<MypageController> {
                   Padding(
                       padding: const EdgeInsets.all(14.0),
                       child: GradientBtn(
-                          text: "로그아웃".toUpperCase(),
+                          text: "로그아웃",
+                          textColor: AppColors.kWhite,
                           btnColor: AppColors.kOrange,
                           btnWidth: ScreenUtil().screenWidth - 40,
                           btnHieght: 45,
                           onTap: () {
-                            // context.read<TabIndexNotifier>().setIndex(0);
-                            // context.go('/home');
+                            controller.appService.logOut();
                           }))
                 ]),
                 UnderTabBar(),
@@ -119,9 +118,7 @@ class MypageView extends GetView<MypageController> {
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 20),
-                    // 가로 크기를 화면의 80%로 설정
                     width: MediaQuery.of(context).size.width * 0.8,
-                    // 세로 크기를 48로 고정
                     height: 48,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),

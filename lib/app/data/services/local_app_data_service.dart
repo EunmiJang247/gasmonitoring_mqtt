@@ -54,6 +54,14 @@ class LocalAppDataService extends GetxService {
     return user_box.get('last_logged_in_user');
   }
 
+  Future<void> clearLastLoginUser() async {
+    try {
+      await user_box.delete('last_logged_in_user');
+    } catch (e) {
+      print('로그인 정보 삭제 실패: $e');
+    }
+  }
+
   Future<void> setConfigValue(String name, String value) async {
     // 설정값 저장 및 불러오기
     await setting_box.put(name, value);
