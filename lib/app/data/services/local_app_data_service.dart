@@ -26,13 +26,6 @@ class LocalAppDataService extends GetxService {
   late Box<MeditationFriendUser> user_box;
   late Box<String?> setting_box;
   late Box<List> template_box;
-  late Box<List> project_box;
-  late Box<List> drawing_box;
-  late Box<List> fault_box;
-  late Box<List> picture_box;
-  late Box<List> engineer_box;
-  late Box<List> fault_cate1_box;
-  late Box<List> fault_cate2_box;
 
   @override
   Future<void> onInit() async {
@@ -46,11 +39,6 @@ class LocalAppDataService extends GetxService {
     setting_box = await Hive.openBox<String?>('setting_box_1_0_0');
     user_box = await Hive.openBox('user_box_1_0_1');
     template_box = await Hive.openBox('template_box_1_0_1');
-    project_box = await Hive.openBox('project_box_1_0_1');
-    fault_box = await Hive.openBox('fault_box_1_0_1');
-    engineer_box = await Hive.openBox('engineer_box_1_0_0');
-    fault_cate1_box = await Hive.openBox('fault_cate1_box_1_0_1');
-    fault_cate2_box = await Hive.openBox('fault_cate2_box_1_0_1');
 
     super.onInit();
   }
