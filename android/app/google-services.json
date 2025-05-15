@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "229628614118",
+    "firebase_url": "https://meditation-friend-default-rtdb.firebaseio.com",
+    "project_id": "meditation-friend",
+    "storage_bucket": "meditation-friend.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:229628614118:android:faa6754fd12f390bbe3227",
+        "android_client_info": {
+          "package_name": "com.example.first_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCB_-07a8m0g4tg2aQSOi3MGFerxjVyECI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:229628614118:android:1016f1baae56ee01be3227",
+        "android_client_info": {
+          "package_name": "com.jenny.meditation_friend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCB_-07a8m0g4tg2aQSOi3MGFerxjVyECI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

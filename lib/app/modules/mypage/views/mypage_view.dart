@@ -16,7 +16,8 @@ class MypageView extends GetView<MypageController> {
 
   @override
   Widget build(BuildContext context) {
-    if (controller.appService.user.value != null) {
+    // if (controller.appService.user.value != null) {
+    if (true) {
       // 로그인 개발하고 위에꺼로 바꾸기, 아래꺼 주석 풀기
       return Scaffold(
         backgroundColor: AppColors.kSkyBlue,
@@ -95,6 +96,28 @@ class MypageView extends GetView<MypageController> {
                           btnHieght: 45,
                           onTap: () {
                             controller.appService.logOut();
+                          })),
+                  Padding(
+                      padding: const EdgeInsets.all(14.0),
+                      child: GradientBtn(
+                          text: "기기토큰 보내기",
+                          textColor: AppColors.kWhite,
+                          btnColor: AppColors.kOrange,
+                          btnWidth: ScreenUtil().screenWidth - 40,
+                          btnHieght: 45,
+                          onTap: () {
+                            controller.appService.sendFirebaseToken();
+                          })),
+                  Padding(
+                      padding: const EdgeInsets.all(14.0),
+                      child: GradientBtn(
+                          text: "알림 보내기",
+                          textColor: AppColors.kWhite,
+                          btnColor: AppColors.kOrange,
+                          btnWidth: ScreenUtil().screenWidth - 40,
+                          btnHieght: 45,
+                          onTap: () {
+                            controller.appService.sendAlaram();
                           }))
                 ]),
                 UnderTabBar(),

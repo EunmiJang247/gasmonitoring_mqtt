@@ -19,4 +19,10 @@ abstract class AppRestAPI {
 
   @GET("/meditation-muics/list")
   Future<BaseResponse?> getMusicList();
+
+  @POST('/notification/send-firebase-token')
+  Future<BaseResponse?> sendFirebaseToken(@Body() Map<String, dynamic> body);
+
+  @POST("/notification/send-firebase-alarm")
+  Future<BaseResponse?> sendFirebaseAlarm();
 }

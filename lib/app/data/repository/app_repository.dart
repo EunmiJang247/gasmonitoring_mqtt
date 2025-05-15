@@ -46,6 +46,35 @@ class AppRepository {
     return response;
   }
 
+  // 파이어베이스 토큰을 서버에 전송
+  Future<String?> sendFirebaseToken({required String fcmToken}) async {
+    try {
+      print('Sending FCM token: $fcmToken'); // 디버그용
+
+      final response = await _appAPI.client.sendFirebaseToken({
+        'fcmToken': fcmToken,
+      });
+
+      print('FCM fcmToken response: $response'); // 디버그용
+      print(response?.result);
+    } catch (e) {
+      print('FCM 토큰 전송 중 에러: $e');
+      rethrow;
+    }
+    return null;
+  }
+
+  // 파이어베이스 토큰을 서버에 전송
+  Future<String?> sendAlarm() async {
+    try {
+      final response = await _appAPI.client.sendFirebaseAlarm();
+    } catch (e) {
+      print('FCM 토큰 전송 중 에러: $e');
+      rethrow;
+    }
+    return null;
+  }
+
   // 로그아웃
   Future<BaseResponse?> logOut() async {
     BaseResponse? response;

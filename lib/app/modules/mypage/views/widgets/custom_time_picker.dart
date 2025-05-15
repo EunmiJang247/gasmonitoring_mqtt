@@ -12,7 +12,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
   int selectedMinute = 30; // 기본 분
 
   final List<int> hours = List.generate(24, (index) => index); // 0~23 시간 리스트
-  final List<int> minutes = List.generate(60, (index) => index); // 0~59 분 리스트
+  final List<int> minutes = List.generate(6, (index) => index * 10);
 
   late FixedExtentScrollController _hourController;
   late FixedExtentScrollController _minuteController;
@@ -23,7 +23,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
     // 시간과 분을 초기화한 후 컨트롤러에 설정
     _hourController = FixedExtentScrollController(initialItem: selectedHour);
     _minuteController = FixedExtentScrollController(
-      initialItem: selectedMinute,
+      initialItem: minutes.indexOf(selectedMinute),
     );
   }
 

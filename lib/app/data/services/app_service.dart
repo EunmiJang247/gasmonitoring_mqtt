@@ -13,6 +13,7 @@ import '../repository/app_repository.dart';
 import 'local_app_data_service.dart';
 
 import 'package:just_audio/just_audio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class AppService extends GetxService {
   final AppRepository _appRepository;
@@ -43,6 +44,41 @@ class AppService extends GetxService {
     musicList.value = musics ?? [];
     curMusic?.value = await getRandomMusic();
     user.value = _localAppDataService.getLastLoginUser();
+  }
+
+  Future<String?> getFcmToken() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    String? token = await messaging.getToken();
+    return token;
+  }
+
+  Future<String?> sendFirebaseToken() async {
+    String? fcmToken = await getFcmToken() ?? "";
+    print('sendFirebaseToken: ${fcmToken}');
+    // 서버에 fcmToken 전송
+    fcmToken = await _appRepository.sendFirebaseToken(
+      fcmToken: fcmToken,
+    );
+    return fcmToken;
+  }
+
+  Future<void> sendAlaram() async {
+    // 권한 확인
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: true,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    print('알림 권한 상태: ${settings.authorizationStatus}');
+
+    await _appRepository.sendAlarm();
   }
 
   clearLastLoginUser() {
