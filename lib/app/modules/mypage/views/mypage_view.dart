@@ -4,7 +4,10 @@ import 'package:get/get.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
 import 'package:meditation_friend/app/modules/mypage/controllers/mypage_controller.dart';
 import 'package:meditation_friend/app/modules/mypage/views/widgets/gradient_button.dart';
+import 'package:meditation_friend/app/modules/mypage/views/widgets/meditation_alarm_time_sheet.dart';
 import 'package:meditation_friend/app/modules/mypage/views/widgets/meditation_duration_sheet.dart';
+import 'package:meditation_friend/app/modules/mypage/views/widgets/meditation_gender_bottom_sheet.dart';
+import 'package:meditation_friend/app/modules/mypage/views/widgets/meditation_kind_bottom_sheet.dart';
 import 'package:meditation_friend/app/modules/mypage/views/widgets/tile_widget.dart';
 import 'package:meditation_friend/app/widgets/under_tab_bar.dart';
 
@@ -45,8 +48,11 @@ class MypageView extends GetView<MypageController> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                     ),
+                    // Text(
+                    //   user.username.toString(),
+                    // ),
                     // child: ReusableText(
-                    //   text: user.username.toString(),
+                    //   text:
                     //   style: appStyle(14, AppColors.kDark, FontWeight.w600),
                     // ),
                   ),
@@ -55,26 +61,26 @@ class MypageView extends GetView<MypageController> {
                     color: AppColors.kSkyBlue,
                     child: Column(
                       children: [
-                        // ProfileTileWidget(
-                        //   title: "선호하는 명상종류",
-                        //   leading: Icons.check,
-                        //   onTap: () => meditationKindBottomSheet(context),
-                        // ),
+                        ProfileTileWidget(
+                          title: "선호하는 명상종류",
+                          leading: Icons.check,
+                          onTap: () => meditationKindBottomSheet(context),
+                        ),
                         ProfileTileWidget(
                           title: "명상 길이 설정",
                           leading: Icons.timelapse,
                           onTap: () => meditationDurationBottomSheet(context),
                         ),
-                        // ProfileTileWidget(
-                        //   title: "명상 알림 시간 설정",
-                        //   leading: Icons.lock_clock,
-                        //   onTap: () => meditationAlramTimeBottomSheet(context),
-                        // ),
-                        // ProfileTileWidget(
-                        //   title: "선호하는 성별",
-                        //   leading: Icons.accessibility,
-                        //   onTap: () => meditationGenderBottomSheet(context),
-                        // ),
+                        ProfileTileWidget(
+                          title: "명상 알림 시간 설정",
+                          leading: Icons.lock_clock,
+                          onTap: () => meditationAlramTimeBottomSheet(context),
+                        ),
+                        ProfileTileWidget(
+                          title: "선호하는 성별",
+                          leading: Icons.accessibility,
+                          onTap: () => meditationGenderBottomSheet(context),
+                        ),
                       ],
                     ),
                   ),
