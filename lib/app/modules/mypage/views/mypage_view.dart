@@ -16,8 +16,8 @@ class MypageView extends GetView<MypageController> {
 
   @override
   Widget build(BuildContext context) {
-    // if (controller.appService.user.value != null) {
-    if (true) {
+    if (controller.appService.user.value != null) {
+      // if (true) {
       // 로그인 개발하고 위에꺼로 바꾸기, 아래꺼 주석 풀기
       return Scaffold(
         backgroundColor: AppColors.kSkyBlue,

@@ -70,6 +70,15 @@ class MypageController extends GetxController {
       final kakaoUser = await UserApi.instance.me();
       print('user 정보: $kakaoUser');
 
+      // 서버에 보내서 로그인 처리
+      appService.signInUsingKakao(
+        id: kakaoUser.id.toString(),
+        nickname: kakaoUser.properties?['nickname'] ?? '',
+        profileImageUrl: kakaoUser.properties?['profile_image'] ?? '',
+        thumbnailImageUrl: kakaoUser.properties?['thumbnail_image'] ?? '',
+        connectedAt: kakaoUser.connectedAt,
+      );
+
       // User 모델로 변환
       final user = MeditationFriendUser(
         id: kakaoUser.id.toString(),

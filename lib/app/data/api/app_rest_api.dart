@@ -8,8 +8,8 @@ part 'app_rest_api.g.dart';
 abstract class AppRestAPI {
   factory AppRestAPI(Dio dio, {String baseUrl}) = _AppRestAPI;
 
-  @POST("/signin")
-  Future<BaseResponse?> signIn(@Queries() Map<String, dynamic> queries);
+  @POST("/setting/signin-using-kakao")
+  Future<BaseResponse?> signInUsingKakao(@Body() Map<String, dynamic> body);
 
   @POST("/logout")
   Future<BaseResponse?> logOut();
@@ -17,7 +17,7 @@ abstract class AppRestAPI {
   @POST("/find_pw")
   Future<BaseResponse?> findPw(@Queries() Map<String, dynamic> queries);
 
-  @GET("/meditation-muics/list")
+  @GET("/meditation-musics/list")
   Future<BaseResponse?> getMusicList();
 
   @POST('/notification/send-firebase-token')

@@ -22,12 +22,12 @@ class _AppRestAPI implements AppRestAPI {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<BaseResponse?> signIn(Map<String, dynamic> queries) async {
+  Future<BaseResponse?> signInUsingKakao(Map<String, dynamic> body) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.addAll(queries);
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
     final _options = _setStreamType<BaseResponse>(Options(
       method: 'POST',
       headers: _headers,
@@ -35,7 +35,7 @@ class _AppRestAPI implements AppRestAPI {
     )
         .compose(
           _dio.options,
-          '/signin',
+          '/setting/signin-using-kakao',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -138,7 +138,7 @@ class _AppRestAPI implements AppRestAPI {
     )
         .compose(
           _dio.options,
-          '/meditation-muics/list',
+          '/meditation-musics/list',
           queryParameters: queryParameters,
           data: _data,
         )

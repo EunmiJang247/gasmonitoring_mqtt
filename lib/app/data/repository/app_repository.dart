@@ -30,18 +30,31 @@ class AppRepository {
   // }
 
   // 카카오 로그인
-  Future<BaseResponse?> signIn({
-    required String kakaoToken,
+  Future<BaseResponse?> signInUsingKakao({
+    required id,
+    required nickname,
+    required profileImageUrl,
+    required thumbnailImageUrl,
+    connectedAt,
   }) async {
     //String sha1Pw = sha1Encode(password);
     BaseResponse? response;
     try {
       Map<String, dynamic> body = {
-        "kakaoToken": kakaoToken,
+        "id": id,
+        "nickname": nickname,
+        "profileImageUrl": profileImageUrl,
+        "thumbnailImageUrl": thumbnailImageUrl,
+        "connectedAt": connectedAt?.toIso8601String(),
       };
-      response = await _appAPI.client.signIn(body);
+      print("Request body: ${jsonEncode(body)}"); // Safe to print now
+      response = await _appAPI.client.signInUsingKakao(body);
+      print('갔어요!');
+      logInfo(response);
+      logInfo(response?.toJson());
     } catch (err) {
-      logError(err, des: 'AppRepository.signIn(email:$kakaoToken)');
+      print('에러: $err');
+      logError(err);
     }
     return response;
   }
