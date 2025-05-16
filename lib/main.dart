@@ -64,9 +64,7 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   await initializeDateFormatting('ko');
-  KakaoSdk.init(
-      nativeAppKey:
-          '41fc802AndroidInitializationSettings ab8a066fcc2b3016fb2c5fb98'); // 네이티브 앱 키
+  KakaoSdk.init(nativeAppKey: '41fc802ab8a066fcc2b3016fb2c5fb98'); // 네이티브 앱 키
   // final String keyHash = await KakaoSdk.origin;
   // print('키해시: $keyHash'); // 이 값을 복사해두세요
 

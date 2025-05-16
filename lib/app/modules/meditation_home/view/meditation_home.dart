@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
 import 'package:get/get.dart';
 import 'package:meditation_friend/app/modules/meditation_home/controllers/home_controller.dart';
+import 'package:meditation_friend/app/modules/meditation_home/view/widgets/attendance_check.dart';
 import 'package:meditation_friend/app/modules/meditation_home/view/widgets/quote_slider.dart';
 import 'package:meditation_friend/app/modules/meditation_home/view/widgets/start_meditation_player_btn.dart';
 import 'package:meditation_friend/app/modules/meditation_home/view/widgets/top_image.dart';
@@ -18,7 +19,6 @@ class MeditationHome extends GetView<HomeController> {
         canPop: true,
         onPopInvoked: (didPop) {
           if (didPop) return;
-
           controller.appService.onPop(context);
         },
         child: SafeArea(
@@ -35,12 +35,9 @@ class MeditationHome extends GetView<HomeController> {
                     QuoteSlider(),
                     SizedBox(height: 10),
                     StartMeditationPlayerBtn(),
-                    StartMeditationPlayerBtn(),
-                    StartMeditationPlayerBtn(),
-                    StartMeditationPlayerBtn(),
                     SizedBox(height: 10),
-                    // AttendanceCheck(),
-                    // SizedBox(height: 100),
+                    AttendanceCheck(),
+                    SizedBox(height: 100),
                   ],
                 ),
               ),
