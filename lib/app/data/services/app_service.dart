@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:meditation_friend/app/data/models/music.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../routes/app_pages.dart';
 import '../../utils/log.dart';
@@ -44,6 +46,59 @@ class AppService extends GetxService {
     musicList.value = musics ?? [];
     curMusic?.value = await getRandomMusic();
     user.value = _localAppDataService.getLastLoginUser();
+
+    initFirebaseMessageHandler();
+  }
+
+  void initFirebaseMessageHandler() {
+    // 포그라운드
+    FirebaseMessaging.onMessage.listen((RemoteMessage? message) {
+      print('포그라운드~~!!!');
+      if (message != null && message.notification != null) {
+        final notification = message.notification;
+
+        final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+            FlutterLocalNotificationsPlugin(); // ✅ 글로벌 플러그인 인스턴스
+        if (notification != null) {
+          flutterLocalNotificationsPlugin.show(
+            0,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                'default_channel',
+                '기본 알림 채널',
+                importance: Importance.max,
+                priority: Priority.high,
+              ),
+            ),
+          );
+        }
+        print("[포그라운드] ${message.notification!.title}");
+        print(message.notification!.body);
+        print(message.data["click_action"]);
+      }
+    });
+
+    // 백그라운드에서 푸시 클릭했을 때
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage? message) {
+      if (message != null && message.notification != null) {
+        print("[백그라운드 클릭] ${message.notification!.title}");
+        print(message.notification!.body);
+        print(message.data["click_action"]);
+      }
+    });
+
+    // 종료 상태에서 푸시 클릭했을 때
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? message) {
+      if (message != null && message.notification != null) {
+        print("[종료 클릭] ${message.notification!.title}");
+        print(message.notification!.body);
+        print(message.data["click_action"]);
+      }
+    });
   }
 
   Future<String?> getFcmToken() async {
@@ -75,6 +130,10 @@ class AppService extends GetxService {
       provisional: false,
       sound: true,
     );
+
+    if (await Permission.notification.isDenied) {
+      await Permission.notification.request();
+    }
 
     print('알림 권한 상태: ${settings.authorizationStatus}');
 

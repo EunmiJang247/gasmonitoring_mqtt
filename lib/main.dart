@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -20,6 +21,16 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:kakao_flutter_sdk_common/kakao_flutter_sdk_common.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'; // ✅ 로컬 알림 패키지 import
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin(); // ✅ 글로벌 플러그인 인스턴스
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("🔔 [백그라운드 메시지 수신]: ${message.notification?.title}");
+  // 여기서 로컬 알림 띄우기도 가능함
+}
+
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
 
@@ -27,8 +38,35 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(); // 💥 여기가 꼭 필요해
+
+  // ✅ 로컬 알림 초기화 (안 하면 포그라운드 표시 안 됨)
+  const AndroidInitializationSettings androidInitSettings =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const InitializationSettings initSettings =
+      InitializationSettings(android: androidInitSettings);
+
+  await flutterLocalNotificationsPlugin.initialize(initSettings);
+
+  // ✅ 알림 채널 등록
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'meditation_friend_daily_alarm', // ⚠️ 여기와 알림 생성 시 ID 일치해야 함
+    '기본 채널',
+    importance: Importance.high,
+  );
+
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel); // ✅ 채널 생성 누락된 부분
+
+  // ✅ 백그라운드 메시지 핸들러 등록
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   await initializeDateFormatting('ko');
-  KakaoSdk.init(nativeAppKey: '41fc802ab8a066fcc2b3016fb2c5fb98'); // 네이티브 앱 키
+  KakaoSdk.init(
+      nativeAppKey:
+          '41fc802AndroidInitializationSettings ab8a066fcc2b3016fb2c5fb98'); // 네이티브 앱 키
   // final String keyHash = await KakaoSdk.origin;
   // print('키해시: $keyHash'); // 이 값을 복사해두세요
 
