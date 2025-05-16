@@ -27,20 +27,16 @@ class LocalAppDataService extends GetxService {
   late Box<String?> setting_box;
   late Box<List> template_box;
 
-  @override
-  Future<void> onInit() async {
-    // Hive 초기화하고, 각 모델마다 Adapter 등록해서 직렬화 가능하게 설정
+  Future<LocalAppDataService> init() async {
     await Hive.initFlutter();
-
     Hive.registerAdapter(UpdateHistoryItemAdapter());
     Hive.registerAdapter(MeditationFriendUserAdapter());
-    // 실제로 Box들을 열어서 읽고 쓸 수 있게 준비함
 
     setting_box = await Hive.openBox<String?>('setting_box_1_0_0');
     user_box = await Hive.openBox('user_box_1_0_1');
     template_box = await Hive.openBox('template_box_1_0_1');
 
-    super.onInit();
+    return this;
   }
 
   Future<void> writeLastLoginUser(MeditationFriendUser userData) async {

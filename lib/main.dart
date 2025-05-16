@@ -68,10 +68,7 @@ Future<void> main() async {
   // final String keyHash = await KakaoSdk.origin;
   // print('키해시: $keyHash'); // 이 값을 복사해두세요
 
-  Get.put<LocalAppDataService>(
-    LocalAppDataService(),
-    permanent: true,
-  );
+  await Get.putAsync(() => LocalAppDataService().init());
 
   Get.lazyPut<AppAPI>(() => AppAPI());
 
