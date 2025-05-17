@@ -37,7 +37,6 @@ class AppRepository {
     required thumbnailImageUrl,
     connectedAt,
   }) async {
-    //String sha1Pw = sha1Encode(password);
     BaseResponse? response;
     try {
       Map<String, dynamic> body = {
@@ -47,13 +46,8 @@ class AppRepository {
         "thumbnailImageUrl": thumbnailImageUrl,
         "connectedAt": connectedAt?.toIso8601String(),
       };
-      print("Request body: ${jsonEncode(body)}"); // Safe to print now
       response = await _appAPI.client.signInUsingKakao(body);
-      print('갔어요!');
-      logInfo(response);
-      logInfo(response?.toJson());
     } catch (err) {
-      print('에러: $err');
       logError(err);
     }
     return response;
@@ -68,10 +62,10 @@ class AppRepository {
         'fcmToken': fcmToken,
       });
 
-      print('FCM fcmToken response: $response'); // 디버그용
-      print(response?.result);
+      // print('FCM fcmToken response: $response'); // 디버그용
+      // print(response?.result);
     } catch (e) {
-      print('FCM 토큰 전송 중 에러: $e');
+      // print('FCM 토큰 전송 중 에러: $e');
       rethrow;
     }
     return null;

@@ -138,7 +138,7 @@ class MypageView extends GetView<MypageController> {
         },
         child: SafeArea(
           child: Stack(
-            fit: StackFit.expand, // Stack이 전체 화면을 차지하도록
+            fit: StackFit.expand,
             children: [
               Center(
                 child: GestureDetector(

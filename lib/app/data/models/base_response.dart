@@ -6,8 +6,9 @@ part 'base_response.g.dart';
 class BaseResponse {
   BaseResult? result;
   dynamic data;
+  Map<String, dynamic>? headers;
 
-  BaseResponse({this.result, this.data});
+  BaseResponse({this.result, this.data, this.headers});
 
   factory BaseResponse.fromJson(Map<String, dynamic> json) =>
       _$BaseResponseFromJson(json);

@@ -102,3 +102,9 @@ surfaceDestroyed
 비번: test12345
 
 flutter pub run build_runner build --delete-conflicting-outputs
+
+# 장소 옮길 때 바꿔야 할것
+1. settings.py에서 ALLOWED_HOSTS에 추가
+2. flutter에 가서 DEV_BASE_URL 주소를 변경
+끝! 
+3. 키해시 확인 -> 카카오개발자 내어플리케이션 -> 플랫폼 -> 안드로이드 -> 키해시에 추가 

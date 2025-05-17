@@ -135,7 +135,7 @@ class AppService extends GetxService {
       await Permission.notification.request();
     }
 
-    print('알림 권한 상태: ${settings.authorizationStatus}');
+    // print('알림 권한 상태: ${settings.authorizationStatus}');
 
     await _appRepository.sendAlarm();
   }
@@ -180,16 +180,13 @@ class AppService extends GetxService {
   }
 
   // 카카오 로그인
-  Future<String?> signInUsingKakao({
+  Future<BaseResponse?> signInUsingKakao({
     required id,
     required nickname,
     required profileImageUrl,
     required thumbnailImageUrl,
     connectedAt,
   }) async {
-    String? result;
-    SignInResponse? response;
-
     // 온라인 일경우
     // await EasyLoading.show(dismissOnTap: true);
     // 로딩 인디케이터 표시
@@ -200,30 +197,7 @@ class AppService extends GetxService {
       thumbnailImageUrl: thumbnailImageUrl,
       connectedAt: connectedAt,
     );
-    logInfo(baseResponse);
-    logInfo(baseResponse?.toJson());
-    // if (baseResponse?.result?.code != 100) {
-    //   result = baseResponse?.result?.message;
-    // }
-
-    // if (baseResponse?.result?.code != 200) {
-    //   // 100번이 아닌 경우 에러 발생한 것임
-    //   result = baseResponse?.result?.message;
-    // } else {
-    //   // 로그인 성공 시 사용자 정보 저장
-    //   response = SignInResponse(
-    //     user: MeditationFriendUser.fromJson(baseResponse?.data?['user']),
-    //   );
-    //   user.value = response.user!;
-    //   // appService에 user정보 저장
-    //   if (user.value != null) {
-    //     // 응답에 사용자에 대한 정보가 있다면
-    //     await _localAppDataService.writeLastLoginUser(user.value!);
-    //   }
-    //   logSuccess(response.user!.toJson(),
-    //       des: 'AppService.signIn($kakaoToken)');
-    // }
-    return result;
+    return baseResponse;
   }
 
   Future<String?> logOut() async {

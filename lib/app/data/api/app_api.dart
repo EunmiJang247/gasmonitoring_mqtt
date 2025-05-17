@@ -65,6 +65,20 @@ class AppAPI extends GetxService {
     onYes: () => Get.offAllNamed(Routes.LOGIN),
   );
 
+  String? extractCookieValue(String rawCookie, String key) {
+    try {
+      final cookies = rawCookie.split(';');
+      for (var cookie in cookies) {
+        if (cookie.trim().startsWith('$key=')) {
+          return cookie.trim().substring('$key='.length);
+        }
+      }
+    } catch (e) {
+      print('쿠키 파싱 오류: $e');
+    }
+    return null;
+  }
+
   @override
   void onInit() {
     // GetxService가 초기화될 때 호출되는 메서드
@@ -81,40 +95,48 @@ class AppAPI extends GetxService {
     );
 
     dio.interceptors.add(
-      // 요청/응답 인터셉터 설정
       InterceptorsWrapper(
         onRequest: (
           RequestOptions options,
           RequestInterceptorHandler handler,
         ) async {
-          // 요청 전 헤더에 필요한 정보 삽입하는 과정이 포함됨됨
+          // 요청 전 헤더에 필요한 정보 삽입하는 과정이 포함됨
           options.headers['Content-Type'] = 'application/json; charset=utf-8';
           options.headers['Access-Key'] = getAccessKey();
-          // 헤더에 content-type, access-key, cookie 삽입
-          // session-id가 설정되어 있다면 요청 헤더에 추가
+
           if (cookie != null) {
+            // logInfo("cookie는요 ${cookie}");
             options.headers['cookie'] = cookie;
+            final csrf = extractCookieValue(cookie!, 'csrftoken');
+            if (csrf != null) {
+              options.headers['X-CSRFToken'] = csrf;
+            }
           }
           handler.next(options);
         },
         onResponse: (response, handler) {
-          // 응답 도착 시 쿠키를 확인하고 ci_session, _device 값을 추출해서 다음 요청에 사용.
           try {
-            // 응답에서 Set-Cookie 헤더가 있는지 확인
+            String? sessionId;
+            String? csrfToken;
+
             final setCookieHeader = response.headers['set-cookie'];
             if (setCookieHeader != null) {
-              for (var cookieHeader in setCookieHeader) {
-                if (cookieHeader.contains('ci_session')) {
-                  session =
-                      _extractSessionId(cookieHeader); // session-id 추출 및 저장
+              for (String cookieHeader in setCookieHeader) {
+                if (cookieHeader.contains('sessionid')) {
+                  sessionId = extractCookieValue(cookieHeader, 'sessionid');
                 }
-                if (cookieHeader.contains('_device')) {
-                  device = _extractDeviceId(cookieHeader); // session-id 추출 및 저장
+                if (cookieHeader.contains('csrftoken')) {
+                  csrfToken = extractCookieValue(cookieHeader, 'csrftoken');
                 }
               }
-              cookie = "ci_session=$session; _device=$device";
+
+              // logInfo('🟢 추출된 sessionId: $sessionId');
+              // logInfo('🟡 추출된 csrfToken: $csrfToken');
+              // ✅ 요청에 사용될 쿠키 문자열 구성하여 저장
+              if (sessionId != null && csrfToken != null) {
+                cookie = "sessionid=$sessionId; csrftoken=$csrfToken";
+              }
             }
-            // 응답 데이터를 유저 정의 포맷으로 변환 (ex. Map → DTO 등).
           } catch (e) {
             final errorMessage = e.toString();
             if (errorMessage.contains("Access Denied")) {
@@ -127,7 +149,6 @@ class AppAPI extends GetxService {
               response.data = null;
             }
           }
-          // {count: 1, music_list: [{id: 1, title: 2, description: 1, image_url: 2, music_url: 1, duration: 600}]}
           handler.next(response);
         },
       ),
@@ -141,22 +162,5 @@ class AppAPI extends GetxService {
     }
 
     super.onInit();
-  }
-
-  // 쿠키에서 세션/디바이스 ID 추출 함수
-  String _extractSessionId(String cookie) {
-    // 응답 쿠키에서 ci_session, _device 값을 추출해 저장
-    // 다음 요청마다 이 값을 헤더에 넣어서 세션 로그인 유지
-    final sessionIdPattern = RegExp(r'ci_session=([^;]+)');
-    final match = sessionIdPattern.firstMatch(cookie);
-    return match != null ? match.group(1)! : '';
-  }
-
-  // session-id 추출 메서드
-  String _extractDeviceId(String cookie) {
-    // 자동으로 로그아웃 처리 + 다이얼로그 띄움
-    final deviceIdPattern = RegExp(r'_device=([^;]+)');
-    final match = deviceIdPattern.firstMatch(cookie);
-    return match != null ? match.group(1)! : '';
   }
 }
