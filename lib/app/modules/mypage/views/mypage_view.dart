@@ -133,7 +133,6 @@ class MypageView extends GetView<MypageController> {
         canPop: true,
         onPopInvoked: (didPop) {
           if (didPop) return;
-
           controller.appService.onPop(context);
         },
         child: SafeArea(

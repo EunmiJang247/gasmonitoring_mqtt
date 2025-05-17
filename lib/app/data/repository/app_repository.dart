@@ -53,6 +53,30 @@ class AppRepository {
     return response;
   }
 
+  // 출석체크 하기
+  Future<BaseResponse?> attendanceCheck() async {
+    BaseResponse? response;
+    try {
+      response = await _appAPI.client.attendanceCheck();
+      return response;
+    } catch (err) {
+      logError(err);
+    }
+    return response;
+  }
+
+  // 출석체크 날짜 가져오기
+  Future<BaseResponse?> getAttendanceCheck() async {
+    BaseResponse? response;
+    try {
+      response = await _appAPI.client.getAttendanceCheck();
+      return response;
+    } catch (err) {
+      logError(err);
+    }
+    return response;
+  }
+
   // 파이어베이스 토큰을 서버에 전송
   Future<String?> sendFirebaseToken({required String fcmToken}) async {
     try {

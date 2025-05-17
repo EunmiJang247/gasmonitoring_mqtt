@@ -105,9 +105,9 @@ class AppAPI extends GetxService {
           options.headers['Access-Key'] = getAccessKey();
 
           if (cookie != null) {
-            // logInfo("cookie는요 ${cookie}");
             options.headers['cookie'] = cookie;
             final csrf = extractCookieValue(cookie!, 'csrftoken');
+            logInfo(csrf);
             if (csrf != null) {
               options.headers['X-CSRFToken'] = csrf;
             }

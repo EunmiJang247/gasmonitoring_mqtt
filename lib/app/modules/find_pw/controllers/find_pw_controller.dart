@@ -33,7 +33,6 @@ class FindPwController extends GetxController {
   onTapConfirm() async {
     await EasyLoading.show();
     String? result = await _appService.findPw(email: emailController.text);
-    logInfo(result);
     await EasyLoading.dismiss();
 
     if (result == 'OK') {

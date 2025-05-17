@@ -25,4 +25,10 @@ abstract class AppRestAPI {
 
   @POST("/notification/send-firebase-alarm")
   Future<BaseResponse?> sendFirebaseAlarm();
+
+  @POST("/setting/attendance-check")
+  Future<BaseResponse?> attendanceCheck();
+
+  @GET("/setting/get-attendance-check")
+  Future<BaseResponse?> getAttendanceCheck();
 }

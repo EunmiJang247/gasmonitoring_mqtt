@@ -9,7 +9,6 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../routes/app_pages.dart';
 import '../../utils/log.dart';
 import '../models/base_response.dart';
-import '../models/sign_in_response.dart';
 import '../models/00_user.dart';
 import '../repository/app_repository.dart';
 import 'local_app_data_service.dart';
@@ -26,6 +25,7 @@ class AppService extends GetxService {
   Rx<bool> isOfflineMode = false.obs;
   DateTime? currentBackPressTime;
   RxList<Music> musicList = <Music>[].obs;
+  RxList<String> attendanceList = <String>[].obs;
   Rx<Music>? curMusic = Music().obs;
   RxBool isPlaying = false.obs;
   RxInt currentIndex = 0.obs;
@@ -38,22 +38,44 @@ class AppService extends GetxService {
   @override
   Future<void> onInit() async {
     super.onInit();
+    await initUser();
     audioPlayer.playerStateStream.listen((state) {
       isPlaying.value = state.playing;
     });
-
-    final musics = await _getMusicList();
-    musicList.value = musics ?? [];
+    musicList.value = await _getMusicList() ?? [];
     curMusic?.value = await getRandomMusic();
-    user.value = _localAppDataService.getLastLoginUser();
-
     initFirebaseMessageHandler();
+  }
+
+  // getLastLoginUser로 가져온 user만 있고 로그인이 되지는 않은 경우
+  initUser() async {
+    if (user.value == null) {
+      // appService에 user가 없는 경우
+      logInfo('유저가 없어요');
+      // 서버에 보내서 로그인 처리
+      MeditationFriendUser? lastUser = _localAppDataService.getLastLoginUser();
+      if (lastUser != null) {
+        logInfo('예전유저는요 ${lastUser.id}');
+        logInfo('예전유저는요 ${lastUser.toJson()}');
+        BaseResponse? response = await signInUsingKakao(
+          id: lastUser.id.toString(),
+          nickname: lastUser.nickname ?? '',
+          profileImageUrl: lastUser.profileImageUrl ?? '',
+          thumbnailImageUrl: lastUser.thumbnailImageUrl ?? '',
+          connectedAt: lastUser.connectedAt,
+        );
+        if (response?.result?.code == 200) {
+          // AppService에 사용자 정보 저장
+          user.value = _localAppDataService.getLastLoginUser();
+        }
+        logInfo('완료추');
+      }
+    }
   }
 
   void initFirebaseMessageHandler() {
     // 포그라운드
     FirebaseMessaging.onMessage.listen((RemoteMessage? message) {
-      print('포그라운드~~!!!');
       if (message != null && message.notification != null) {
         final notification = message.notification;
 
@@ -74,17 +96,12 @@ class AppService extends GetxService {
             ),
           );
         }
-        print("[포그라운드] ${message.notification!.title}");
-        print(message.notification!.body);
-        print(message.data["click_action"]);
       }
     });
 
     // 백그라운드에서 푸시 클릭했을 때
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage? message) {
       if (message != null && message.notification != null) {
-        print("[백그라운드 클릭] ${message.notification!.title}");
-        print(message.notification!.body);
         print(message.data["click_action"]);
       }
     });
@@ -94,8 +111,6 @@ class AppService extends GetxService {
         .getInitialMessage()
         .then((RemoteMessage? message) {
       if (message != null && message.notification != null) {
-        print("[종료 클릭] ${message.notification!.title}");
-        print(message.notification!.body);
         print(message.data["click_action"]);
       }
     });
@@ -120,7 +135,6 @@ class AppService extends GetxService {
   Future<void> sendAlaram() async {
     // 권한 확인
     FirebaseMessaging messaging = FirebaseMessaging.instance;
-
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
       announcement: true,
@@ -134,9 +148,6 @@ class AppService extends GetxService {
     if (await Permission.notification.isDenied) {
       await Permission.notification.request();
     }
-
-    // print('알림 권한 상태: ${settings.authorizationStatus}');
-
     await _appRepository.sendAlarm();
   }
 
@@ -198,6 +209,23 @@ class AppService extends GetxService {
       connectedAt: connectedAt,
     );
     return baseResponse;
+  }
+
+  // 출석체크 하는함수
+  Future<BaseResponse?> attendanceCheck() async {
+    if (user.value != null) {
+      BaseResponse? baseResponse = await _appRepository.attendanceCheck();
+      return baseResponse;
+    }
+  }
+
+  // 출석체크 날짜 가져오기
+  Future<void> getAttendanceCheck() async {
+    logInfo('지금나와요? ${user.toJson()}');
+    if (user.value != null) {
+      BaseResponse? baseResponse = await _appRepository.getAttendanceCheck();
+      logInfo("baseResponse: ${baseResponse}");
+    }
   }
 
   Future<String?> logOut() async {

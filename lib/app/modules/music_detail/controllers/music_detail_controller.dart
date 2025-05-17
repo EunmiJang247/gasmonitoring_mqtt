@@ -12,27 +12,6 @@ class MusicDetailController extends GetxController {
   Rx<Music?> get currentMusic => appService.curMusic ?? Rx<Music?>(null);
   RxBool get isPlaying => appService.isPlaying;
 
-  @override
-  void onInit() {
-    super.onInit();
-    _initializeMusic();
-  }
-
-  Future<void> _initializeMusic() async {
-    try {
-      if (currentMusic.value?.musicUrl != null) {
-        logInfo('음악 초기화 시작: ${currentMusic.value?.title}');
-        // await playMusic();
-      } else {
-        // logInfo('재생할 음악이 없습니다.');
-        // 음악이 없는 경우 새로운 음악 가져와서 재생
-        // await playNextMusic();
-      }
-    } catch (e) {
-      logInfo('음악 초기화 오류: $e');
-    }
-  }
-
   // 다음곡 재생
   Future<void> playNextMusic() async {
     try {

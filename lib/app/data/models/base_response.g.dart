@@ -11,12 +11,14 @@ BaseResponse _$BaseResponseFromJson(Map<String, dynamic> json) => BaseResponse(
           ? null
           : BaseResult.fromJson(json['result'] as Map<String, dynamic>),
       data: json['data'],
+      headers: json['headers'] as Map<String, dynamic>?,
     );
 
 Map<String, dynamic> _$BaseResponseToJson(BaseResponse instance) =>
     <String, dynamic>{
       'result': instance.result,
       'data': instance.data,
+      'headers': instance.headers,
     };
 
 BaseResult _$BaseResultFromJson(Map<String, dynamic> json) => BaseResult(

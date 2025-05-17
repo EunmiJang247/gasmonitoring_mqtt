@@ -16,7 +16,7 @@ class AttendanceCheck extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> attendanceListStrings = ["2025-05-15", "2025-05-14"];
+    List<String> attendanceListStrings = controller.appService.attendanceList;
     bool isPresent = false;
 
     // 문자열을 DateTime 리스트로 변환
@@ -38,7 +38,8 @@ class AttendanceCheck extends GetView<HomeController> {
 
     return GestureDetector(
       onTap: () {
-        controller.onAttendanceCheck();
+        // controller.onAttendanceCheck();
+        // 달력 페이지로 이동하기
       },
       child: Card(
         color: AppColors.kWhite,
