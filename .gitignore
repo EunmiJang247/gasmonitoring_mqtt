@@ -56,3 +56,5 @@ linux/flutter/generated_plugin_registrant.*
 linux/flutter/ephemeral/
 macos/Flutter/GeneratedPluginRegistrant.swift
 android/app/build/
+
+**/ephemeral/
