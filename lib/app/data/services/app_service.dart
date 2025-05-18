@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:meditation_friend/app/data/models/music.dart';
@@ -44,6 +43,7 @@ class AppService extends GetxService {
     });
     musicList.value = await _getMusicList() ?? [];
     curMusic?.value = await getRandomMusic();
+    await getAttendanceCheck();
     initFirebaseMessageHandler();
   }
 
@@ -55,7 +55,6 @@ class AppService extends GetxService {
       // 서버에 보내서 로그인 처리
       MeditationFriendUser? lastUser = _localAppDataService.getLastLoginUser();
       if (lastUser != null) {
-        logInfo('예전유저는요 ${lastUser.id}');
         logInfo('예전유저는요 ${lastUser.toJson()}');
         BaseResponse? response = await signInUsingKakao(
           id: lastUser.id.toString(),
@@ -221,10 +220,12 @@ class AppService extends GetxService {
 
   // 출석체크 날짜 가져오기
   Future<void> getAttendanceCheck() async {
-    logInfo('지금나와요? ${user.toJson()}');
     if (user.value != null) {
       BaseResponse? baseResponse = await _appRepository.getAttendanceCheck();
-      logInfo("baseResponse: ${baseResponse}");
+      if (baseResponse?.data != null && baseResponse!.data is List) {
+        attendanceList.value =
+            (baseResponse!.data as List).map((e) => e.toString()).toList();
+      }
     }
   }
 

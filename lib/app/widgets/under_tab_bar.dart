@@ -9,7 +9,6 @@ class UnderTabBar extends StatelessWidget {
   UnderTabBar({super.key});
 
   void _onItemTapped(int index) {
-    print("탭바 인덱스: $index");
     switch (index) {
       case 0:
         _appService.currentIndex.value = 0;

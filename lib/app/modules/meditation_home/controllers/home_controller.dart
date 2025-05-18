@@ -24,4 +24,8 @@ class HomeController extends GetxController {
   onMusicListen() {
     Get.toNamed(Routes.MUSIC_DETAIL);
   }
+
+  onAttendanceCheck() {
+    Get.toNamed(Routes.CALENDAR);
+  }
 }

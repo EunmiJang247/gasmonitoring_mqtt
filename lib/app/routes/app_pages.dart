@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:meditation_friend/app/modules/calendar/binding/calendar_binding.dart';
+import 'package:meditation_friend/app/modules/calendar/views/calendar_view.dart';
 import 'package:meditation_friend/app/modules/meditation_home/bindings/meditation_home_binding.dart';
 import 'package:meditation_friend/app/modules/meditation_home/view/meditation_home.dart';
 import 'package:meditation_friend/app/modules/music_detail/bindings/music_detail_binding.dart';
@@ -43,6 +45,11 @@ class AppPages {
       name: _Paths.MYPAGE,
       page: () => const MypageView(),
       binding: MypageBinding(),
+    ),
+    GetPage(
+      name: _Paths.CALENDAR,
+      page: () => const CalendarView(),
+      binding: CalendarBinding(),
     ),
   ];
 }

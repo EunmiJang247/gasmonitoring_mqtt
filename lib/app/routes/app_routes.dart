@@ -11,6 +11,7 @@ abstract class Routes {
   static const MEDITATION_HOME = _Paths.MEDITATION_HOME;
   static const MUSIC_DETAIL = _Paths.MUSIC_DETAIL;
   static const MYPAGE = _Paths.MYPAGE;
+  static const CALENDAR = _Paths.CALENDAR;
 }
 
 abstract class _Paths {
@@ -22,4 +23,5 @@ abstract class _Paths {
   static const MEDITATION_HOME = '/meditation-home';
   static const MUSIC_DETAIL = '/music-detail';
   static const MYPAGE = '/mypage';
+  static const CALENDAR = '/caldendar';
 }
