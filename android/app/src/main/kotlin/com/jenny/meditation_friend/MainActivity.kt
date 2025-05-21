@@ -12,9 +12,7 @@ class MainActivity: FlutterActivity() {
         window.setBackgroundDrawableResource(android.R.color.transparent)
         window.addFlags(
             WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )
     }
 
