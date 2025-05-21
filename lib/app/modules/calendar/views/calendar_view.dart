@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
 import 'package:meditation_friend/app/data/models/attendance.dart';
 import 'package:meditation_friend/app/widgets/custom_app_bar.dart';
@@ -18,28 +19,26 @@ class _CalendarViewState extends State<CalendarView> {
   late DateTime _selectedDay;
 
   // 샘플 데이터 - 실제로는 서버나 로컬 DB에서 가져와야 함
-  final Map<DateTime, List<Attendance>> _events = {
-    DateTime.utc(2025, 5, 20): [
-      Attendance(
-        attendanceDate: DateTime.utc(2025, 5, 20),
-        mood: "행복",
-        diary: "오늘은 20분 명상했어요1",
-        imageUrl: "https://example.com/image.jpg",
-      ),
-      Attendance(
-        attendanceDate: DateTime.utc(2025, 5, 20),
-        mood: "행복",
-        diary: "오늘은 20분 명상했어요2",
-        imageUrl: "https://example.com/image.jpg",
-      ),
-      Attendance(
-        attendanceDate: DateTime.utc(2025, 5, 20),
-        mood: "행복",
-        diary: "오늘은 20분 명상했어요3",
-        imageUrl: "https://example.com/image.jpg",
-      ),
-    ],
-  };
+  final List<Attendance> _events = [
+    Attendance(
+      attendanceDate: DateTime.utc(2025, 5, 20),
+      mood: "행복",
+      diary: "오늘은 20분 명상했어요1",
+      imageUrl: "https://example.com/image.jpg",
+    ),
+    Attendance(
+      attendanceDate: DateTime.utc(2025, 5, 21),
+      mood: "행복",
+      diary: "오늘은 20분 명상했어요2",
+      imageUrl: "https://example.com/image.jpg",
+    ),
+    Attendance(
+      attendanceDate: DateTime.utc(2025, 5, 22),
+      mood: "행복",
+      diary: "오늘은 20분 명상했어요3",
+      imageUrl: "https://example.com/image.jpg",
+    ),
+  ];
 
   @override
   void initState() {
@@ -51,20 +50,16 @@ class _CalendarViewState extends State<CalendarView> {
   }
 
   List<Attendance> _getEventsForDay(DateTime day) {
-    // UTC 날짜로 변환하여 비교
     final eventDate = DateTime.utc(day.year, day.month, day.day);
 
-    // 모든 이벤트를 순회하며 같은 날짜의 이벤트를 찾음
-    List<Attendance> eventsForDay = [];
-    _events.forEach((date, events) {
-      if (date.year == eventDate.year &&
-          date.month == eventDate.month &&
-          date.day == eventDate.day) {
-        eventsForDay.addAll(events);
-      }
-    });
+    return _events.where((event) {
+      final date = event.attendanceDate;
+      if (date == null) return false; // null check added
 
-    return eventsForDay;
+      return date.year == eventDate.year &&
+          date.month == eventDate.month &&
+          date.day == eventDate.day;
+    }).toList();
   }
 
   // 기분별 아이콘 매핑
@@ -85,6 +80,9 @@ class _CalendarViewState extends State<CalendarView> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceHeight = MediaQuery.of(context).size.height;
+    final calendarHeight = (deviceHeight * 2) / 3; // 디바이스 높이의 2/3
+
     return Scaffold(
       backgroundColor: AppColors.kDark,
       appBar: CustomAppBar(
@@ -109,6 +107,7 @@ class _CalendarViewState extends State<CalendarView> {
       body: Column(
         children: [
           TableCalendar<Attendance>(
+            rowHeight: ScreenUtil().screenHeight / 5 - 80,
             firstDay: DateTime.utc(2020, 1, 1),
             lastDay: DateTime.utc(2025, 12, 31),
             focusedDay: _focusedDay,
@@ -122,7 +121,6 @@ class _CalendarViewState extends State<CalendarView> {
               });
             },
             calendarFormat: _calendarFormat,
-            // 마커 스타일 설정
             calendarBuilders: CalendarBuilders(
               markerBuilder: (context, date, events) {
                 if (events.isNotEmpty) {
@@ -132,7 +130,7 @@ class _CalendarViewState extends State<CalendarView> {
                     child: Icon(
                       _getMoodIcon(events.first.mood),
                       color: AppColors.kBrighYellow,
-                      size: 16,
+                      size: 32,
                     ),
                   );
                 }
@@ -155,6 +153,8 @@ class _CalendarViewState extends State<CalendarView> {
                 color: AppColors.kBrighYellow.withOpacity(0.5),
                 shape: BoxShape.circle,
               ),
+              cellMargin: EdgeInsets.all(18), // 셀 내부 여백 추가
+              cellPadding: EdgeInsets.zero, // 내부 패딩은 제거
             ),
             headerStyle: HeaderStyle(
               formatButtonVisible: false,
@@ -170,8 +170,11 @@ class _CalendarViewState extends State<CalendarView> {
               weekendStyle: TextStyle(color: AppColors.kBrighYellow),
             ),
           ),
+
+          // 🟡 코멘트 영역은 고정 높이만 사용
           const SizedBox(height: 8.0),
-          Expanded(
+          SizedBox(
+            height: 180, // 코멘트 영역의 고정 높이
             child: ValueListenableBuilder<List<Attendance>>(
               valueListenable: _selectedEvents,
               builder: (context, events, _) {
@@ -204,14 +207,16 @@ class _CalendarViewState extends State<CalendarView> {
                         leading: Icon(
                           _getMoodIcon(event.mood),
                           color: AppColors.kBrighYellow,
-                          size: 24,
+                          size: 32,
                         ),
                         title: Text(
                           event.mood ?? '기분 없음',
                           style: TextStyle(color: AppColors.kBrighYellow),
                         ),
-                        subtitle: Text(event.diary ?? '',
-                            style: TextStyle(color: AppColors.kBrighYellow)),
+                        subtitle: Text(
+                          event.diary ?? '',
+                          style: TextStyle(color: AppColors.kBrighYellow),
+                        ),
                         trailing: event.imageUrl != null
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(4),
@@ -221,8 +226,11 @@ class _CalendarViewState extends State<CalendarView> {
                                   height: 50,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(Icons.error,
-                                          color: AppColors.kBrighYellow),
+                                      const Icon(
+                                    Icons.error,
+                                    color: AppColors.kBrighYellow,
+                                    size: 50,
+                                  ),
                                 ),
                               )
                             : null,

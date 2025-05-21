@@ -78,7 +78,7 @@ class AttendanceCheck extends GetView<HomeController> {
                               : (date == now
                                   ? AppColors.kBrighYellow
                                   : // 오늘은 주황색
-                                  AppColors.kBrighYellow), // 나머지는 기본 색
+                                  AppColors.kGray), // 나머지는 기본 색
                           size: ScreenUtil().screenWidth / 14,
                         ),
                         Text(
