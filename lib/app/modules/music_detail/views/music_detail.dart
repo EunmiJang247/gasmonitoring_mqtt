@@ -19,7 +19,7 @@ class MusicDetailView extends GetView<MusicDetailController> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.kSkyBlue,
+      backgroundColor: AppColors.kAppBackgroundColor,
       appBar: AppBar(
         backgroundColor: AppColors.kSkyBlue,
         title: const Text('명상음악 재생'),

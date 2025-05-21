@@ -13,7 +13,7 @@ class SplashView extends GetView<SplashController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.kSkyBlue,
+      backgroundColor: AppColors.kAppBackgroundColor,
       body: SafeArea(
         child: Center(
           child: Stack(
@@ -23,12 +23,17 @@ class SplashView extends GetView<SplashController> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const EllipsisLoadingIndicatorCustom(),
+                  Text('- 칼융 -',
+                      style: TextStyle(
+                        color: Color(0xFFFFFF00), // Namaste 텍스트 색상
+                        fontSize: 16,
+                      )),
                   const SizedBox(height: 20),
                   Image.asset(
                     ASSETS_IMAGES_SPLASHSCREEN_PNG,
                     width: ScreenUtil().screenWidth - 100,
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 20),
                 ],
               ),
               Positioned(
@@ -36,7 +41,7 @@ class SplashView extends GetView<SplashController> {
                 left: 0,
                 child: Image.asset(
                   ASSETS_IMAGES_SPLASHSCREEN_DOTDOT_PNG,
-                  width: 80,
+                  width: ScreenUtil().screenWidth / 3,
                 ),
               ),
             ],

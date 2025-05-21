@@ -24,7 +24,7 @@ class SplashController extends GetxController {
     });
 
     // 1초뒤 로그인 시도
-    await Future.delayed(const Duration(milliseconds: 1000), () async {
+    await Future.delayed(const Duration(milliseconds: 2000), () async {
       // 네트워크가 연결되어 있을때만 업데이트 확인
       final List<ConnectivityResult> connectivityResult =
           await Connectivity().checkConnectivity();

@@ -14,7 +14,7 @@ class MeditationHome extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.kSkyBlue,
+      backgroundColor: AppColors.kAppBackgroundColor,
       body: PopScope(
         canPop: true,
         onPopInvoked: (didPop) {

@@ -20,7 +20,7 @@ class MypageView extends GetView<MypageController> {
       // if (true) {
       // 로그인 개발하고 위에꺼로 바꾸기, 아래꺼 주석 풀기
       return Scaffold(
-        backgroundColor: AppColors.kSkyBlue,
+        backgroundColor: AppColors.kAppBackgroundColor,
         body: PopScope(
           canPop: true,
           onPopInvoked: (didPop) {
@@ -128,7 +128,7 @@ class MypageView extends GetView<MypageController> {
       );
     }
     return Scaffold(
-      backgroundColor: AppColors.kSkyBlue,
+      backgroundColor: AppColors.kAppBackgroundColor,
       body: PopScope(
         canPop: true,
         onPopInvoked: (didPop) {

@@ -37,8 +37,25 @@ class _EllipsisLoadingIndicatorCustomState
   @override
   Widget build(BuildContext context) {
     String dots = '.' * _dotCount;
-    return Text(
-      'Namaste$dots',
+    return RichText(
+      text: TextSpan(
+        children: [
+          const TextSpan(
+            text: '내면을 들여다보는 자는 깨어난다',
+            style: TextStyle(
+              color: Color(0xFFFFFF00), // Namaste 텍스트 색상
+              fontSize: 16,
+            ),
+          ),
+          TextSpan(
+            text: dots,
+            style: const TextStyle(
+              color: Color(0xFFFFFF00), // 형광노랑색 도트
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

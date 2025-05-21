@@ -24,4 +24,5 @@ abstract class AppColors {
   static const Color kRed = Color(0xFFC80000);
   static const Color kSkyBlue = Color(0xFFEAF2F2);
   static const Color kOrange = Color(0xFFEB784E);
+  static const Color kAppBackgroundColor = Color(0xFF000000);
 }
