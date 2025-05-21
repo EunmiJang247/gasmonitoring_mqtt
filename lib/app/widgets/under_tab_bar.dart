@@ -39,7 +39,13 @@ class UnderTabBar extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.kDark,
+              border: Border(
+                top: BorderSide(
+                  color: AppColors.kBrighYellow, // 상단 보더 색상
+                  width: 1.0, // 보더 두께
+                ),
+              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.2),
@@ -51,18 +57,18 @@ class UnderTabBar extends StatelessWidget {
             ),
             child: Obx(
               () => BottomNavigationBar(
-                backgroundColor: Colors.white,
+                backgroundColor: AppColors.kDark,
                 elevation: 0,
                 currentIndex: _appService.currentIndex.value,
                 type: BottomNavigationBarType.fixed,
-                selectedItemColor: AppColors.kOrange,
+                selectedItemColor: AppColors.kBrighYellow,
                 unselectedItemColor: Colors.grey,
                 items: [
                   BottomNavigationBarItem(
                     icon: Icon(
                       Icons.home,
                       color: _appService.currentIndex.value == 0
-                          ? AppColors.kOrange
+                          ? AppColors.kBrighYellow
                           : Colors.grey,
                     ),
                     label: '홈',
@@ -71,7 +77,7 @@ class UnderTabBar extends StatelessWidget {
                     icon: Icon(
                       Icons.music_note,
                       color: _appService.currentIndex.value == 1
-                          ? AppColors.kOrange
+                          ? AppColors.kBrighYellow
                           : Colors.grey,
                     ),
                     label: '명상하기',
@@ -80,7 +86,7 @@ class UnderTabBar extends StatelessWidget {
                     icon: Icon(
                       Icons.person,
                       color: _appService.currentIndex.value == 2
-                          ? AppColors.kOrange
+                          ? AppColors.kBrighYellow
                           : Colors.grey,
                     ),
                     label: '마이페이지',
@@ -93,7 +99,7 @@ class UnderTabBar extends StatelessWidget {
           // SafeArea 하단 여백만큼 패딩 추가
           Container(
             height: bottomPadding,
-            color: Colors.white,
+            color: AppColors.kDark,
           ),
         ],
       ),

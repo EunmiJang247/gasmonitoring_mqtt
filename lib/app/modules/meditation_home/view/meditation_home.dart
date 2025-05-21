@@ -4,8 +4,10 @@ import 'package:get/get.dart';
 import 'package:meditation_friend/app/modules/meditation_home/controllers/home_controller.dart';
 import 'package:meditation_friend/app/modules/meditation_home/view/widgets/attendance_check.dart';
 import 'package:meditation_friend/app/modules/meditation_home/view/widgets/quote_slider.dart';
+import 'package:meditation_friend/app/modules/meditation_home/view/widgets/recommend_sessions.dart';
 import 'package:meditation_friend/app/modules/meditation_home/view/widgets/start_meditation_player_btn.dart';
 import 'package:meditation_friend/app/modules/meditation_home/view/widgets/top_image.dart';
+import 'package:meditation_friend/app/widgets/custom_app_bar.dart';
 import 'package:meditation_friend/app/widgets/under_tab_bar.dart';
 
 class MeditationHome extends GetView<HomeController> {
@@ -14,6 +16,25 @@ class MeditationHome extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(
+        leftSide: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {},
+        ),
+        rightSide: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: Icon(Icons.notifications),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () {},
+            ),
+          ],
+        ),
+      ),
       backgroundColor: AppColors.kAppBackgroundColor,
       body: PopScope(
         canPop: true,
@@ -36,6 +57,7 @@ class MeditationHome extends GetView<HomeController> {
                     SizedBox(height: 10),
                     StartMeditationPlayerBtn(),
                     SizedBox(height: 10),
+                    RecommendSessions(),
                     AttendanceCheck(),
                     SizedBox(height: 100),
                   ],

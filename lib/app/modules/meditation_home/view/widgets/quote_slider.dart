@@ -23,12 +23,14 @@ class QuoteSlider extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  quotes[i].quote,
-                  maxLines: 2, // 최대 2줄까지만 표시
-                  overflow: TextOverflow.ellipsis, // 초과 시 ... 처리
-                  textAlign: TextAlign.center,
-                ),
+                Text(quotes[i].quote,
+                    maxLines: 2, // 최대 2줄까지만 표시
+                    overflow: TextOverflow.ellipsis, // 초과 시 ... 처리
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFFFFFF00), // Namaste 텍스트 색상
+                      fontSize: 16,
+                    )),
                 SizedBox(height: 4),
                 Text(
                   '- ${quotes[i].author}',

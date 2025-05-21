@@ -42,7 +42,10 @@ class AttendanceCheck extends GetView<HomeController> {
         // 달력 페이지로 이동하기
       },
       child: Card(
-        color: AppColors.kWhite,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        color: AppColors.kDark,
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: SizedBox(
@@ -71,14 +74,17 @@ class AttendanceCheck extends GetView<HomeController> {
                                   ? Icons.sentiment_satisfied // 오늘 (출석 안함)
                                   : Icons.sentiment_neutral), // 출석 안한날
                           color: isPresent
-                              ? const Color.fromARGB(
-                                  255, 78, 91, 235) // 출석한날 파란색
+                              ? AppColors.kBrighYellow // 출석한날 파란색
                               : (date == now
-                                  ? AppColors.kOrange
+                                  ? AppColors.kBrighYellow
                                   : // 오늘은 주황색
-                                  null), // 나머지는 기본 색
+                                  AppColors.kBrighYellow), // 나머지는 기본 색
+                          size: ScreenUtil().screenWidth / 14,
                         ),
-                        Text(getDayOfWeek(date)), // 요일 표시
+                        Text(
+                          getDayOfWeek(date),
+                          style: TextStyle(color: AppColors.kBrighYellow),
+                        ), // 요일 표시
                       ],
                     ),
                   );
