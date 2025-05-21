@@ -7,8 +7,8 @@ import 'package:meditation_friend/app/modules/splash/views/widgets/custom_loadin
 
 import '../../../constant/app_color.dart';
 
-class UpdateScreen extends GetView<SplashController> {
-  const UpdateScreen({super.key});
+class SplashView extends GetView<SplashController> {
+  const SplashView({super.key});
 
   @override
   Widget build(BuildContext context) {

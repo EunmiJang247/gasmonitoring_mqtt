@@ -23,7 +23,7 @@ class AppPages {
   static final routes = [
     GetPage(
       name: _Paths.SPLASH,
-      page: () => const UpdateScreen(),
+      page: () => const SplashView(),
       binding: SplashBinding(),
     ),
     GetPage(
