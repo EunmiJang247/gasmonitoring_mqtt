@@ -20,7 +20,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import 'package:flutter_local_notifications/flutter_local_notifications.dart'; // ✅ 로컬 알림 패키지 import
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin(); // ✅ 글로벌 플러그인 인스턴스
@@ -31,14 +31,18 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 Future<void> main() async {
+  // 1. Flutter 바인딩 초기화
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  // 2. 기본 설정 초기화
   await dotenv.load(fileName: ".env");
-
   HttpOverrides.global = MyHttpOverrides();
+  await initializeDateFormatting('ko');
 
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // 💥 여기가 꼭 필요해
+  // 3. 필수 서비스 초기화
+  await Firebase.initializeApp();
+  await Get.putAsync(() => LocalAppDataService().init());
 
-  // ✅ 로컬 알림 초기화 (안 하면 포그라운드 표시 안 됨)
+  // 4. 알림 설정
   const AndroidInitializationSettings androidInitSettings =
       AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -62,12 +66,9 @@ Future<void> main() async {
   // ✅ 백그라운드 메시지 핸들러 등록
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  await initializeDateFormatting('ko');
   KakaoSdk.init(nativeAppKey: '41fc802ab8a066fcc2b3016fb2c5fb98'); // 네이티브 앱 키
   // final String keyHash = await KakaoSdk.origin;
   // print('키해시: $keyHash'); // 이 값을 복사해두세요
-
-  await Get.putAsync(() => LocalAppDataService().init());
 
   Get.lazyPut<AppAPI>(() => AppAPI());
 
