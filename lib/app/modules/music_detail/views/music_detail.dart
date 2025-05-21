@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
 import 'package:meditation_friend/app/constant/constants.dart';
 import 'package:meditation_friend/app/modules/music_detail/controllers/music_detail_controller.dart';
+import 'package:meditation_friend/app/widgets/custom_app_bar.dart';
 import 'package:meditation_friend/app/widgets/under_tab_bar.dart';
 
 class MusicDetailView extends GetView<MusicDetailController> {
@@ -19,15 +20,27 @@ class MusicDetailView extends GetView<MusicDetailController> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.kAppBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.kSkyBlue,
-        title: const Text('명상음악 재생'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
+      appBar: CustomAppBar(
+        title: '명상재생',
+        leftSide: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: () {},
+        ),
+        rightSide: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: Icon(Icons.notifications),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () {},
+            ),
+          ],
         ),
       ),
+      backgroundColor: AppColors.kAppBackgroundColor,
       body: PopScope(
         canPop: true,
         onPopInvoked: (didPop) {
@@ -101,7 +114,7 @@ class MusicDetailView extends GetView<MusicDetailController> {
                                     controller.appService.audioPlayer
                                         .seek(Duration(seconds: value.toInt()));
                                   },
-                                  activeColor: AppColors.kOrange,
+                                  activeColor: AppColors.kBrighYellow,
                                   inactiveColor: Colors.grey,
                                 ),
 
@@ -116,12 +129,12 @@ class MusicDetailView extends GetView<MusicDetailController> {
                                       Text(
                                         _formatDuration(position),
                                         style: const TextStyle(
-                                            color: Colors.black54),
+                                            color: AppColors.kBrighYellow),
                                       ),
                                       Text(
                                         _formatDuration(duration),
                                         style: const TextStyle(
-                                            color: Colors.black54),
+                                            color: AppColors.kBrighYellow),
                                       ),
                                     ],
                                   ),
@@ -136,12 +149,20 @@ class MusicDetailView extends GetView<MusicDetailController> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.stop, size: 48),
+                              icon: const Icon(
+                                Icons.stop,
+                                size: 48,
+                                color: AppColors.kBrighYellow,
+                              ),
                               onPressed: controller.stopMusic,
                             ),
                             if (!isPlaying.value)
                               IconButton(
-                                  icon: const Icon(Icons.play_arrow, size: 48),
+                                  icon: const Icon(
+                                    Icons.play_arrow,
+                                    size: 48,
+                                    color: AppColors.kBrighYellow,
+                                  ),
                                   onPressed: () async {
                                     try {
                                       await controller.playMusic();
@@ -151,11 +172,19 @@ class MusicDetailView extends GetView<MusicDetailController> {
                                   }),
                             if (isPlaying.value)
                               IconButton(
-                                icon: const Icon(Icons.pause, size: 48),
+                                icon: const Icon(
+                                  Icons.pause,
+                                  size: 48,
+                                  color: AppColors.kBrighYellow,
+                                ),
                                 onPressed: controller.pauseMusic,
                               ),
                             IconButton(
-                                icon: const Icon(Icons.skip_next, size: 48),
+                                icon: const Icon(
+                                  Icons.skip_next,
+                                  size: 48,
+                                  color: AppColors.kBrighYellow,
+                                ),
                                 onPressed: () async {
                                   try {
                                     await controller.playNextMusic();

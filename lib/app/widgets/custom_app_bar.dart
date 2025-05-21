@@ -3,14 +3,16 @@ import 'package:meditation_friend/app/constant/app_color.dart';
 import '../constant/constants.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  const CustomAppBar({
+  CustomAppBar({
     super.key,
     required this.leftSide,
     required this.rightSide,
+    this.title,
   });
 
   final Widget leftSide;
   final Widget rightSide;
+  String? title;
 
   @override
   Size get preferredSize => Size.fromHeight(appBarHeight);
@@ -45,7 +47,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           // 중앙 타이틀
           Center(
             child: Text(
-              '명상 친구',
+              widget.title ?? "명상친구",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
