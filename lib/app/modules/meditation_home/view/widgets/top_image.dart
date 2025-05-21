@@ -14,7 +14,7 @@ class TopImage extends StatelessWidget {
         Text(
           'Namaste, \nJenny',
           style: TextStyle(
-            color: Color(0xFFFFFF00),
+            color: AppColors.kBrighYellow,
             fontSize: 24,
             fontWeight: FontWeight.bold,
           ),

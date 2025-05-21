@@ -35,7 +35,6 @@ class MeditationHome extends GetView<HomeController> {
           ],
         ),
       ),
-      backgroundColor: AppColors.kAppBackgroundColor,
       body: PopScope(
         canPop: true,
         onPopInvoked: (didPop) {
@@ -46,6 +45,32 @@ class MeditationHome extends GetView<HomeController> {
           child: Stack(
             fit: StackFit.expand, // Stack이 전체 화면을 차지하도록
             children: [
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: RadialGradient(
+                    center: Alignment.topLeft, // 오른쪽 중앙
+                    radius: 2,
+                    colors: [
+                      Color(0xFFF7FF00), // 형광 노랑
+                      Color(0xFF000000), // 블랙 배경
+                    ],
+                    stops: [0.0, .3],
+                  ),
+                ),
+              ),
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: RadialGradient(
+                    center: Alignment.centerRight, // 오른쪽 중앙
+                    radius: 2,
+                    colors: [
+                      Color(0xFFF7FF00), // 형광 노랑
+                      Color(0xFF000000), // 블랙 배경
+                    ],
+                    stops: [0.0, .3],
+                  ),
+                ),
+              ),
               SingleChildScrollView(
                 // 하단 패딩으로 탭바 영역 확보
                 padding: const EdgeInsets.only(bottom: 80),
