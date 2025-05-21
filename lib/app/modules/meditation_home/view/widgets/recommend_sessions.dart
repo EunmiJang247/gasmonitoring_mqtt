@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
 import 'package:get/get.dart';
-import 'package:meditation_friend/app/constant/constants.dart';
 import 'package:meditation_friend/app/modules/meditation_home/controllers/home_controller.dart';
-import 'package:meditation_friend/app/modules/mypage/views/widgets/gradient_button.dart';
 
 class RecommendSessions extends GetView<HomeController> {
   const RecommendSessions({super.key});
