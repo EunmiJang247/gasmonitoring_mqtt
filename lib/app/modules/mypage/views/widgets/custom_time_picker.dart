@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meditation_friend/app/constant/app_color.dart';
 
 class CustomTimePicker extends StatefulWidget {
   const CustomTimePicker({super.key});
@@ -39,12 +40,12 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
         Text(
           '선택된 시간: $selectedHour 시 $selectedMinute 분',
-          style: const TextStyle(fontSize: 20),
+          style: TextStyle(fontSize: 20, color: AppColors.kWhite),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -61,7 +62,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
             const SizedBox(width: 4),
             const Text(
               "시", // "시" 텍스트
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 16, color: AppColors.kWhite),
             ),
             const SizedBox(width: 10),
             // 분 스크롤
@@ -77,7 +78,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
             const SizedBox(width: 4),
             const Text(
               "분", // "분" 텍스트
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 16, color: AppColors.kWhite),
             ),
           ],
         ),
@@ -92,7 +93,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
     required ValueChanged<int> onSelectedItemChanged,
   }) {
     return SizedBox(
-      height: 120,
+      height: 140,
       width: 60,
       child: ListWheelScrollView.useDelegate(
         controller: controller,
@@ -104,7 +105,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
             return Center(
               child: Text(
                 list[index].toString(),
-                style: const TextStyle(fontSize: 24),
+                style: const TextStyle(fontSize: 16, color: AppColors.kWhite),
               ),
             );
           },

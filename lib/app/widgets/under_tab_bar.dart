@@ -16,7 +16,22 @@ class UnderTabBar extends StatelessWidget {
         break;
       case 1:
         _appService.currentIndex.value = 1;
-        Get.offNamed('/music-detail');
+        // 이미 재생 중인 음악이 있는지 확인
+        final currentMusic = _appService.curMusic?.value;
+
+        if (currentMusic != null && currentMusic.musicUrl != null) {
+          // 이미 재생 중인 음악이 있으면 해당 음악 정보와 함께 페이지 이동
+          Get.toNamed('/music-detail', arguments: {
+            'category': currentMusic.category ?? '',
+            'continue_current': true, // 현재 음악 계속 재생 플래그
+          });
+        } else {
+          // 재생 중인 음악이 없으면 빈 카테고리로 페이지 이동 (랜덤 음악 로드)
+          Get.toNamed('/music-detail', arguments: {
+            'category': '',
+            'continue_current': false,
+          });
+        }
         break;
       case 2:
         _appService.currentIndex.value = 2;
@@ -42,8 +57,8 @@ class UnderTabBar extends StatelessWidget {
               color: AppColors.kDark,
               border: Border(
                 top: BorderSide(
-                  color: AppColors.kBrighBlue, // 상단 보더 색상
-                  width: 1.0, // 보더 두께
+                  color: AppColors.kBrighBlue,
+                  width: 1.0,
                 ),
               ),
               boxShadow: [

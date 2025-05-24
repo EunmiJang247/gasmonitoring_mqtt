@@ -37,7 +37,7 @@ class AttendanceCheck extends GetView<HomeController> {
 
     return GestureDetector(
       onTap: () {
-        controller.onAttendanceCheck();
+        // controller.onAttendanceCheck();
         // 달력 페이지로 이동하기
       },
       child: Card(

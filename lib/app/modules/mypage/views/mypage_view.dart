@@ -6,10 +6,8 @@ import 'package:meditation_friend/app/constant/constants.dart';
 import 'package:meditation_friend/app/modules/mypage/controllers/mypage_controller.dart';
 import 'package:meditation_friend/app/modules/mypage/views/widgets/gradient_button.dart';
 import 'package:meditation_friend/app/modules/mypage/views/widgets/meditation_alarm_time_sheet.dart';
-import 'package:meditation_friend/app/modules/mypage/views/widgets/meditation_duration_sheet.dart';
-import 'package:meditation_friend/app/modules/mypage/views/widgets/meditation_gender_bottom_sheet.dart';
-import 'package:meditation_friend/app/modules/mypage/views/widgets/meditation_kind_bottom_sheet.dart';
 import 'package:meditation_friend/app/modules/mypage/views/widgets/tile_widget.dart';
+import 'package:meditation_friend/app/widgets/custom_img_button.dart';
 import 'package:meditation_friend/app/widgets/under_tab_bar.dart';
 
 class MypageView extends GetView<MypageController> {
@@ -45,7 +43,6 @@ class MypageView extends GetView<MypageController> {
                     ),
                   ),
                 ),
-
                 // 2. 배경 이미지
                 Positioned(
                   top: 0,
@@ -55,6 +52,21 @@ class MypageView extends GetView<MypageController> {
                     HOME_BG,
                     width: ScreenUtil().screenWidth, // 핸드폰 전체 너비로
                     fit: BoxFit.fitWidth, // 너비에 맞추기
+                  ),
+                ),
+                // 3. 뒤로가기 버튼 - 왼쪽 상단에 위치
+                Positioned(
+                  top: 16.h,
+                  left: 16.w,
+                  child: CustomImgButton(
+                    imagePath: 'assets/images/back_btn.png', // 실제 이미지 경로
+                    onPressed: () {
+                      Get.offNamed('/meditation-home');
+                      controller.appService.currentIndex.value = 0;
+                    },
+                    // 선택적 매개변수
+                    size: 45.w, // 크기 조정 (원하는 경우)
+                    borderRadius: 25.r, // 둥글기 조정 (원하는 경우)
                   ),
                 ),
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -85,37 +97,37 @@ class MypageView extends GetView<MypageController> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 10.h),
                   Container(
                     child: Column(
                       children: [
+                        //       ProfileTileWidget(
+                        //         title: "선호하는 명상종류",
+                        //         leading: Icons.check,
+                        //         onTap: () => meditationKindBottomSheet(context),
+                        //       ),
+                        //       SizedBox(height: 4.h),
+                        //       ProfileTileWidget(
+                        //         title: "명상 길이 설정",
+                        //         leading: Icons.timelapse,
+                        //         onTap: () => meditationDurationBottomSheet(context),
+                        //       ),
+                        //       SizedBox(height: 4.h),
                         ProfileTileWidget(
-                          title: "선호하는 명상종류",
-                          leading: Icons.check,
-                          onTap: () => meditationKindBottomSheet(context),
-                        ),
-                        SizedBox(height: 4.h),
-                        ProfileTileWidget(
-                          title: "명상 길이 설정",
-                          leading: Icons.timelapse,
-                          onTap: () => meditationDurationBottomSheet(context),
-                        ),
-                        SizedBox(height: 4.h),
-                        ProfileTileWidget(
-                          title: "명상 알림 시간 설정",
+                          title: "명상 알람 시간 설정",
                           leading: Icons.lock_clock,
                           onTap: () => meditationAlramTimeBottomSheet(context),
                         ),
-                        SizedBox(height: 4.h),
-                        ProfileTileWidget(
-                          title: "선호하는 성별",
-                          leading: Icons.accessibility,
-                          onTap: () => meditationGenderBottomSheet(context),
-                        ),
+                        //       SizedBox(height: 4.h),
+                        //       ProfileTileWidget(
+                        //         title: "선호하는 성별",
+                        //         leading: Icons.accessibility,
+                        //         onTap: () => meditationGenderBottomSheet(context),
+                        //       ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 20.h),
+                  // SizedBox(height: 20.h),
                   Padding(
                       padding: const EdgeInsets.all(14.0),
                       child: GradientBtn(

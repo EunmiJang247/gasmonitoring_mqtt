@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:meditation_friend/app/constant/app_color.dart';
 import 'package:meditation_friend/app/modules/mypage/views/widgets/custom_time_picker.dart';
 import 'package:meditation_friend/app/modules/mypage/views/widgets/week_day_select_buttons.dart';
 
@@ -10,7 +11,7 @@ Future<dynamic> meditationAlramTimeBottomSheet(BuildContext context) {
       return Container(
         height: MediaQuery.of(context).size.height * 0.7,
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: AppColors.kDark,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
         ),
         child: Padding(
@@ -21,13 +22,20 @@ Future<dynamic> meditationAlramTimeBottomSheet(BuildContext context) {
             children: [
               Text(
                 '알람 시간',
+                style: TextStyle(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.kWhite,
+                ),
               ),
-              SizedBox(height: 10.h),
-
-              // Information Section
+              SizedBox(height: 4.h),
               Text(
                 '해당 시간에 알람을 드려요',
                 textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: AppColors.kWhite.withOpacity(0.7),
+                ),
               ),
               SizedBox(height: 15.h),
               WeekDaySelectButtons(

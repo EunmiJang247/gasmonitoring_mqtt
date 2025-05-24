@@ -41,8 +41,6 @@ class AppService extends GetxService {
     audioPlayer.playerStateStream.listen((state) {
       isPlaying.value = state.playing;
     });
-    musicList.value = await _getMusicList() ?? [];
-    curMusic?.value = await getRandomMusic();
     await getAttendanceCheck();
     initFirebaseMessageHandler();
   }
@@ -270,6 +268,49 @@ class AppService extends GetxService {
     } else {
       final musicResult = await _appRepository.searchMusicList();
       return musicResult;
+    }
+  }
+
+  // 카테고리별 명상 음악 요청 메서드 (AppService에 추가)
+// 카테고리별 명상 음악 요청 메서드 (HomeController에서 수정)
+  Future<List<Music>> fetchMeditationByCategory(String category) async {
+    try {
+      // 로딩 상태 표시
+      Get.dialog(
+        const Center(child: CircularProgressIndicator()),
+        barrierDismissible: false,
+      );
+
+      // 전체 음악 목록 가져오기
+      final allMusic = await _getMusicList();
+
+      if (allMusic != null) {
+        // 카테고리로 필터링
+        final filteredMusic =
+            allMusic.where((music) => music.category == category).toList();
+
+        // 앱 서비스에 저장
+        musicList.assignAll(filteredMusic);
+
+        // 첫 번째 음악이 있으면 현재 음악으로 설정
+        if (filteredMusic.isNotEmpty) {
+          curMusic?.value = filteredMusic.first;
+        }
+        logInfo("$category 카테고리 명상 음악 ${filteredMusic.length}개 로드 완료");
+        return filteredMusic;
+      } else {
+        // 에러 처리
+        logError("명상 음악 로드 실패");
+        Get.snackbar('오류', '명상 음악을 불러오는데 실패했습니다.');
+        return <Music>[];
+      }
+    } catch (e) {
+      logError("카테고리별 음악 로드 중 예외 발생: $e");
+      Get.snackbar('오류', '서버 연결에 문제가 발생했습니다.');
+      return <Music>[];
+    } finally {
+      // 로딩 다이얼로그 닫기
+      Get.back();
     }
   }
 }

@@ -69,14 +69,8 @@ class MeditationHome extends GetView<HomeController> {
                   ],
                 ),
               ),
-
               // 4. 하단 탭바 (항상 위에 표시)
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: UnderTabBar(),
-              ),
+              UnderTabBar(),
             ],
           ),
         ),

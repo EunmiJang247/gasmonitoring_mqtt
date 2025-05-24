@@ -16,10 +16,12 @@ class StartMeditationPlayerBtn extends GetView<HomeController> {
         children: [
           Expanded(
             child: MeditationCard(
-              onTap: () {
-                //
+              onTap: () async {
+                Get.toNamed('/music-detail', arguments: {
+                  'category': '바디스캐닝',
+                });
               },
-              title: "Evening \nMeditation\nto Relax",
+              title: "나를 \n바라보는 \n바디스캐닝",
               duration: "15 min",
               color: Color.fromRGBO(108, 99, 255, 0.75),
             ),
@@ -27,10 +29,12 @@ class StartMeditationPlayerBtn extends GetView<HomeController> {
           SizedBox(width: 16),
           Expanded(
             child: MeditationCard(
-              onTap: () {
-                //
+              onTap: () async {
+                Get.toNamed('/music-detail', arguments: {
+                  'category': '호흡',
+                });
               },
-              title: "Get Back\nto Sleep\nto Sleep",
+              title: "마음이 \n편해지는 \n호흡명상",
               duration: "10 min",
               color: Color.fromRGBO(47, 47, 79, 0.75), // 반투명 남색
             ),

@@ -36,7 +36,8 @@ class _WeekDaySelectButtonsState extends State<WeekDaySelectButtons> {
             child: ElevatedButton(
               onPressed: () => toggleDay(index),
               style: ElevatedButton.styleFrom(
-                backgroundColor: isSelected ? AppColors.kOrange : Colors.grey,
+                backgroundColor:
+                    isSelected ? AppColors.kBrighBlue : AppColors.kGray,
                 foregroundColor: Colors.white,
               ),
               child: Text(days[index]),

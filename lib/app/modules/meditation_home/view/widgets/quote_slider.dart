@@ -11,7 +11,7 @@ class QuoteSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       constraints: BoxConstraints(
-        maxHeight: 80.h, // 최소 높이 설정
+        maxHeight: 80.h,
       ),
       child: ImageSlideshow(
         indicatorBackgroundColor: Colors.transparent,
@@ -31,15 +31,15 @@ class QuoteSlider extends StatelessWidget {
                     overflow: TextOverflow.ellipsis, // 초과 시 ... 처리
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                      color: AppColors.kWhite, // Namaste 텍스트 색상
+                      color: AppColors.kWhite,
                       fontSize: 20.sp,
                     )),
                 SizedBox(height: 4),
                 Text('- ${quotes[i].author}',
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                      color: AppColors.kWhite, // Namaste 텍스트 색상
-                      fontSize: 16.sp,
+                      color: AppColors.kWhite,
+                      fontSize: 14.sp,
                     )),
               ],
             ),

@@ -17,9 +17,7 @@ class MeditationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        // 부모한테 받은 함수 실행
-      },
+      onTap: onTap != null ? () => onTap!() : null,
       child: Container(
         width: 140,
         padding: const EdgeInsets.all(16),
