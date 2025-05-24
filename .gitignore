@@ -58,3 +58,4 @@ macos/Flutter/GeneratedPluginRegistrant.swift
 android/app/build/
 
 **/ephemeral/
+pubspec.lock

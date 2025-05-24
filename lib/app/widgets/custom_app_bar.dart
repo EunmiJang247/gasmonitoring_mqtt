@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
 import '../constant/constants.dart';
 
@@ -8,11 +9,13 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.leftSide,
     required this.rightSide,
     this.title,
+    this.bgColor,
   });
 
   final Widget leftSide;
   final Widget rightSide;
   String? title;
+  Color? bgColor;
 
   @override
   Size get preferredSize => Size.fromHeight(appBarHeight);
@@ -27,10 +30,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
     return Container(
       height: appBarHeight,
       decoration: BoxDecoration(
-        color: AppColors.kDark,
+        color: widget.bgColor ?? AppColors.kDark,
         border: Border(
           bottom: BorderSide(
-            color: AppColors.kBrighYellow,
+            color: AppColors.kBrighBlue,
             width: 1.0,
           ),
         ),
@@ -38,30 +41,23 @@ class _CustomAppBarState extends State<CustomAppBar> {
       child: Stack(
         children: [
           // 왼쪽 위젯
-          Positioned(
-            left: 16,
-            top: 0,
-            bottom: 0,
-            child: Center(child: widget.leftSide),
-          ),
+          // Positioned(
+          //   left: 16,
+          //   top: 0,
+          //   bottom: 0,
+          //   child: Center(child: widget.leftSide),
+          // ),
           // 중앙 타이틀
           Center(
-            child: Text(
-              widget.title ?? "명상친구",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.kBrighYellow,
-              ),
-            ),
+            child: Image.asset("assets/images/logo.png", width: 100.w),
           ),
           // 오른쪽 위젯
-          Positioned(
-            right: 16,
-            top: 0,
-            bottom: 0,
-            child: Center(child: widget.rightSide),
-          ),
+          // Positioned(
+          //   right: 16,
+          //   top: 0,
+          //   bottom: 0,
+          //   child: Center(child: widget.rightSide),
+          // ),
         ],
       ),
     );

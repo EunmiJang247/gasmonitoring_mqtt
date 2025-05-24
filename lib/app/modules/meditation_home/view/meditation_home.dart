@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:meditation_friend/app/constant/app_color.dart';
+import 'package:meditation_friend/app/constant/constants.dart';
 import 'package:meditation_friend/app/modules/meditation_home/controllers/home_controller.dart';
 import 'package:meditation_friend/app/modules/meditation_home/view/widgets/attendance_check.dart';
 import 'package:meditation_friend/app/modules/meditation_home/view/widgets/quote_slider.dart';
 import 'package:meditation_friend/app/modules/meditation_home/view/widgets/recommend_sessions.dart';
 import 'package:meditation_friend/app/modules/meditation_home/view/widgets/start_meditation_player_btn.dart';
-import 'package:meditation_friend/app/modules/meditation_home/view/widgets/top_image.dart';
-import 'package:meditation_friend/app/widgets/custom_app_bar.dart';
 import 'package:meditation_friend/app/widgets/under_tab_bar.dart';
 
 class MeditationHome extends GetView<HomeController> {
@@ -15,25 +16,6 @@ class MeditationHome extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        leftSide: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () {},
-        ),
-        rightSide: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: Icon(Icons.notifications),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () {},
-            ),
-          ],
-        ),
-      ),
       body: PopScope(
         canPop: true,
         onPopInvoked: (didPop) {
@@ -44,50 +26,57 @@ class MeditationHome extends GetView<HomeController> {
           child: Stack(
             fit: StackFit.expand, // Stack이 전체 화면을 차지하도록
             children: [
+              // 1. 배경 그라데이션
               Container(
                 decoration: const BoxDecoration(
-                  gradient: RadialGradient(
-                    center: Alignment.topLeft, // 오른쪽 중앙
-                    radius: 2,
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                     colors: [
-                      Color(0xFFF7FF00), // 형광 노랑
-                      Color(0xFF000000), // 블랙 배경
+                      Color(0xFF161538), // 위쪽 색상
+                      AppColors.kDark, // 아래쪽 색상
                     ],
-                    stops: [0.0, .3],
                   ),
                 ),
               ),
-              Container(
-                decoration: const BoxDecoration(
-                  gradient: RadialGradient(
-                    center: Alignment.centerRight, // 오른쪽 중앙
-                    radius: 2,
-                    colors: [
-                      Color(0xFFF7FF00), // 형광 노랑
-                      Color(0xFF000000), // 블랙 배경
-                    ],
-                    stops: [0.0, .3],
-                  ),
+
+              // 2. 배경 상단 이미지
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: Image.asset(
+                  HOME_BG,
+                  width: ScreenUtil().screenWidth, // 핸드폰 전체 너비로
+                  fit: BoxFit.fitWidth, // 너비에 맞추기
                 ),
               ),
+
+              // 3. 스크롤 가능한 콘텐츠
               SingleChildScrollView(
                 // 하단 패딩으로 탭바 영역 확보
-                padding: const EdgeInsets.only(bottom: 80),
+                padding: EdgeInsets.only(bottom: 80.h),
                 child: Column(
-                  children: const [
-                    TopImage(),
-                    SizedBox(height: 10),
-                    QuoteSlider(),
-                    SizedBox(height: 10),
-                    StartMeditationPlayerBtn(),
-                    SizedBox(height: 10),
-                    RecommendSessions(),
-                    AttendanceCheck(),
-                    SizedBox(height: 100),
+                  children: [
+                    SizedBox(height: 20.h),
+                    const QuoteSlider(),
+                    SizedBox(height: 10.h),
+                    const StartMeditationPlayerBtn(),
+                    SizedBox(height: 10.h),
+                    const AttendanceCheck(),
+                    SizedBox(height: 10.h),
+                    const RecommendSessions(),
                   ],
                 ),
               ),
-              UnderTabBar(),
+
+              // 4. 하단 탭바 (항상 위에 표시)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: UnderTabBar(),
+              ),
             ],
           ),
         ),

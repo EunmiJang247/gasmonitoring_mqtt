@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
+import 'package:meditation_friend/app/constant/app_color.dart';
 import 'package:meditation_friend/app/constant/constants.dart';
 
 class QuoteSlider extends StatelessWidget {
@@ -8,8 +9,10 @@ class QuoteSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 80,
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: 80.h, // 최소 높이 설정
+      ),
       child: ImageSlideshow(
         indicatorBackgroundColor: Colors.transparent,
         indicatorColor: Colors.transparent,
@@ -18,24 +21,26 @@ class QuoteSlider extends StatelessWidget {
         isLoop: true,
         children: List.generate(quotes.length, (i) {
           return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 1.h),
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(quotes[i].quote,
                     maxLines: 2, // 최대 2줄까지만 표시
                     overflow: TextOverflow.ellipsis, // 초과 시 ... 처리
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.left,
                     style: TextStyle(
-                      color: Color(0xFFFFFF00), // Namaste 텍스트 색상
-                      fontSize: 16,
+                      color: AppColors.kWhite, // Namaste 텍스트 색상
+                      fontSize: 20.sp,
                     )),
                 SizedBox(height: 4),
-                Text(
-                  '- ${quotes[i].author}',
-                  textAlign: TextAlign.start,
-                ),
+                Text('- ${quotes[i].author}',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: AppColors.kWhite, // Namaste 텍스트 색상
+                      fontSize: 16.sp,
+                    )),
               ],
             ),
           );

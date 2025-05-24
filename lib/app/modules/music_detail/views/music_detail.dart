@@ -1,10 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
 import 'package:meditation_friend/app/constant/constants.dart';
 import 'package:meditation_friend/app/modules/music_detail/controllers/music_detail_controller.dart';
-import 'package:meditation_friend/app/widgets/custom_app_bar.dart';
+import 'package:meditation_friend/app/widgets/custom_img_button.dart';
 import 'package:meditation_friend/app/widgets/under_tab_bar.dart';
 
 class MusicDetailView extends GetView<MusicDetailController> {
@@ -20,26 +20,6 @@ class MusicDetailView extends GetView<MusicDetailController> {
     }
 
     return Scaffold(
-      appBar: CustomAppBar(
-        title: '명상재생',
-        leftSide: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () {},
-        ),
-        rightSide: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: Icon(Icons.notifications),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () {},
-            ),
-          ],
-        ),
-      ),
       backgroundColor: AppColors.kAppBackgroundColor,
       body: PopScope(
         canPop: true,
@@ -52,6 +32,45 @@ class MusicDetailView extends GetView<MusicDetailController> {
           child: Stack(
             fit: StackFit.expand,
             children: [
+              // 1. 배경 그라데이션
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0xFF161538), // 위쪽 색상
+                      AppColors.kDark, // 아래쪽 색상
+                    ],
+                  ),
+                ),
+              ),
+              // 2. 배경 이미지
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: Opacity(
+                  opacity: 0.4, // 투명도 조절
+                  child: Image.asset(
+                    ASSETS_IMAGES_MUSICPLAYING_BG, // 배경 이미지 경로
+                    width: MediaQuery.of(context).size.width,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              // 3. 뒤로가기 버튼 - 왼쪽 상단에 위치
+              Positioned(
+                top: 16.h,
+                left: 16.w,
+                child: CustomImgButton(
+                  imagePath: 'assets/images/back_btn.png', // 실제 이미지 경로
+                  onPressed: () => Get.back(),
+                  // 선택적 매개변수
+                  size: 45.w, // 크기 조정 (원하는 경우)
+                  borderRadius: 25.r, // 둥글기 조정 (원하는 경우)
+                ),
+              ),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
@@ -66,29 +85,30 @@ class MusicDetailView extends GetView<MusicDetailController> {
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // 음악 이미지
-                        music.imageUrl?.isNotEmpty == true
-                            ? CachedNetworkImage(
-                                imageUrl: music.imageUrl!,
-                                width: 300,
-                                height: 300,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.asset(
-                                MUSICPLAYING,
-                                width: 300,
-                                height: 300,
-                                fit: BoxFit.cover,
-                              ),
+                        Image.asset(
+                          MUSICPLAYING,
+                          width: 300,
+                          height: 300,
+                          fit: BoxFit.cover,
+                        ),
                         const SizedBox(height: 20),
 
                         // 음악 제목
                         Text(
                           music.title ?? '제목 없음',
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.normal,
+                              color: AppColors.kWhite),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 4),
+                        Text(
+                          music.description ?? '제목 없음',
+                          style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w100,
+                              color: AppColors.kGray),
+                        ),
 
                         // 슬라이더
                         StreamBuilder<Duration>(
@@ -103,21 +123,6 @@ class MusicDetailView extends GetView<MusicDetailController> {
 
                             return Column(
                               children: [
-                                // 슬라이더
-                                Slider(
-                                  value: position.inSeconds
-                                      .toDouble()
-                                      .clamp(0, duration.inSeconds.toDouble()),
-                                  min: 0,
-                                  max: duration.inSeconds.toDouble(),
-                                  onChanged: (value) {
-                                    controller.appService.audioPlayer
-                                        .seek(Duration(seconds: value.toInt()));
-                                  },
-                                  activeColor: AppColors.kBrighYellow,
-                                  inactiveColor: Colors.grey,
-                                ),
-
                                 // 시간 표시
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -129,40 +134,60 @@ class MusicDetailView extends GetView<MusicDetailController> {
                                       Text(
                                         _formatDuration(position),
                                         style: const TextStyle(
-                                            color: AppColors.kBrighYellow),
+                                            color: AppColors.kWhite,
+                                            fontSize: 12),
                                       ),
                                       Text(
                                         _formatDuration(duration),
                                         style: const TextStyle(
-                                            color: AppColors.kBrighYellow),
+                                            color: AppColors.kWhite,
+                                            fontSize: 12),
                                       ),
                                     ],
+                                  ),
+                                ),
+                                SizedBox(height: 10.h),
+                                // 슬라이더
+                                Container(
+                                  width: 300.w,
+                                  child: SliderTheme(
+                                    data: SliderThemeData(
+                                      thumbShape: SliderComponentShape
+                                          .noThumb, // 원(thumb) 제거
+                                      trackHeight: 4.0, // 트랙 높이 조정
+                                      activeTrackColor: AppColors.kWhite,
+                                      inactiveTrackColor:
+                                          const Color(0xFF2E2F37),
+                                      overlayShape: SliderComponentShape
+                                          .noOverlay, // 오버레이도 제거
+                                    ),
+                                    child: Slider(
+                                      value: position.inSeconds
+                                          .toDouble()
+                                          .clamp(
+                                              0, duration.inSeconds.toDouble()),
+                                      min: 0,
+                                      max: duration.inSeconds.toDouble(),
+                                      onChanged: (value) {
+                                        controller.appService.audioPlayer.seek(
+                                            Duration(seconds: value.toInt()));
+                                      },
+                                    ),
                                   ),
                                 ),
                               ],
                             );
                           },
                         ),
-
+                        const SizedBox(height: 10),
                         // 재생 컨트롤
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            IconButton(
-                              icon: const Icon(
-                                Icons.stop,
-                                size: 48,
-                                color: AppColors.kBrighYellow,
-                              ),
-                              onPressed: controller.stopMusic,
-                            ),
                             if (!isPlaying.value)
-                              IconButton(
-                                  icon: const Icon(
-                                    Icons.play_arrow,
-                                    size: 48,
-                                    color: AppColors.kBrighYellow,
-                                  ),
+                              CustomImgButton(
+                                  imagePath: "assets/images/play_btn.png",
+                                  size: 48.w,
                                   onPressed: () async {
                                     try {
                                       await controller.playMusic();
@@ -174,24 +199,14 @@ class MusicDetailView extends GetView<MusicDetailController> {
                               IconButton(
                                 icon: const Icon(
                                   Icons.pause,
-                                  size: 48,
-                                  color: AppColors.kBrighYellow,
+                                  size: 36,
+                                  color: AppColors.kGray,
                                 ),
                                 onPressed: controller.pauseMusic,
                               ),
-                            IconButton(
-                                icon: const Icon(
-                                  Icons.skip_next,
-                                  size: 48,
-                                  color: AppColors.kBrighYellow,
-                                ),
-                                onPressed: () async {
-                                  try {
-                                    await controller.playNextMusic();
-                                  } catch (e) {
-                                    print('Error playing music: $e');
-                                  }
-                                }),
+                            SizedBox(
+                              width: 10,
+                            ),
                           ],
                         ),
                       ],

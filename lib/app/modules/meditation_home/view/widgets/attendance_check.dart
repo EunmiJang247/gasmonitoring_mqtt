@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
-import 'package:flutter/material.dart';
 import 'package:meditation_friend/app/modules/meditation_home/controllers/home_controller.dart';
 
 class AttendanceCheck extends GetView<HomeController> {
@@ -45,11 +44,11 @@ class AttendanceCheck extends GetView<HomeController> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        color: AppColors.kDark,
+        color: Color.fromRGBO(47, 47, 79, 0.75), // 반투명 남색
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: SizedBox(
-            width: ScreenUtil().screenWidth - 100, // ← 여기서 너비 제한
+            width: ScreenUtil().screenWidth - 80, // ← 여기서 너비 제한
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -71,19 +70,19 @@ class AttendanceCheck extends GetView<HomeController> {
                           isPresent
                               ? Icons.sentiment_very_satisfied // 출석한 날
                               : (date == now
-                                  ? Icons.sentiment_satisfied // 오늘 (출석 안함)
+                                  ? Icons.sentiment_very_satisfied // 오늘 (출석 안함)
                                   : Icons.sentiment_neutral), // 출석 안한날
                           color: isPresent
-                              ? AppColors.kBrighYellow // 출석한날 파란색
+                              ? AppColors.kWhite // 출석한날 파란색
                               : (date == now
-                                  ? AppColors.kBrighYellow
+                                  ? AppColors.kWhite
                                   : // 오늘은 주황색
                                   AppColors.kGray), // 나머지는 기본 색
                           size: ScreenUtil().screenWidth / 14,
                         ),
                         Text(
                           getDayOfWeek(date),
-                          style: TextStyle(color: AppColors.kBrighYellow),
+                          style: TextStyle(color: AppColors.kWhite),
                         ), // 요일 표시
                       ],
                     ),

@@ -41,11 +41,13 @@ const List<String> location = [
   "5",
 ]; //부위
 const String ASSETS_IMAGES_SPLASHSCREEN_PNG = 'assets/images/splashscreen.png';
+const String HOME_BG = 'assets/images/home_bg.png';
 const String MUSICPLAYING = 'assets/images/music_playing_pic.png';
 const String ASSETS_IMAGES_SPLASHSCREEN_DOTDOT_PNG =
     'assets/images/dotdot_splash.png';
 const String ASSETS_MUSIC_BAR = 'assets/images/music_sound_bar.png';
 const String ASSETS_PLAY_BUTTON = 'assets/images/playbutton.png';
+const String ASSETS_IMAGES_MUSICPLAYING_BG = 'assets/images/music_ing_bg.png';
 List<Quote> quotes = [
   Quote(author: "파울로 코엘료", quote: "언제나 현재에 집중할 수 있다면 행복할 것이다."),
   Quote(author: "달라이 라마", quote: "행복은 이미 우리 안에 있습니다.\n 그것을 인식하는 것이 중요합니다."),

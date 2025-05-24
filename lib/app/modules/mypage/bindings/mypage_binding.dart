@@ -10,7 +10,6 @@ class MypageBinding extends Bindings {
       () => MypageController(
           appService: Get.find<AppService>(),
           localAppDataService: Get.find<LocalAppDataService>()),
-      //
     );
   }
 }

@@ -15,13 +15,25 @@ class ProfileTileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      visualDensity: VisualDensity.compact,
-      onTap: onTap,
-      leading: Icon(leading, color: AppColors.kGray),
-      title: Text(title),
-      trailing: const Icon(Icons.add_ic_call_outlined,
-          size: 16, color: AppColors.kDark),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.kDark.withOpacity(0.3), // 원하는 색상으로 변경
+          borderRadius: BorderRadius.circular(10), // 모서리 둥글게 (선택사항)
+        ),
+        child: ListTile(
+          visualDensity: VisualDensity.compact,
+          onTap: onTap,
+          leading: Icon(leading, color: AppColors.kWhite),
+          title: Text(title,
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.kWhite,
+                fontWeight: FontWeight.w500,
+              )),
+        ),
+      ),
     );
   }
 }

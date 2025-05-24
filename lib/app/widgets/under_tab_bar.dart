@@ -42,7 +42,7 @@ class UnderTabBar extends StatelessWidget {
               color: AppColors.kDark,
               border: Border(
                 top: BorderSide(
-                  color: AppColors.kBrighYellow, // 상단 보더 색상
+                  color: AppColors.kBrighBlue, // 상단 보더 색상
                   width: 1.0, // 보더 두께
                 ),
               ),
@@ -61,14 +61,14 @@ class UnderTabBar extends StatelessWidget {
                 elevation: 0,
                 currentIndex: _appService.currentIndex.value,
                 type: BottomNavigationBarType.fixed,
-                selectedItemColor: AppColors.kBrighYellow,
+                selectedItemColor: AppColors.kBrighBlue,
                 unselectedItemColor: Colors.grey,
                 items: [
                   BottomNavigationBarItem(
                     icon: Icon(
                       Icons.home,
                       color: _appService.currentIndex.value == 0
-                          ? AppColors.kBrighYellow
+                          ? AppColors.kBrighBlue
                           : Colors.grey,
                     ),
                     label: '홈',
@@ -77,7 +77,7 @@ class UnderTabBar extends StatelessWidget {
                     icon: Icon(
                       Icons.music_note,
                       color: _appService.currentIndex.value == 1
-                          ? AppColors.kBrighYellow
+                          ? AppColors.kBrighBlue
                           : Colors.grey,
                     ),
                     label: '명상하기',
@@ -86,7 +86,7 @@ class UnderTabBar extends StatelessWidget {
                     icon: Icon(
                       Icons.person,
                       color: _appService.currentIndex.value == 2
-                          ? AppColors.kBrighYellow
+                          ? AppColors.kBrighBlue
                           : Colors.grey,
                     ),
                     label: '마이페이지',

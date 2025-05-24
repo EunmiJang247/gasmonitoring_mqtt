@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:meditation_friend/app/constant/app_color.dart';
 
 class EllipsisLoadingIndicatorCustom extends StatefulWidget {
   const EllipsisLoadingIndicatorCustom({super.key});
@@ -37,25 +39,63 @@ class _EllipsisLoadingIndicatorCustomState
   @override
   Widget build(BuildContext context) {
     String dots = '.' * _dotCount;
-    return RichText(
-      text: TextSpan(
-        children: [
-          const TextSpan(
-            text: '내면을 들여다보는 자는 깨어난다',
-            style: TextStyle(
-              color: Color(0xFFFFFF00), // Namaste 텍스트 색상
-              fontSize: 16,
-            ),
+    return Column(
+      mainAxisSize: MainAxisSize.min, // 내용 크기만큼만 차지하도록 변경
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        // 첫 번째 줄
+        Text(
+          '내면을',
+          style: TextStyle(
+            color: Color(0xFF5244F3), // 원하는 색상
+            fontSize: 52,
           ),
-          TextSpan(
-            text: dots,
-            style: const TextStyle(
-              color: Color(0xFFFFFF00), // 형광노랑색 도트
-              fontSize: 16,
-            ),
+          textAlign: TextAlign.center,
+        ),
+        Text(
+          '들여다보는',
+          style: TextStyle(
+            color: AppColors.kWhite, // 원하는 색상
+            fontSize: 52.sp,
           ),
-        ],
-      ),
+          textAlign: TextAlign.center,
+        ),
+        Text(
+          '자는',
+          style: TextStyle(
+            color: Color(0xFF5244F3), // 원하는 색상
+            fontSize: 52.sp,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        // 두 번째 줄 (점들과 함께)
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '깨어난다',
+              style: TextStyle(
+                color: AppColors.kWhite, // 원하는 색상
+                fontSize: 52.sp,
+              ),
+            ),
+            // 고정 너비 사용 (OverflowBox 대신)
+            SizedBox(
+              width: 40.sp,
+              child: Text(
+                dots,
+                style: const TextStyle(
+                  color: AppColors.kWhite, // 원하는 색상
+                  fontSize: 48,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
