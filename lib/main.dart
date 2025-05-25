@@ -8,6 +8,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
+import 'package:meditation_friend/app/utils/log.dart';
 
 import 'app/constant/app_color.dart';
 import 'app/data/api/app_api.dart';
@@ -40,7 +41,7 @@ Future<void> main() async {
 
   // 3. 필수 서비스 초기화
   await Firebase.initializeApp();
-  await Get.putAsync(() => LocalAppDataService().init());
+  final localService = await Get.putAsync(() => LocalAppDataService().init());
 
   // 4. 알림 설정
   const AndroidInitializationSettings androidInitSettings =
@@ -70,6 +71,15 @@ Future<void> main() async {
   // final String keyHash = await KakaoSdk.origin;
   // print('키해시: $keyHash'); // 이 값을 복사해두세요
 
+  final lastUser = localService.getLastLoginUser();
+  final hasVisitedBefore = localService.hasVisitedBefore();
+
+  // ✅ 유저가 저장되어 있거나 방문기록이 있으면 홈으로 시작, 아니면 스플래시
+  final String initialRoute = (lastUser != null || hasVisitedBefore)
+      ? Routes.MEDITATION_HOME
+      : Routes.SPLASH;
+
+  await localService.saveAppVisitState(true);
   Get.lazyPut<AppAPI>(() => AppAPI());
 
   Get.put<AppRepository>(
@@ -105,7 +115,7 @@ Future<void> main() async {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            initialRoute: AppPages.INITIAL,
+            initialRoute: initialRoute,
             getPages: AppPages.routes,
             theme: ThemeData(
               fontFamily: "Pretendard",

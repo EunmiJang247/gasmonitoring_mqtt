@@ -3,6 +3,7 @@
 import 'package:meditation_friend/app/data/models/00_user.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:meditation_friend/app/utils/log.dart';
 
 import '../../utils/converter.dart';
 import '../models/update_history.dart';
@@ -82,5 +83,18 @@ class LocalAppDataService extends GetxService {
 
   List<UpdateHistoryItem>? getUpdateHistory() {
     return template_box.get('update_history')?.cast<UpdateHistoryItem>();
+  }
+
+// 앱 방문 기록 저장 - 최초 실행 여부 체크에 사용
+  Future<void> saveAppVisitState(bool visited) async {
+    await setting_box.put('has_visited_before', visited.toString());
+  }
+
+// 앱 방문 기록 확인
+  bool hasVisitedBefore() {
+    final visitState = setting_box.get('has_visited_before');
+    // 'true' 문자열이면 true 반환, 그 외에는 false 반환
+    logInfo("visitState: ${visitState}");
+    return visitState == 'true';
   }
 }

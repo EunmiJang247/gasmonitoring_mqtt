@@ -220,6 +220,7 @@ class AppService extends GetxService {
   Future<void> getAttendanceCheck() async {
     if (user.value != null) {
       BaseResponse? baseResponse = await _appRepository.getAttendanceCheck();
+      logInfo("baseResponse: ${baseResponse?.data}");
       if (baseResponse?.data != null && baseResponse!.data is List) {
         attendanceList.value =
             (baseResponse!.data as List).map((e) => e.toString()).toList();
