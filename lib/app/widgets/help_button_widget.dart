@@ -54,7 +54,6 @@ class HelpButtonWidget extends StatelessWidget {
               "?",
               style: TextStyle(
                   color: currentScale < scaleStd ? Colors.black : Colors.white,
-                  fontFamily: "Pretendard",
                   fontSize: 16,
                   fontWeight: FontWeight.bold),
             ),

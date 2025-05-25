@@ -31,9 +31,9 @@ class QuoteSlider extends StatelessWidget {
                     overflow: TextOverflow.ellipsis, // 초과 시 ... 처리
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                      color: AppColors.kWhite,
-                      fontSize: 20.sp,
-                    )),
+                        color: AppColors.kWhite,
+                        fontSize: 20.sp,
+                        letterSpacing: 0.5)),
                 SizedBox(height: 4),
                 Text('- ${quotes[i].author}',
                     textAlign: TextAlign.left,

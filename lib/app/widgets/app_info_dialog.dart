@@ -49,7 +49,6 @@ class _AppInfoDialog extends State<AppInfoDialog> {
                 const Text(
                   '업데이트 정보',
                   style: TextStyle(
-                      fontFamily: "Pretendard",
                       fontWeight: FontWeight.w600,
                       fontSize: 18,
                       color: Color(0xFF344054)),
@@ -100,7 +99,6 @@ class _AppInfoDialog extends State<AppInfoDialog> {
                           child: Text(
                             widget.updateHistory![index].version,
                             style: const TextStyle(
-                                fontFamily: "Pretendard",
                                 fontWeight: FontWeight.w700,
                                 fontSize: 16,
                                 color: Color(0xFF5F6262)),
@@ -126,7 +124,6 @@ class _AppInfoDialog extends State<AppInfoDialog> {
                                   const Text(
                                     '•',
                                     style: TextStyle(
-                                        fontFamily: "Pretendard",
                                         fontWeight: FontWeight.w400,
                                         fontSize: 14,
                                         color: Color(0xFF5F6262)),
@@ -136,7 +133,6 @@ class _AppInfoDialog extends State<AppInfoDialog> {
                                     child: Text(
                                       txt,
                                       style: const TextStyle(
-                                          fontFamily: "Pretendard",
                                           fontWeight: FontWeight.w400,
                                           fontSize: 14,
                                           height: 1.2,

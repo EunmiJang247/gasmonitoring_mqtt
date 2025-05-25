@@ -49,7 +49,6 @@ class OneButtonDialog extends StatelessWidget {
                     child: Text(
                       yes,
                       style: TextStyle(
-                          fontFamily: "Pretendard",
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 18),

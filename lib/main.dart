@@ -108,6 +108,7 @@ Future<void> main() async {
             initialRoute: AppPages.INITIAL,
             getPages: AppPages.routes,
             theme: ThemeData(
+              fontFamily: "Pretendard",
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
               scaffoldBackgroundColor: Colors.white,

@@ -109,3 +109,12 @@ flutter pub run build_runner build --delete-conflicting-outputs
 끝! 
 3. 키해시 확인 -> 카카오개발자 내어플리케이션 -> 플랫폼 -> 안드로이드 -> 키해시에 추가 
 맥에서 내 아이피 보기: ipconfig getifaddr en0
+
+
+# 카테고리
+동기부여
+스트레스해소
+상상
+질문
+바디스캐닝
+호흡

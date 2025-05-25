@@ -45,16 +45,12 @@ class AppAPI extends GetxService {
         Text(
           "안내",
           style: TextStyle(
-              fontFamily: "Pretendard",
-              color: AppColors.c1,
-              fontWeight: FontWeight.bold,
-              fontSize: 22),
+              color: AppColors.c1, fontWeight: FontWeight.bold, fontSize: 22),
         ),
         Gaps.h16,
         Text(
           "세션이 만료되어 로그아웃합니다.",
           style: TextStyle(
-            fontFamily: "Pretendard",
             fontSize: 18,
           ),
           textAlign: TextAlign.center,

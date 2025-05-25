@@ -7,8 +7,6 @@ import 'package:meditation_friend/app/modules/music_detail/bindings/music_detail
 import 'package:meditation_friend/app/modules/music_detail/views/music_detail.dart';
 import 'package:meditation_friend/app/modules/mypage/bindings/mypage_binding.dart';
 import 'package:meditation_friend/app/modules/mypage/views/mypage_view.dart';
-import '../modules/find_pw/bindings/find_pw_binding.dart';
-import '../modules/find_pw/views/find_pw_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
 
@@ -25,11 +23,6 @@ class AppPages {
       name: _Paths.SPLASH,
       page: () => const SplashView(),
       binding: SplashBinding(),
-    ),
-    GetPage(
-      name: _Paths.FIND_PW,
-      page: () => const FindPwView(),
-      binding: FindPwBinding(),
     ),
     GetPage(
       name: _Paths.MEDITATION_HOME,

@@ -57,7 +57,6 @@ class TwoButtonDialog extends StatelessWidget {
                           child: Text(
                             no,
                             style: TextStyle(
-                                fontFamily: "Pretendard",
                                 color: AppColors.c1,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18),
@@ -84,7 +83,6 @@ class TwoButtonDialog extends StatelessWidget {
                           child: Text(
                             yes,
                             style: TextStyle(
-                                fontFamily: "Pretendard",
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18),
