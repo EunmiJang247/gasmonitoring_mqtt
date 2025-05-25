@@ -287,8 +287,11 @@ class AppService extends GetxService {
 
       if (allMusic != null) {
         // 카테고리로 필터링
-        final filteredMusic =
-            allMusic.where((music) => music.category == category).toList();
+        final filteredMusic = category.isEmpty
+            ? allMusic // 모든 음악 반환
+            : allMusic
+                .where((music) => music.category == category)
+                .toList(); // 특정 카테고리 필터링
 
         // 앱 서비스에 저장
         musicList.assignAll(filteredMusic);
@@ -297,7 +300,8 @@ class AppService extends GetxService {
         if (filteredMusic.isNotEmpty) {
           curMusic?.value = filteredMusic.first;
         }
-        logInfo("$category 카테고리 명상 음악 ${filteredMusic.length}개 로드 완료");
+        logInfo(
+            "${category.isEmpty ? '전체' : category} 카테고리 명상 음악 ${filteredMusic.length}개 로드 완료");
         return filteredMusic;
       } else {
         // 에러 처리

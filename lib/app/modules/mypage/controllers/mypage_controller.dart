@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:meditation_friend/app/data/models/00_user.dart';
@@ -49,6 +50,8 @@ class MypageController extends GetxController {
 
   Future<void> onKakaoLogin() async {
     try {
+      // 로딩 표시 시작
+      EasyLoading.show(status: '로그인 중...');
       // 카카오톡 설치 여부 확인
       if (await isKakaoTalkInstalled()) {
         try {
@@ -73,6 +76,8 @@ class MypageController extends GetxController {
         thumbnailImageUrl: kakaoUser.properties?['thumbnail_image'] ?? '',
         connectedAt: kakaoUser.connectedAt,
       );
+      // 로딩 표시 종료
+      EasyLoading.dismiss();
       if (response?.result?.code == 200) {
         // 서버의 데이터베이스에 user가 있는 경우
         // User 모델로 변환

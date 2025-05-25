@@ -68,7 +68,6 @@ class MusicDetailController extends GetxController {
 
       // AppService를 통해 해당 카테고리의 음악 요청
       final musicList = await appService.fetchMeditationByCategory(category);
-      logInfo('카테고리 음악 로드: ${musicList.length}개');
       if (musicList.isNotEmpty) {
         // 음악 리스트 업데이트
         appService.musicList.assignAll(musicList);
