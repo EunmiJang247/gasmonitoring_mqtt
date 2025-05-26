@@ -8,7 +8,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
-import 'package:meditation_friend/app/utils/log.dart';
 
 import 'app/constant/app_color.dart';
 import 'app/data/api/app_api.dart';

@@ -38,9 +38,21 @@ class AppService extends GetxService {
   Future<void> onInit() async {
     super.onInit();
     await initUser();
-    audioPlayer.playerStateStream.listen((state) {
-      isPlaying.value = state.playing;
+
+    // 재생 상태 스트림 리스너 추가
+    audioPlayer.playingStream.listen((playing) {
+      isPlaying.value = playing;
+      logInfo('재생 상태 변경: $playing');
     });
+
+    // 재생 완료 스트림 리스너 추가
+    audioPlayer.playerStateStream.listen((state) {
+      if (state.processingState == ProcessingState.completed) {
+        isPlaying.value = false;
+        logInfo('음악 재생 완료');
+      }
+    });
+
     await getAttendanceCheck();
     initFirebaseMessageHandler();
   }
@@ -275,13 +287,8 @@ class AppService extends GetxService {
   // 카테고리별 명상 음악 요청 메서드 (AppService에 추가)
 // 카테고리별 명상 음악 요청 메서드 (HomeController에서 수정)
   Future<List<Music>> fetchMeditationByCategory(String category) async {
+    logInfo("카테고리별 명상 음악 요청: $category");
     try {
-      // 로딩 상태 표시
-      Get.dialog(
-        const Center(child: CircularProgressIndicator()),
-        barrierDismissible: false,
-      );
-
       // 전체 음악 목록 가져오기
       final allMusic = await _getMusicList();
 
@@ -313,9 +320,6 @@ class AppService extends GetxService {
       logError("카테고리별 음악 로드 중 예외 발생: $e");
       Get.snackbar('오류', '서버 연결에 문제가 발생했습니다.');
       return <Music>[];
-    } finally {
-      // 로딩 다이얼로그 닫기
-      Get.back();
     }
   }
 }

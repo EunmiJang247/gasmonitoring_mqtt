@@ -22,7 +22,7 @@ class UnderTabBar extends StatelessWidget {
         if (currentMusic != null && currentMusic.musicUrl != null) {
           // 이미 재생 중인 음악이 있으면 해당 음악 정보와 함께 페이지 이동
           Get.toNamed('/music-detail', arguments: {
-            'category': currentMusic.category ?? '',
+            'category': '',
             'continue_current': true, // 현재 음악 계속 재생 플래그
           });
         } else {
