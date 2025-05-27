@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
 import 'package:meditation_friend/app/constant/constants.dart';
 import 'package:meditation_friend/app/modules/music_detail/controllers/music_detail_controller.dart';
+import 'package:meditation_friend/app/modules/music_detail/views/widgets/other_category_musics.dart';
 import 'package:meditation_friend/app/utils/log.dart';
 import 'package:meditation_friend/app/widgets/custom_img_button.dart';
 import 'package:meditation_friend/app/widgets/under_tab_bar.dart';
@@ -74,12 +75,11 @@ class MusicDetailView extends GetView<MusicDetailController> {
                   borderRadius: 25.r, // 둥글기 조정 (원하는 경우)
                 ),
               ),
-              Center(
+              SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Obx(() {
                     final music = controller.currentMusic.value;
-                    final isPlaying = controller.isPlaying;
 
                     if (music == null) {
                       return const Text('음악이 없어요!');
@@ -88,6 +88,9 @@ class MusicDetailView extends GetView<MusicDetailController> {
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        SizedBox(
+                          height: 80,
+                        ),
                         if (music.musicUrl != null && (music.duration ?? 0) > 0)
                           Image.asset(
                             MUSICPLAYING,
@@ -242,29 +245,31 @@ class MusicDetailView extends GetView<MusicDetailController> {
                                   ),
                                 ),
                                 // 오른쪽 끝 다음곡 버튼
-                                Positioned(
-                                  right: 16.w,
-                                  top: 0,
-                                  bottom: 0,
-                                  child: Center(
-                                    child: CustomImgButton(
-                                      imagePath:
-                                          "assets/images/play_btn.png", // 다음곡 버튼 이미지
-                                      size: 40.w,
-                                      onPressed: () async {
-                                        try {
-                                          await controller.playNextMusic();
-                                        } catch (e) {
-                                          logInfo(
-                                              'Error playing next music: $e');
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                ),
+                                // Positioned(
+                                //   right: 16.w,
+                                //   top: 0,
+                                //   bottom: 0,
+                                //   child: Center(
+                                //     child: CustomImgButton(
+                                //       imagePath:
+                                //           "assets/images/play_btn.png", // 다음곡 버튼 이미지
+                                //       size: 40.w,
+                                //       onPressed: () async {
+                                //         try {
+                                //           await controller.playNextMusic();
+                                //         } catch (e) {
+                                //           logInfo(
+                                //               'Error playing next music: $e');
+                                //         }
+                                //       },
+                                //     ),
+                                //   ),
+                                // ),
                               ],
                             ),
                           ),
+
+                        OtherCategoryMusics(),
                       ],
                     );
                   }),

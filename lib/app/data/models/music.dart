@@ -6,16 +6,17 @@ class Music {
   String? category; // 카테고리
   String? musicUrl;
   int? duration; // 명상 시간 (초 단위)
+  Function()? onTap; // 클릭 이벤트 핸들러 (선택적)
 
-  Music({
-    this.id,
-    this.title,
-    this.description,
-    this.imageUrl,
-    this.category,
-    this.musicUrl,
-    this.duration,
-  });
+  Music(
+      {this.id,
+      this.title,
+      this.description,
+      this.imageUrl,
+      this.category,
+      this.musicUrl,
+      this.duration,
+      this.onTap});
 
   factory Music.fromJson(Map<String, dynamic> json) {
     return Music(
