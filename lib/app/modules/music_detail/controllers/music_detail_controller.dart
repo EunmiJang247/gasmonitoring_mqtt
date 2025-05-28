@@ -57,32 +57,6 @@ class MusicDetailController extends GetxController {
     }
   }
 
-  // 카테고리별 음악 로드
-  Future<void> loadMusicByCategory(String category) async {
-    try {
-      logInfo("카테고리 음악 로드 시작: $category");
-      // AppService를 통해 해당 카테고리의 음악 요청
-      final musicList = await appService.fetchMeditationByCategory(category);
-
-      if (musicList.isNotEmpty) {
-        // 음악 리스트 업데이트
-        appService.musicList.value = musicList;
-
-        // 첫 번째 음악을 현재 음악으로 설정
-        appService.curMusic?.value = musicList.first;
-
-        logInfo('${category} 카테고리 음악 ${musicList.length}개 로드 완료');
-      } else {
-        logError('${category} 카테고리에 음악이 없습니다');
-        // Get.snackbar('알림', '해당 카테고리에 음악이 없습니다');
-        appService.curMusic?.value = Music();
-      }
-    } catch (e) {
-      logError('카테고리 음악 로드 오류: $e');
-      Get.snackbar('오류', '음악을 불러오는 중 문제가 발생했습니다');
-    } finally {}
-  }
-
   // 다음곡 재생
   Future<void> playNextMusic() async {
     try {
@@ -152,5 +126,57 @@ class MusicDetailController extends GetxController {
     } catch (e) {
       logInfo('일시정지 오류: $e');
     }
+  }
+
+  // music_detail_controller.dart
+  Future<void> changeCategory(String newCategory) async {
+    try {
+      logInfo('카테고리 변경: $newCategory');
+      // 현재 재생 중인 음악 정지
+      await appService.audioPlayer.stop();
+      await appService.audioPlayer.seek(Duration.zero); // 재생 위치를 0으로 초기화
+
+      // 2. URL 추적 변수 초기화
+      _currentLoadedUrl = null;
+
+      // 새 카테고리로 음악 로드
+      category.value = newCategory;
+      await loadMusicByCategory(newCategory);
+
+      logInfo('카테고리 변경 완료: $newCategory');
+    } catch (e) {
+      logError('카테고리 변경 오류: $e');
+    }
+  }
+
+  // 카테고리별 음악 로드
+  Future<void> loadMusicByCategory(String category) async {
+    try {
+      logInfo("카테고리 음악 로드 시작: $category");
+      // AppService를 통해 해당 카테고리의 음악 요청
+      final musicList = await appService.fetchMeditationByCategory(category);
+
+      logInfo('음악 재생 요청: ${musicList}');
+      if (musicList.isNotEmpty) {
+        // 음악 리스트 업데이트
+        appService.musicList.value = musicList;
+
+        // 첫 번째 음악을 현재 음악으로 설정
+        appService.curMusic?.value = musicList.first;
+
+        logInfo('${category} 카테고리 음악 ${musicList.length}개 로드 완료');
+      } else {
+        logError('${category} 카테고리에 음악이 없습니다');
+        // Get.snackbar('알림', '해당 카테고리에 음악이 없습니다');
+        appService.curMusic?.value = Music();
+      }
+    } catch (e) {
+      logError('카테고리 음악 로드 오류: $e');
+      Get.snackbar('오류', '음악을 불러오는 중 문제가 발생했습니다');
+    } finally {}
+  }
+
+  selectMusic(music) {
+    print(music);
   }
 }

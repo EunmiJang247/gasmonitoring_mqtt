@@ -35,7 +35,7 @@ class UnderTabBar extends StatelessWidget {
         break;
       case 2:
         _appService.currentIndex.value = 2;
-        Get.offNamed('/mypage');
+        Get.toNamed('/mypage');
         break;
     }
   }

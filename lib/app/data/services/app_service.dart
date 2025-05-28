@@ -285,7 +285,7 @@ class AppService extends GetxService {
   }
 
   // 카테고리별 명상 음악 요청 메서드 (AppService에 추가)
-// 카테고리별 명상 음악 요청 메서드 (HomeController에서 수정)
+  // 카테고리별 명상 음악 요청 메서드 (HomeController에서 수정)
   Future<List<Music>> fetchMeditationByCategory(String category) async {
     logInfo("카테고리별 명상 음악 요청: $category");
     try {
@@ -302,13 +302,6 @@ class AppService extends GetxService {
 
         // 앱 서비스에 저장
         musicList.assignAll(filteredMusic);
-
-        // 첫 번째 음악이 있으면 현재 음악으로 설정
-        if (filteredMusic.isNotEmpty) {
-          curMusic?.value = filteredMusic.first;
-        }
-        logInfo(
-            "${category.isEmpty ? '전체' : category} 카테고리 명상 음악 ${filteredMusic.length}개 로드 완료");
         return filteredMusic;
       } else {
         // 에러 처리

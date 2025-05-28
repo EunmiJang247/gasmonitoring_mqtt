@@ -17,7 +17,7 @@ class MeditationHome extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: PopScope(
-        canPop: true,
+        canPop: false,
         onPopInvoked: (didPop) {
           if (didPop) return;
           controller.appService.onPop(context);

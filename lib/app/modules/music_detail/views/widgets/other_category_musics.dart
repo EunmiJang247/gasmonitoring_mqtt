@@ -1,45 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
-import 'package:meditation_friend/app/data/models/music.dart';
+import 'package:meditation_friend/app/modules/music_detail/controllers/music_detail_controller.dart';
 
 class OtherCategoryMusics extends StatelessWidget {
-  OtherCategoryMusics({Key? key}) : super(key: key);
+  final MusicDetailController controller; // controller 매개변수 추가
 
-  final List<Music> items = List.generate(
-    10,
-    (index) => Music(
-        imageUrl:
-            'https://via.placeholder.com/100x100.png?text=Image+${index + 1}',
-        title: 'Button ${index + 1}',
-        onTap: () {
-          // 클릭 이벤트 처리
-          print("버튼 ${index + 1} 클릭됨");
-        }),
-  );
+  const OtherCategoryMusics({
+    super.key,
+    required this.controller, // required로 설정
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // 제목 추가
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 10.w),
-          child: Text(
-            "다른 카테고리",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 14.sp,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-        ),
+    final List<Map<String, dynamic>> items = [
+      {
+        'imageUrl': 'assets/images/pic1.png',
+        'title': '바디스캐닝',
+        'category': '바디스캐닝',
+      },
+      {
+        'imageUrl': 'assets/images/pic2.png',
+        'title': '호흡 명상',
+        'category': '호흡',
+      },
+      {
+        'imageUrl': 'assets/images/pic3.png',
+        'title': '동기부여',
+        'category': '동기부여',
+      },
+      {
+        'imageUrl': 'assets/images/pic4.png',
+        'title': '스트레스해소',
+        'category': '스트레스해소',
+      },
+      {
+        'imageUrl': 'assets/images/pic5.png',
+        'title': '상상 명상',
+        'category': '상상',
+      },
+      {
+        'imageUrl': 'assets/images/pic6.png',
+        'title': '질문 명상',
+        'category': '질문',
+      },
+    ];
 
-        // 그리드뷰 수정
+    return Column(
+      children: [
         GridView.builder(
-          physics: NeverScrollableScrollPhysics(), // 스크롤 비활성화
-          shrinkWrap: true, // 내용에 맞게 크기 조정
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             mainAxisSpacing: 8.h,
@@ -51,12 +62,12 @@ class OtherCategoryMusics extends StatelessWidget {
             final item = items[index];
             return GestureDetector(
               onTap: () {
-                // 클릭 이벤트 추가
-                item.onTap?.call();
+                // 전달받은 controller 사용
+                controller.changeCategory(item['category']);
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.kDark.withOpacity(0.7),
+                  color: AppColors.kDark.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10.w),
                   boxShadow: [
                     BoxShadow(color: Colors.black12, blurRadius: 4),
@@ -68,12 +79,11 @@ class OtherCategoryMusics extends StatelessWidget {
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Image.network(
-                      item.imageUrl ?? '',
-                      width: 60,
-                      height: 60,
+                    Image.asset(
+                      item['imageUrl'],
+                      width: 35,
+                      height: 35,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
@@ -85,15 +95,17 @@ class OtherCategoryMusics extends StatelessWidget {
                         );
                       },
                     ),
-                    SizedBox(width: 10.w),
-                    Text(
-                      item.title ?? '',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        item['title'],
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
@@ -101,8 +113,6 @@ class OtherCategoryMusics extends StatelessWidget {
             );
           },
         ),
-
-        // 하단 여백 추가
         SizedBox(height: 80.h),
       ],
     );

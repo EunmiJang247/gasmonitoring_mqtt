@@ -5,6 +5,7 @@ import 'package:meditation_friend/app/constant/app_color.dart';
 import 'package:meditation_friend/app/constant/constants.dart';
 import 'package:meditation_friend/app/modules/music_detail/controllers/music_detail_controller.dart';
 import 'package:meditation_friend/app/modules/music_detail/views/widgets/other_category_musics.dart';
+import 'package:meditation_friend/app/modules/music_detail/views/widgets/same_category_musics.dart';
 import 'package:meditation_friend/app/utils/log.dart';
 import 'package:meditation_friend/app/widgets/custom_img_button.dart';
 import 'package:meditation_friend/app/widgets/under_tab_bar.dart';
@@ -24,10 +25,10 @@ class MusicDetailView extends GetView<MusicDetailController> {
     return Scaffold(
       backgroundColor: AppColors.kAppBackgroundColor,
       body: PopScope(
-        canPop: true,
-        onPopInvoked: (didPop) {
-          if (didPop) return;
-          controller.appService.onPop(context);
+        canPop: false,
+        onPopInvoked: (bool didPop) {
+          controller.appService.currentIndex.value = 0;
+          Get.offNamed('/meditation-home');
         },
         child: SafeArea(
           child: Stack(
@@ -60,21 +61,7 @@ class MusicDetailView extends GetView<MusicDetailController> {
                   ),
                 ),
               ),
-              // 3. 뒤로가기 버튼 - 왼쪽 상단에 위치
-              Positioned(
-                top: 16.h,
-                left: 16.w,
-                child: CustomImgButton(
-                  imagePath: 'assets/images/back_btn.png', // 실제 이미지 경로
-                  onPressed: () {
-                    Get.offNamed('/meditation-home');
-                    controller.appService.currentIndex.value = 0;
-                  },
-                  // 선택적 매개변수
-                  size: 45.w, // 크기 조정 (원하는 경우)
-                  borderRadius: 25.r, // 둥글기 조정 (원하는 경우)
-                ),
-              ),
+
               SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
@@ -94,8 +81,8 @@ class MusicDetailView extends GetView<MusicDetailController> {
                         if (music.musicUrl != null && (music.duration ?? 0) > 0)
                           Image.asset(
                             MUSICPLAYING,
-                            width: 300,
-                            height: 300,
+                            width: 150.w,
+                            height: 150.h,
                             fit: BoxFit.cover,
                           ),
                         const SizedBox(height: 20),
@@ -166,8 +153,10 @@ class MusicDetailView extends GetView<MusicDetailController> {
                                         activeTrackColor: AppColors.kWhite,
                                         inactiveTrackColor:
                                             const Color(0xFF2E2F37),
-                                        overlayShape: SliderComponentShape
-                                            .noOverlay, // 오버레이도 제거
+                                        overlayShape:
+                                            SliderComponentShape.noOverlay, //
+                                        trackShape:
+                                            RectangularSliderTrackShape(), // 직사각형 트랙오버레이도 제거
                                       ),
                                       child: Slider(
                                         value: position.inSeconds
@@ -268,14 +257,53 @@ class MusicDetailView extends GetView<MusicDetailController> {
                               ],
                             ),
                           ),
-
-                        OtherCategoryMusics(),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        SameCategoryMusics(
+                          controller: controller,
+                        ),
+                        SizedBox(
+                          height: 40,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "전체 카테고리",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12.sp,
+                              ),
+                            ),
+                            SizedBox(height: 10.h),
+                            OtherCategoryMusics(
+                              controller: controller, // controller 전달
+                            ),
+                          ],
+                        )
                       ],
                     );
                   }),
                 ),
               ),
+
               UnderTabBar(),
+              // 3. 뒤로가기 버튼 - 왼쪽 상단에 위치
+              Positioned(
+                top: 16.h,
+                left: 16.w,
+                child: CustomImgButton(
+                  imagePath: 'assets/images/back_btn.png', // 실제 이미지 경로
+                  onPressed: () {
+                    controller.appService.currentIndex.value = 0;
+                    Get.offNamed('/meditation-home');
+                  },
+                  // 선택적 매개변수
+                  size: 45.w, // 크기 조정 (원하는 경우)
+                  borderRadius: 25.r, // 둥글기 조정 (원하는 경우)
+                ),
+              ),
             ],
           ),
         ),

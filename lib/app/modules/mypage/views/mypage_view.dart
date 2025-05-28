@@ -21,10 +21,10 @@ class MypageView extends GetView<MypageController> {
       return Scaffold(
         backgroundColor: AppColors.kSkyBlue,
         body: PopScope(
-          canPop: true,
-          onPopInvoked: (didPop) {
-            if (didPop) return;
-            controller.appService.onPop(context);
+          canPop: false,
+          onPopInvoked: (bool didPop) {
+            controller.appService.currentIndex.value = 0;
+            Get.offNamed('/meditation-home');
           },
           child: SafeArea(
             child: Stack(
@@ -60,8 +60,8 @@ class MypageView extends GetView<MypageController> {
                   child: CustomImgButton(
                     imagePath: 'assets/images/back_btn.png', // 실제 이미지 경로
                     onPressed: () {
-                      Get.offNamed('/meditation-home');
                       controller.appService.currentIndex.value = 0;
+                      Get.offNamed('/meditation-home');
                     },
                     // 선택적 매개변수
                     size: 45.w, // 크기 조정 (원하는 경우)
