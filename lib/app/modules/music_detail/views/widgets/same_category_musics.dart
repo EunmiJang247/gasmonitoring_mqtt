@@ -37,65 +37,78 @@ class SameCategoryMusics extends StatelessWidget {
             );
           }
 
-          return Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: AppColors.kBrighBlue,
-                width: 0.5.w,
-              ),
-              borderRadius: BorderRadius.circular(10.w), // 선택 사항
-            ),
-            height: 110.h,
-            child: SingleChildScrollView(
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 1,
-                  mainAxisSpacing: 4.h,
-                  crossAxisSpacing: 8.w,
-                  childAspectRatio: 8,
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "동일 카테고리",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12.sp,
                 ),
-                itemCount: musicList.length,
-                itemBuilder: (context, index) {
-                  final music = musicList[index];
-                  logInfo(music.toJson());
-                  // {id: 1, title: 호흡명상, description: 현재의 나에 집중하는 호흡명상입니다, imageUrl: 1, category: 호흡, musicUrl: /static/result/result1.mp3, duration: 635}
-                  return GestureDetector(
-                    onTap: () {
-                      controller.selectMusic(music);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.kDark.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(10.w),
-                        boxShadow: [
-                          BoxShadow(color: Colors.black12, blurRadius: 4),
-                        ],
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.2),
-                          width: 1,
-                        ),
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.h),
-                      child: Row(
-                        children: [
-                          Text(
-                            music.title ?? "?",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w500,
+              ),
+              SizedBox(height: 4.h),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: AppColors.kBrighBlue,
+                    width: 0.5.w,
+                  ),
+                  borderRadius: BorderRadius.circular(10.w), // 선택 사항
+                ),
+                height: 110.h,
+                child: SingleChildScrollView(
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 1,
+                      mainAxisSpacing: 4.h,
+                      crossAxisSpacing: 8.w,
+                      childAspectRatio: 8,
+                    ),
+                    itemCount: musicList.length,
+                    itemBuilder: (context, index) {
+                      final music = musicList[index];
+                      logInfo(music.toJson());
+                      // {id: 1, title: 호흡명상, description: 현재의 나에 집중하는 호흡명상입니다, imageUrl: 1, category: 호흡, musicUrl: /static/result/result1.mp3, duration: 635}
+                      return GestureDetector(
+                        onTap: () {
+                          controller.selectMusic(music);
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.kDark.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10.w),
+                            boxShadow: [
+                              BoxShadow(color: Colors.black12, blurRadius: 4),
+                            ],
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.2),
+                              width: 1,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10.w, vertical: 2.h),
+                          child: Row(
+                            children: [
+                              Text(
+                                music.title ?? "?",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
-            ),
+            ],
           );
         }),
       ],

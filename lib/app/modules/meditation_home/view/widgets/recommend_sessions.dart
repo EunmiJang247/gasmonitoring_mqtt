@@ -30,8 +30,10 @@ class RecommendSessions extends GetView<HomeController> {
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: MeditationTile(
             onTap: () async {
+              controller.appService.currentIndex.value = 1;
               Get.toNamed('/music-detail', arguments: {
                 'category': '동기부여',
+                'continue_current': false,
               });
             },
             title: "성공을 위한 동기부여명상",
@@ -45,8 +47,10 @@ class RecommendSessions extends GetView<HomeController> {
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: MeditationTile(
             onTap: () async {
+              controller.appService.currentIndex.value = 1;
               Get.toNamed('/music-detail', arguments: {
                 'category': '스트레스해소',
+                'continue_current': false,
               });
             },
             title: "일끝낸 후 스트레스해소명상",
@@ -64,8 +68,10 @@ class RecommendSessions extends GetView<HomeController> {
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: MeditationTile(
             onTap: () async {
+              controller.appService.currentIndex.value = 1;
               Get.toNamed('/music-detail', arguments: {
                 'category': '상상',
+                'continue_current': false,
               });
             },
             title: "파워 N이 만든 상상명상",
@@ -79,8 +85,10 @@ class RecommendSessions extends GetView<HomeController> {
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: MeditationTile(
             onTap: () async {
+              controller.appService.currentIndex.value = 1;
               Get.toNamed('/music-detail', arguments: {
                 'category': '질문',
+                'continue_current': false,
               });
             },
             title: "나를 알아가는 질문명상",

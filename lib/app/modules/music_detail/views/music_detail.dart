@@ -276,7 +276,7 @@ class MusicDetailView extends GetView<MusicDetailController> {
                                 fontSize: 12.sp,
                               ),
                             ),
-                            SizedBox(height: 10.h),
+                            SizedBox(height: 4.h),
                             OtherCategoryMusics(
                               controller: controller, // controller 전달
                             ),
@@ -287,7 +287,6 @@ class MusicDetailView extends GetView<MusicDetailController> {
                   }),
                 ),
               ),
-
               UnderTabBar(),
               // 3. 뒤로가기 버튼 - 왼쪽 상단에 위치
               Positioned(

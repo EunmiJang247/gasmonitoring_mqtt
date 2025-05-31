@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:meditation_friend/app/data/models/music.dart';
@@ -23,8 +24,14 @@ class MusicDetailController extends GetxController {
 
   @override
   void onInit() {
-    turnOnMusic();
     super.onInit();
+    // 로그 추가로 진입점 확인
+    logInfo("MusicDetailController onInit 호출됨");
+
+    // 지연 호출로 의존성이 모두 준비된 후 실행
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      turnOnMusic();
+    });
 
     // 현재 재생 중인 음악이 있으면 URL 동기화
     if (appService.curMusic?.value.musicUrl != null) {
@@ -35,12 +42,13 @@ class MusicDetailController extends GetxController {
   }
 
   Future<void> turnOnMusic() async {
+    logInfo("계속 들어와야 하는거 아닌가?");
     final args = Get.arguments;
-    logInfo("받은 arguments: $args");
     if (args != null && args is Map<String, dynamic>) {
       // 카테고리 정보 추출
       category.value = args['category'] ?? '';
       final continueCurrent = args['continue_current'] ?? false;
+      logInfo("continueCurrent: $continueCurrent");
 
       if (continueCurrent) {
         // 재생중이었던 음악이 있으면
@@ -50,8 +58,17 @@ class MusicDetailController extends GetxController {
           return; // 이미 로드된 음악이 있으므로 추가 로딩 불필요
         }
       } else {
-        // 현재 재생되고 있던 음악이 없으면
-        logInfo("처리할 카테고리: ${category.value}");
+        logInfo("여긴데요?");
+        // 현재 재생 중인 음악이 있으면 중지
+        if (appService.curMusic?.value != null) {
+          await appService.audioPlayer.stop();
+          await appService.audioPlayer.seek(Duration.zero);
+          _currentLoadedUrl = null; // URL 추적 변수 초기화
+          logInfo("이전 음악 중지: ${appService.curMusic?.value.title}");
+        }
+
+        // 새 카테고리 음악 로드
+        logInfo("새 카테고리 음악 로드: ${category.value}");
         await loadMusicByCategory(category.value);
       }
     }

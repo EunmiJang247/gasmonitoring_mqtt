@@ -17,8 +17,10 @@ class StartMeditationPlayerBtn extends GetView<HomeController> {
           Expanded(
             child: MeditationCard(
               onTap: () async {
+                controller.appService.currentIndex.value = 1;
                 Get.toNamed('/music-detail', arguments: {
                   'category': '바디스캐닝',
+                  'continue_current': false,
                 });
               },
               title: "나를 \n바라보는 \n바디스캐닝",
@@ -30,8 +32,10 @@ class StartMeditationPlayerBtn extends GetView<HomeController> {
           Expanded(
             child: MeditationCard(
               onTap: () async {
+                controller.appService.currentIndex.value = 1;
                 Get.toNamed('/music-detail', arguments: {
                   'category': '호흡',
+                  'continue_current': false,
                 });
               },
               title: "마음이 \n편해지는 \n호흡명상",

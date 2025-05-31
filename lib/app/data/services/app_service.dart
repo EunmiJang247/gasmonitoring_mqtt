@@ -306,7 +306,7 @@ class AppService extends GetxService {
       } else {
         // 에러 처리
         logError("명상 음악 로드 실패");
-        Get.snackbar('오류', '명상 음악을 불러오는데 실패했습니다.');
+        Get.snackbar('오류', '인터넷 연결을 확인해주세요.');
         return <Music>[];
       }
     } catch (e) {
