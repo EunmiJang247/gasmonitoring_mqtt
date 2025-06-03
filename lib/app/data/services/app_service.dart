@@ -66,8 +66,11 @@ class AppService extends GetxService {
       MeditationFriendUser? lastUser = _localAppDataService.getLastLoginUser();
       if (lastUser != null) {
         logInfo('예전유저는요 ${lastUser.toJson()}');
+
+        String? fcmToken = await getFcmToken() ?? "";
         BaseResponse? response = await signInUsingKakao(
           id: lastUser.id.toString(),
+          fcmToken: fcmToken,
           nickname: lastUser.nickname ?? '',
           profileImageUrl: lastUser.profileImageUrl ?? '',
           thumbnailImageUrl: lastUser.thumbnailImageUrl ?? '',
@@ -133,7 +136,6 @@ class AppService extends GetxService {
 
   Future<String?> sendFirebaseToken() async {
     String? fcmToken = await getFcmToken() ?? "";
-    print('sendFirebaseToken: ${fcmToken}');
     // 서버에 fcmToken 전송
     fcmToken = await _appRepository.sendFirebaseToken(
       fcmToken: fcmToken,
@@ -202,6 +204,7 @@ class AppService extends GetxService {
   // 카카오 로그인
   Future<BaseResponse?> signInUsingKakao({
     required id,
+    required fcmToken,
     required nickname,
     required profileImageUrl,
     required thumbnailImageUrl,
@@ -212,6 +215,7 @@ class AppService extends GetxService {
     // 로딩 인디케이터 표시
     BaseResponse? baseResponse = await _appRepository.signInUsingKakao(
       id: id,
+      fcmToken: fcmToken,
       nickname: nickname,
       profileImageUrl: profileImageUrl,
       thumbnailImageUrl: thumbnailImageUrl,

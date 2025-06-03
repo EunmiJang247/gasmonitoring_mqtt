@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
+import 'package:meditation_friend/app/modules/mypage/controllers/mypage_controller.dart';
 import 'package:meditation_friend/app/modules/mypage/views/widgets/custom_time_picker.dart';
 import 'package:meditation_friend/app/modules/mypage/views/widgets/week_day_select_buttons.dart';
 
 Future<dynamic> meditationAlramTimeBottomSheet(BuildContext context) {
+  // 선택된 요일과 시간을 저장할 변수
+  int selectedDays = 0;
+  int selectedHour = 12;
+  int selectedMinute = 30;
+
+  // 컨트롤러 가져오기
+  final mypageController = Get.find<MypageController>();
+
   return showModalBottomSheet<void>(
     context: context,
     builder: (BuildContext context) {

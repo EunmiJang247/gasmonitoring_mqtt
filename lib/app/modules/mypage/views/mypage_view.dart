@@ -97,34 +97,32 @@ class MypageView extends GetView<MypageController> {
                     ),
                   ),
                   SizedBox(height: 10.h),
-                  Container(
-                    child: Column(
-                      children: [
-                        //       ProfileTileWidget(
-                        //         title: "선호하는 명상종류",
-                        //         leading: Icons.check,
-                        //         onTap: () => meditationKindBottomSheet(context),
-                        //       ),
-                        //       SizedBox(height: 4.h),
-                        //       ProfileTileWidget(
-                        //         title: "명상 길이 설정",
-                        //         leading: Icons.timelapse,
-                        //         onTap: () => meditationDurationBottomSheet(context),
-                        //       ),
-                        //       SizedBox(height: 4.h),
-                        ProfileTileWidget(
-                          title: "명상 알람 시간 설정",
-                          leading: Icons.lock_clock,
-                          onTap: () => meditationAlramTimeBottomSheet(context),
-                        ),
-                        //       SizedBox(height: 4.h),
-                        //       ProfileTileWidget(
-                        //         title: "선호하는 성별",
-                        //         leading: Icons.accessibility,
-                        //         onTap: () => meditationGenderBottomSheet(context),
-                        //       ),
-                      ],
-                    ),
+                  Column(
+                    children: [
+                      //       ProfileTileWidget(
+                      //         title: "선호하는 명상종류",
+                      //         leading: Icons.check,
+                      //         onTap: () => meditationKindBottomSheet(context),
+                      //       ),
+                      //       SizedBox(height: 4.h),
+                      //       ProfileTileWidget(
+                      //         title: "명상 길이 설정",
+                      //         leading: Icons.timelapse,
+                      //         onTap: () => meditationDurationBottomSheet(context),
+                      //       ),
+                      //       SizedBox(height: 4.h),
+                      ProfileTileWidget(
+                        title: "명상 알람 시간 설정",
+                        leading: Icons.lock_clock,
+                        onTap: () => meditationAlramTimeBottomSheet(context),
+                      ),
+                      //       SizedBox(height: 4.h),
+                      //       ProfileTileWidget(
+                      //         title: "선호하는 성별",
+                      //         leading: Icons.accessibility,
+                      //         onTap: () => meditationGenderBottomSheet(context),
+                      //       ),
+                    ],
                   ),
                   // SizedBox(height: 20.h),
                   Padding(
@@ -150,6 +148,7 @@ class MypageView extends GetView<MypageController> {
                   //         onTap: () {
                   //           controller.appService.sendFirebaseToken();
                   //         })),
+
                   // Padding(
                   //     padding: const EdgeInsets.all(14.0),
                   //     child: GradientBtn(

@@ -32,6 +32,7 @@ class AppRepository {
   // 카카오 로그인
   Future<BaseResponse?> signInUsingKakao({
     required id,
+    required fcmToken,
     required nickname,
     required profileImageUrl,
     required thumbnailImageUrl,
@@ -41,6 +42,7 @@ class AppRepository {
     try {
       Map<String, dynamic> body = {
         "id": id,
+        "fcmToken": fcmToken,
         "nickname": nickname,
         "profileImageUrl": profileImageUrl,
         "thumbnailImageUrl": thumbnailImageUrl,
@@ -80,14 +82,11 @@ class AppRepository {
   // 파이어베이스 토큰을 서버에 전송
   Future<String?> sendFirebaseToken({required String fcmToken}) async {
     try {
-      print('Sending FCM token: $fcmToken'); // 디버그용
-
       final response = await _appAPI.client.sendFirebaseToken({
         'fcmToken': fcmToken,
       });
 
-      // print('FCM fcmToken response: $response'); // 디버그용
-      // print(response?.result);
+      logInfo('FCM fcmToken response: $response'); // 디버그용
     } catch (e) {
       // print('FCM 토큰 전송 중 에러: $e');
       rethrow;
@@ -101,6 +100,7 @@ class AppRepository {
       final response = await _appAPI.client.sendFirebaseAlarm();
     } catch (e) {
       print('FCM 토큰 전송 중 에러: $e');
+      logInfo(e);
       rethrow;
     }
     return null;
