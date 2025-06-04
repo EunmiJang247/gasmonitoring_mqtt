@@ -112,10 +112,9 @@ class MypageView extends GetView<MypageController> {
                       //       ),
                       //       SizedBox(height: 4.h),
                       ProfileTileWidget(
-                        title: "명상 알람 시간 설정",
-                        leading: Icons.lock_clock,
-                        onTap: () => meditationAlramTimeBottomSheet(context),
-                      ),
+                          title: "명상 알람 시간 설정",
+                          leading: Icons.lock_clock,
+                          onTap: () => meditationAlramTimeBottomSheet(context)),
                       //       SizedBox(height: 4.h),
                       //       ProfileTileWidget(
                       //         title: "선호하는 성별",

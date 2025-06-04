@@ -7,11 +7,6 @@ import 'package:meditation_friend/app/modules/mypage/views/widgets/custom_time_p
 import 'package:meditation_friend/app/modules/mypage/views/widgets/week_day_select_buttons.dart';
 
 Future<dynamic> meditationAlramTimeBottomSheet(BuildContext context) {
-  // 선택된 요일과 시간을 저장할 변수
-  int selectedDays = 0;
-  int selectedHour = 12;
-  int selectedMinute = 30;
-
   // 컨트롤러 가져오기
   final mypageController = Get.find<MypageController>();
 
@@ -49,13 +44,41 @@ Future<dynamic> meditationAlramTimeBottomSheet(BuildContext context) {
               ),
               SizedBox(height: 15.h),
               WeekDaySelectButtons(
-                onChanged: (selectedDays) {
-                  print(
-                    "선택된 요일 비트마스크: ${selectedDays.toRadixString(2).padLeft(7, '0')}",
-                  );
+                onChanged: (days) {
+                  mypageController.alarmDays.value = days;
                 },
               ),
-              CustomTimePicker(),
+              CustomTimePicker(
+                onTimeChanged: (hour, minute) {
+                  mypageController.alarmHour.value = hour; // 선택된 시간 저장
+                  mypageController.alarmMinute.value = minute; // 선택된 분 저장
+                },
+              ),
+              Container(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    // ✅ 수정: 컨트롤러 메서드 직접 호출
+                    await mypageController.saveAlarmSettings();
+                    // Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.kBrighBlue,
+                    padding: EdgeInsets.symmetric(vertical: 8.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                  ),
+                  child: Text(
+                    '알람 설정',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

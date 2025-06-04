@@ -97,4 +97,32 @@ class LocalAppDataService extends GetxService {
     logInfo("visitState: ${visitState}");
     return visitState == 'true';
   }
+
+  // 알람 설정 저장
+  Future<void> saveAlarmSettings({
+    required String alarmDays,
+    required int alarmHour,
+    required int alarmMinute,
+  }) async {
+    await setting_box.put('alarm_days', alarmDays.toString());
+    await setting_box.put('alarm_hour', alarmHour.toString());
+    await setting_box.put('alarm_minute', alarmMinute.toString());
+  }
+
+  // 알람 설정 불러오기
+  Map<String, dynamic>? getAlarmSettings() {
+    final daysString = setting_box.get('alarm_days');
+    final hourString = setting_box.get('alarm_hour');
+    final minuteString = setting_box.get('alarm_minute');
+
+    if (daysString == null || hourString == null || minuteString == null) {
+      return null; // 설정이 없으면 null 반환
+    }
+
+    return {
+      'alarmDays': daysString.split(','),
+      'alarmHour': int.tryParse(hourString) ?? 9,
+      'alarmMinute': int.tryParse(minuteString) ?? 0,
+    };
+  }
 }

@@ -55,6 +55,7 @@ class AppService extends GetxService {
 
     await getAttendanceCheck();
     initFirebaseMessageHandler();
+    await getNotificationSettings();
   }
 
   // getLastLoginUser로 가져온 user만 있고 로그인이 되지는 않은 경우
@@ -244,6 +245,16 @@ class AppService extends GetxService {
     }
   }
 
+  // 출석체크 날짜 가져오기
+  Future<BaseResponse?> getNotificationSettings() async {
+    if (user.value != null) {
+      BaseResponse? baseResponse =
+          await _appRepository.getNotificationSettings();
+      logInfo("baseResponse: ${baseResponse?.data}");
+      return baseResponse;
+    }
+  }
+
   Future<String?> logOut() async {
     String? result;
     try {
@@ -317,6 +328,28 @@ class AppService extends GetxService {
       logError("카테고리별 음악 로드 중 예외 발생: $e");
       Get.snackbar('오류', '서버 연결에 문제가 발생했습니다.');
       return <Music>[];
+    }
+  }
+
+  Future<void> saveAlarmSettings({
+    required String alarmDays,
+    required int alarmHour,
+    required int alarmMinute,
+  }) async {
+    if (user.value != null) {
+      await _localAppDataService.saveAlarmSettings(
+        alarmDays: alarmDays,
+        alarmHour: alarmHour,
+        alarmMinute: alarmMinute,
+      );
+
+      await _appRepository.saveAlarmSettings(
+        alarmDays: alarmDays,
+        alarmHour: alarmHour,
+        alarmMinute: alarmMinute,
+      );
+    } else {
+      Get.snackbar('오류', '로그인이 필요합니다.');
     }
   }
 }

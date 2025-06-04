@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
 
 class WeekDaySelectButtons extends StatefulWidget {
-  final Function(int) onChanged;
+  final ValueChanged<String> onChanged;
 
   const WeekDaySelectButtons({super.key, required this.onChanged});
 
@@ -15,11 +15,19 @@ class _WeekDaySelectButtonsState extends State<WeekDaySelectButtons> {
 
   final List<String> days = ["월", "화", "수", "목", "금", "토", "일"];
 
+  String _selectedDayBits() {
+    return List.generate(7, (i) {
+      // 요일 인덱스가 0(월)부터 6(일)까지, 비트 인덱스는 거꾸로 매핑 (6 - i)
+      final bitIndex = 6 - i;
+      return ((selectedDays & (1 << bitIndex)) != 0) ? '1' : '0';
+    }).join();
+  }
+
   void toggleDay(int index) {
     setState(() {
-      selectedDays ^= (1 << (6 - index)); // 해당 비트 토글
+      selectedDays ^= (1 << (6 - index)); // 토글 처리
+      widget.onChanged(_selectedDayBits());
     });
-    widget.onChanged(selectedDays); // 변경된 값 전달
   }
 
   @override

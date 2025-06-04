@@ -1,12 +1,13 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
+import 'package:meditation_friend/app/constant/app_color.dart';
 import 'package:meditation_friend/app/data/models/00_user.dart';
 import 'package:meditation_friend/app/data/models/base_response.dart';
-import 'package:meditation_friend/app/utils/log.dart';
 
 import '../../../data/services/app_service.dart';
 import '../../../data/services/local_app_data_service.dart';
@@ -27,6 +28,12 @@ class MypageController extends GetxController {
   RxBool isSaveLoginInfo = false.obs;
   Rx<String?> errorText = Rx(null);
 
+  // 알람 설정 관련 변수
+  RxString alarmDays = "0000000".obs; // 월~일 순서로 비트 플래그 (0: 선택 안함, 1: 선택함)
+  RxInt alarmHour = 12.obs;
+  RxInt alarmMinute = 30.obs;
+  RxBool isAlarmEnabled = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -41,12 +48,6 @@ class MypageController extends GetxController {
 
   setIsSaveInfo(bool value) {
     isSaveLoginInfo.value = value;
-  }
-
-  Future<void> _getUserInfo() async {
-    try {} catch (e) {
-      print('유저 정보 가져오기 실패: $e');
-    }
   }
 
   Future<void> onKakaoLogin() async {
@@ -107,5 +108,20 @@ class MypageController extends GetxController {
         snackPosition: SnackPosition.BOTTOM,
       );
     }
+  }
+
+  Future<void> saveAlarmSettings() async {
+    await appService.saveAlarmSettings(
+      alarmDays: alarmDays.value,
+      alarmHour: alarmHour.value,
+      alarmMinute: alarmMinute.value,
+    );
+
+    // 로컬스토리지에 이 시간 저장하는 부분
+
+    Get.back(); // BottomSheet 닫기
+    Future.delayed(Duration(milliseconds: 100), () {
+      Get.snackbar('알림 설정', '저장되었습니다.', snackPosition: SnackPosition.BOTTOM);
+    });
   }
 }

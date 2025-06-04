@@ -11,6 +11,9 @@ abstract class AppRestAPI {
   @POST("/setting/signin-using-kakao")
   Future<BaseResponse?> signInUsingKakao(@Body() Map<String, dynamic> body);
 
+  @POST("/notification/save-alarm")
+  Future<BaseResponse?> saveAlarmSettings(@Body() Map<String, dynamic> body);
+
   @POST("/logout")
   Future<BaseResponse?> logOut();
 
@@ -31,4 +34,7 @@ abstract class AppRestAPI {
 
   @GET("/setting/get-attendance-check")
   Future<BaseResponse?> getAttendanceCheck();
+
+  @GET("/notification/get-notification-settings")
+  Future<BaseResponse?> getNotificationSettings();
 }

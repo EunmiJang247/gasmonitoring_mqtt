@@ -55,6 +55,28 @@ class AppRepository {
     return response;
   }
 
+  Future<BaseResponse?> saveAlarmSettings({
+    required String alarmDays,
+    required int alarmHour,
+    required int alarmMinute,
+  }) async {
+    BaseResponse? response;
+    try {
+      Map<String, dynamic> body = {
+        'alarmDays': jsonEncode(alarmDays),
+        'alarmHour': alarmHour,
+        'alarmMinute': alarmMinute,
+      };
+
+      final response = await _appAPI.client.saveAlarmSettings(body);
+      logInfo('알람 설정 저장 성공: $response');
+    } catch (e) {
+      logError(e, des: 'saveAlarmSettings Error!');
+      rethrow;
+    }
+    return response;
+  }
+
   // 출석체크 하기
   Future<BaseResponse?> attendanceCheck() async {
     BaseResponse? response;
@@ -149,5 +171,17 @@ class AppRepository {
       logError(stack);
       return null;
     }
+  }
+
+  Future<BaseResponse?> getNotificationSettings() async {
+    BaseResponse? response;
+    try {
+      BaseResponse? response = await _appAPI.client.getNotificationSettings();
+      logInfo('알림 설정 가져오기 성공: $response');
+    } catch (e) {
+      logError(e, des: 'getNotificationSettings Error!');
+      rethrow;
+    }
+    return response;
   }
 }

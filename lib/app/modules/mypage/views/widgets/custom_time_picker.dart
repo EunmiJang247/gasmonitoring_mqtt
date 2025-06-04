@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
 
 class CustomTimePicker extends StatefulWidget {
-  const CustomTimePicker({super.key});
+  final Function(int hour, int minute)? onTimeChanged; // 콜백 함수 추가
+  const CustomTimePicker({
+    super.key,
+    this.onTimeChanged, // 콜백 함수 매개변수
+  });
 
   @override
   _CustomTimePickerState createState() => _CustomTimePickerState();
@@ -26,6 +30,11 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
     _minuteController = FixedExtentScrollController(
       initialItem: minutes.indexOf(selectedMinute),
     );
+
+    // 초기값 콜백 호출
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.onTimeChanged?.call(selectedHour, selectedMinute);
+    });
   }
 
   @override
@@ -33,6 +42,16 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
     _hourController.dispose();
     _minuteController.dispose();
     super.dispose();
+  }
+
+  // 시간 변경 시 콜백 호출하는 헬퍼 메서드
+  void _updateTime(int hour, int minute) {
+    setState(() {
+      selectedHour = hour;
+      selectedMinute = minute;
+    });
+    // 콜백 함수 호출
+    widget.onTimeChanged?.call(hour, minute);
   }
 
   @override
@@ -54,9 +73,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
               list: hours,
               controller: _hourController,
               onSelectedItemChanged: (index) {
-                setState(() {
-                  selectedHour = index;
-                });
+                _updateTime(index, selectedMinute);
               },
             ),
             const SizedBox(width: 4),
@@ -70,9 +87,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
               list: minutes,
               controller: _minuteController,
               onSelectedItemChanged: (index) {
-                setState(() {
-                  selectedMinute = index;
-                });
+                _updateTime(selectedHour, minutes[index]);
               },
             ),
             const SizedBox(width: 4),
