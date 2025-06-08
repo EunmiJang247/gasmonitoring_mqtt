@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
 import 'package:meditation_friend/app/modules/meditation_home/controllers/home_controller.dart';
+import 'package:meditation_friend/app/utils/log.dart';
 
 class AttendanceCheck extends GetView<HomeController> {
   const AttendanceCheck({super.key});
@@ -15,84 +16,80 @@ class AttendanceCheck extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> attendanceListStrings = controller.appService.attendanceList;
-    bool isPresent = false;
+    return Obx(() {
+      List<String> attendanceListStrings = controller.appService.attendanceList;
 
-    // 문자열을 DateTime 리스트로 변환
-    List<DateTime> attendanceList = attendanceListStrings
-        .map((dateString) => DateTime.parse(dateString))
-        .toList();
-    DateTime now = DateTime.now();
+      // 문자열을 DateTime 리스트로 변환
+      List<DateTime> attendanceList = attendanceListStrings
+          .map((dateString) => DateTime.parse(dateString))
+          .toList();
+      DateTime now = DateTime.now();
 
-    // 현재 날짜 기준으로 -3일 ~ +3일 범위의 날짜 리스트 생성
-    List<DateTime> dates = [
-      now.subtract(Duration(days: 3)),
-      now.subtract(Duration(days: 2)),
-      now.subtract(Duration(days: 1)),
-      now, // 오늘
-      now.add(Duration(days: 1)),
-      now.add(Duration(days: 2)),
-      now.add(Duration(days: 3)),
-    ];
+      // 현재 날짜 기준으로 -3일 ~ +3일 범위의 날짜 리스트 생성
+      List<DateTime> dates = [
+        now.subtract(Duration(days: 3)),
+        now.subtract(Duration(days: 2)),
+        now.subtract(Duration(days: 1)),
+        now,
+        now.add(Duration(days: 1)),
+        now.add(Duration(days: 2)),
+        now.add(Duration(days: 3)),
+      ];
 
-    return GestureDetector(
-      onTap: () {
-        // controller.onAttendanceCheck();
-        // 달력 페이지로 이동하기
-      },
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        color: Color.fromRGBO(47, 47, 79, 0.75), // 반투명 남색
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: SizedBox(
-            width: ScreenUtil().screenWidth - 80, // ← 여기서 너비 제한
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // 현재 날짜 기준으로 -3일 ~ +3일 범위의 날짜 리스트를 돌면서 각각의 날짜에 대한 아이콘과 요일 표시
-                ...dates.map((date) {
-                  // 해당 날짜가 출석 리스트에 포함되어 있는지 확인
-                  isPresent = attendanceList.any(
-                    (attendanceDate) =>
-                        attendanceDate.year == date.year &&
-                        attendanceDate.month == date.month &&
-                        attendanceDate.day == date.day,
-                  );
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: Column(
-                      children: [
-                        // 출석 여부에 따라 아이콘을 다르게 표시
-                        Icon(
-                          isPresent
-                              ? Icons.sentiment_very_satisfied // 출석한 날
-                              : (date == now
-                                  ? Icons.sentiment_very_satisfied // 오늘 (출석 안함)
-                                  : Icons.sentiment_neutral), // 출석 안한날
-                          color: isPresent
-                              ? AppColors.kWhite // 출석한날 파란색
-                              : (date == now
-                                  ? AppColors.kWhite
-                                  : // 오늘은 주황색
-                                  AppColors.kGray), // 나머지는 기본 색
-                          size: ScreenUtil().screenWidth / 14,
-                        ),
-                        Text(
-                          getDayOfWeek(date),
-                          style: TextStyle(color: AppColors.kWhite),
-                        ), // 요일 표시
-                      ],
-                    ),
-                  );
-                }).toList(),
-              ],
+      return GestureDetector(
+        onTap: () {
+          // controller.onAttendanceCheck();
+        },
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          color: const Color.fromRGBO(47, 47, 79, 0.75),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: SizedBox(
+              width: ScreenUtil().screenWidth - 80,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ...dates.map((date) {
+                    bool isPresent = attendanceList.any(
+                      (attendanceDate) =>
+                          attendanceDate.year == date.year &&
+                          attendanceDate.month == date.month &&
+                          attendanceDate.day == date.day,
+                    );
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                      child: Column(
+                        children: [
+                          Icon(
+                            isPresent
+                                ? Icons.sentiment_very_satisfied
+                                : (date == now
+                                    ? Icons.sentiment_very_satisfied
+                                    : Icons.sentiment_neutral),
+                            color: isPresent
+                                ? AppColors.kWhite
+                                : (date == now
+                                    ? AppColors.kWhite
+                                    : AppColors.kGray),
+                            size: ScreenUtil().screenWidth / 14,
+                          ),
+                          Text(
+                            getDayOfWeek(date),
+                            style: TextStyle(color: AppColors.kWhite),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

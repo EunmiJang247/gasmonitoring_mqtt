@@ -26,7 +26,7 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin(); // ✅ 글로벌 플러그인 인스턴스
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("🔔 [백그라운드 메시지 수신]: ${message.notification?.title}");
+  // print("🔔 [백그라운드 메시지 수신]: ${message.notification?.title}");
   // 여기서 로컬 알림 띄우기도 가능함
 }
 

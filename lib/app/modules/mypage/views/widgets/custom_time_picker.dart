@@ -1,37 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
+import 'package:meditation_friend/app/data/models/notification_setting.dart';
 
 class CustomTimePicker extends StatefulWidget {
   final Function(int hour, int minute)? onTimeChanged; // 콜백 함수 추가
-  const CustomTimePicker({
-    super.key,
-    this.onTimeChanged, // 콜백 함수 매개변수
-  });
+  final NotificationSetting notificationSetting;
+
+  const CustomTimePicker(
+      {super.key,
+      this.onTimeChanged, // 콜백 함수 매개변수
+      required this.notificationSetting});
 
   @override
   _CustomTimePickerState createState() => _CustomTimePickerState();
 }
 
 class _CustomTimePickerState extends State<CustomTimePicker> {
-  int selectedHour = 12; // 기본 시
-  int selectedMinute = 30; // 기본 분
-
   final List<int> hours = List.generate(24, (index) => index); // 0~23 시간 리스트
   final List<int> minutes = List.generate(6, (index) => index * 10);
 
   late FixedExtentScrollController _hourController;
   late FixedExtentScrollController _minuteController;
 
+  int selectedHour = 12;
+  int selectedMinute = 30;
+
   @override
   void initState() {
     super.initState();
+
+    // ✅ 서버에서 받은 값으로 초기값 설정
+    selectedHour = widget.notificationSetting.notifyHour ?? 12;
+    selectedMinute = widget.notificationSetting.notifyMinute ?? 30;
+
     // 시간과 분을 초기화한 후 컨트롤러에 설정
     _hourController = FixedExtentScrollController(initialItem: selectedHour);
     _minuteController = FixedExtentScrollController(
-      initialItem: minutes.indexOf(selectedMinute),
+      initialItem: minutes.contains(selectedMinute)
+          ? minutes.indexOf(selectedMinute)
+          : 0, // fallback
     );
 
-    // 초기값 콜백 호출
+    // ✅ 초기값 콜백도 해당 값으로 호출
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.onTimeChanged?.call(selectedHour, selectedMinute);
     });

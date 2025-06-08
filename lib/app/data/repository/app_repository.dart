@@ -177,7 +177,7 @@ class AppRepository {
     BaseResponse? response;
     try {
       BaseResponse? response = await _appAPI.client.getNotificationSettings();
-      logInfo('알림 설정 가져오기 성공: $response');
+      return response;
     } catch (e) {
       logError(e, des: 'getNotificationSettings Error!');
       rethrow;

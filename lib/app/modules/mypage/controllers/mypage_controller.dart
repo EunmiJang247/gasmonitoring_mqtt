@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
-import 'package:meditation_friend/app/constant/app_color.dart';
 import 'package:meditation_friend/app/data/models/00_user.dart';
 import 'package:meditation_friend/app/data/models/base_response.dart';
 

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
+import 'package:meditation_friend/app/data/models/notification_setting.dart';
 
 class WeekDaySelectButtons extends StatefulWidget {
   final ValueChanged<String> onChanged;
+  final NotificationSetting notificationSetting;
 
-  const WeekDaySelectButtons({super.key, required this.onChanged});
+  const WeekDaySelectButtons(
+      {super.key, required this.onChanged, required this.notificationSetting});
 
   @override
   _WeekDaySelectButtonsState createState() => _WeekDaySelectButtonsState();
@@ -12,20 +15,35 @@ class WeekDaySelectButtons extends StatefulWidget {
 
 class _WeekDaySelectButtonsState extends State<WeekDaySelectButtons> {
   int selectedDays = 0;
-
   final List<String> days = ["월", "화", "수", "목", "금", "토", "일"];
+
+  @override
+  void initState() {
+    super.initState();
+    selectedDays = _parseNotifyDays(widget.notificationSetting.notifyDays);
+  }
 
   String _selectedDayBits() {
     return List.generate(7, (i) {
-      // 요일 인덱스가 0(월)부터 6(일)까지, 비트 인덱스는 거꾸로 매핑 (6 - i)
       final bitIndex = 6 - i;
       return ((selectedDays & (1 << bitIndex)) != 0) ? '1' : '0';
     }).join();
   }
 
+  int _parseNotifyDays(String dayBits) {
+    // 예: '1111100' → int 비트마스크
+    int value = 0;
+    for (int i = 0; i < dayBits.length; i++) {
+      if (dayBits[i] == '1') {
+        value |= (1 << (6 - i));
+      }
+    }
+    return value;
+  }
+
   void toggleDay(int index) {
     setState(() {
-      selectedDays ^= (1 << (6 - index)); // 토글 처리
+      selectedDays ^= (1 << (6 - index)); // toggle
       widget.onChanged(_selectedDayBits());
     });
   }

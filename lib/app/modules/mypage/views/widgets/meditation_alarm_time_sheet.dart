@@ -5,6 +5,8 @@ import 'package:meditation_friend/app/constant/app_color.dart';
 import 'package:meditation_friend/app/modules/mypage/controllers/mypage_controller.dart';
 import 'package:meditation_friend/app/modules/mypage/views/widgets/custom_time_picker.dart';
 import 'package:meditation_friend/app/modules/mypage/views/widgets/week_day_select_buttons.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 Future<dynamic> meditationAlramTimeBottomSheet(BuildContext context) {
   // 컨트롤러 가져오기
@@ -13,6 +15,23 @@ Future<dynamic> meditationAlramTimeBottomSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
     builder: (BuildContext context) {
+      // ✅ 알림 권한 요청
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        FirebaseMessaging messaging = FirebaseMessaging.instance;
+        NotificationSettings settings = await messaging.requestPermission(
+          alert: true,
+          announcement: true,
+          badge: true,
+          carPlay: false,
+          criticalAlert: false,
+          provisional: false,
+          sound: true,
+        );
+        if (await Permission.notification.isDenied) {
+          await Permission.notification.request();
+        }
+      });
+
       return Container(
         height: MediaQuery.of(context).size.height * 0.7,
         decoration: const BoxDecoration(
@@ -44,16 +63,18 @@ Future<dynamic> meditationAlramTimeBottomSheet(BuildContext context) {
               ),
               SizedBox(height: 15.h),
               WeekDaySelectButtons(
-                onChanged: (days) {
-                  mypageController.alarmDays.value = days;
-                },
-              ),
+                  onChanged: (days) {
+                    mypageController.alarmDays.value = days;
+                  },
+                  notificationSetting:
+                      mypageController.appService.notificationSetting),
               CustomTimePicker(
-                onTimeChanged: (hour, minute) {
-                  mypageController.alarmHour.value = hour; // 선택된 시간 저장
-                  mypageController.alarmMinute.value = minute; // 선택된 분 저장
-                },
-              ),
+                  onTimeChanged: (hour, minute) {
+                    mypageController.alarmHour.value = hour; // 선택된 시간 저장
+                    mypageController.alarmMinute.value = minute; // 선택된 분 저장
+                  },
+                  notificationSetting:
+                      mypageController.appService.notificationSetting),
               Container(
                 width: double.infinity,
                 child: ElevatedButton(

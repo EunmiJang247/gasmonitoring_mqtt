@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:meditation_friend/app/data/models/music.dart';
+import 'package:meditation_friend/app/data/models/notification_setting.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../routes/app_pages.dart';
@@ -28,7 +29,12 @@ class AppService extends GetxService {
   Rx<Music>? curMusic = Music().obs;
   RxBool isPlaying = false.obs;
   RxInt currentIndex = 0.obs;
-
+  NotificationSetting notificationSetting = NotificationSetting(
+    notifyHour: 9,
+    notifyMinute: 0,
+    notifyDays: '1111100', // 월~금
+    enabled: true,
+  );
   AppService({
     required AppRepository appRepository,
     required LocalAppDataService localAppDataService,
@@ -37,7 +43,7 @@ class AppService extends GetxService {
   @override
   Future<void> onInit() async {
     super.onInit();
-    await initUser();
+    await initUser(); // 로그인 유저가 없을경우 hive에 저장된 유저로 로그인 시도
 
     // 재생 상태 스트림 리스너 추가
     audioPlayer.playingStream.listen((playing) {
@@ -53,9 +59,9 @@ class AppService extends GetxService {
       }
     });
 
-    await getAttendanceCheck();
-    initFirebaseMessageHandler();
-    await getNotificationSettings();
+    await getAttendanceCheck(); // 출석체크 날짜 가져오기
+    initFirebaseMessageHandler(); // Firebase 메시지 핸들러 초기화
+    await getNotificationSettings(); // 알림 설정 가져오기
   }
 
   // getLastLoginUser로 가져온 user만 있고 로그인이 되지는 않은 경우
@@ -222,6 +228,7 @@ class AppService extends GetxService {
       thumbnailImageUrl: thumbnailImageUrl,
       connectedAt: connectedAt,
     );
+
     return baseResponse;
   }
 
@@ -237,7 +244,6 @@ class AppService extends GetxService {
   Future<void> getAttendanceCheck() async {
     if (user.value != null) {
       BaseResponse? baseResponse = await _appRepository.getAttendanceCheck();
-      logInfo("baseResponse: ${baseResponse?.data}");
       if (baseResponse?.data != null && baseResponse!.data is List) {
         attendanceList.value =
             (baseResponse!.data as List).map((e) => e.toString()).toList();
@@ -245,14 +251,19 @@ class AppService extends GetxService {
     }
   }
 
-  // 출석체크 날짜 가져오기
+  // 마이페이지에서 설정한 알람시간
   Future<BaseResponse?> getNotificationSettings() async {
     if (user.value != null) {
       BaseResponse? baseResponse =
           await _appRepository.getNotificationSettings();
-      logInfo("baseResponse: ${baseResponse?.data}");
-      return baseResponse;
+      if (baseResponse?.data != null &&
+          baseResponse!.data is Map<String, dynamic>) {
+        notificationSetting = NotificationSetting.fromJson(
+          baseResponse.data as Map<String, dynamic>,
+        );
+      }
     }
+    return null;
   }
 
   Future<String?> logOut() async {
@@ -337,6 +348,12 @@ class AppService extends GetxService {
     required int alarmMinute,
   }) async {
     if (user.value != null) {
+      notificationSetting = NotificationSetting(
+        notifyDays: alarmDays,
+        notifyHour: alarmHour,
+        notifyMinute: alarmMinute,
+        enabled: true, // 알람 활성화 상태
+      );
       await _localAppDataService.saveAlarmSettings(
         alarmDays: alarmDays,
         alarmHour: alarmHour,
