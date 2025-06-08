@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:meditation_friend/app/data/models/alaram_time.dart';
 import 'package:meditation_friend/app/data/models/music.dart';
-import 'package:meditation_friend/app/data/models/notification_setting.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../routes/app_pages.dart';

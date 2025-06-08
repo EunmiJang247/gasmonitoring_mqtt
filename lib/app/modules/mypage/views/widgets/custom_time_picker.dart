@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
-import 'package:meditation_friend/app/data/models/notification_setting.dart';
+import 'package:meditation_friend/app/data/models/alaram_time.dart';
 
 class CustomTimePicker extends StatefulWidget {
   final Function(int hour, int minute)? onTimeChanged; // 콜백 함수 추가

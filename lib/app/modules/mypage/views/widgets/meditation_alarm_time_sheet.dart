@@ -15,19 +15,19 @@ Future<dynamic> meditationAlramTimeBottomSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
     builder: (BuildContext context) {
-      // ✅ 알림 권한 요청
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+        // Firebase 권한 요청
         NotificationSettings settings = await messaging.requestPermission(
           alert: true,
-          announcement: true,
           badge: true,
-          carPlay: false,
-          criticalAlert: false,
-          provisional: false,
           sound: true,
         );
-        if (await Permission.notification.isDenied) {
+
+        // 필요할 경우에만 permission_handler 사용
+        final status = await Permission.notification.status;
+        if (status.isDenied) {
           await Permission.notification.request();
         }
       });
