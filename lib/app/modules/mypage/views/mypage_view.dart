@@ -37,7 +37,7 @@ class MypageView extends GetView<MypageController> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Color(0xFF161538), // 위쪽 색상
-                        AppColors.kDark, // 아래쪽 색상
+                        Color(0xFF11002A), // 아래쪽 색상
                       ],
                     ),
                   ),
@@ -50,7 +50,7 @@ class MypageView extends GetView<MypageController> {
                   child: Image.asset(
                     HOME_BG,
                     width: ScreenUtil().screenWidth, // 핸드폰 전체 너비로
-                    fit: BoxFit.fitWidth, // 너비에 맞추기
+                    fit: BoxFit.cover, // 너비에 맞추기
                   ),
                 ),
                 // 3. 뒤로가기 버튼 - 왼쪽 상단에 위치
@@ -200,8 +200,7 @@ class MypageView extends GetView<MypageController> {
                 right: 0,
                 child: Image.asset(
                   HOME_BG,
-                  width: ScreenUtil().screenWidth, // 핸드폰 전체 너비로
-                  fit: BoxFit.fitWidth, // 너비에 맞추기
+                  fit: BoxFit.cover, // 너비에 맞추기
                 ),
               ),
               Column(

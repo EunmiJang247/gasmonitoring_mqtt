@@ -54,7 +54,7 @@ class RecommendSessions extends GetView<HomeController> {
               });
             },
             title: "일끝낸 후 스트레스해소명상",
-            tags: ["10 min", "Cheer", "Evening"],
+            tags: ["10 min", "Stress", "Evening"],
             backgroundColor: Colors.white,
             textColor: Colors.black,
             tagColor: Color(0xFF6C63FF),
@@ -75,7 +75,7 @@ class RecommendSessions extends GetView<HomeController> {
               });
             },
             title: "파워 N이 만든 상상명상",
-            tags: ["10 min", "Nature"],
+            tags: ["10 min", "Imageination"],
             backgroundColor: Color.fromRGBO(30, 30, 30, 0.9),
           ),
         ),
@@ -92,7 +92,7 @@ class RecommendSessions extends GetView<HomeController> {
               });
             },
             title: "나를 알아가는 질문명상",
-            tags: ["10 min", "애프터눈", "Question"],
+            tags: ["10 min", "Afternoon", "Question"],
             backgroundColor: Color.fromRGBO(47, 47, 79, 0.9),
           ),
         ),

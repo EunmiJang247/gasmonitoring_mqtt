@@ -34,7 +34,7 @@ class MeditationHome extends GetView<HomeController> {
                     end: Alignment.bottomCenter,
                     colors: [
                       Color(0xFF161538), // 위쪽 색상
-                      AppColors.kDark, // 아래쪽 색상
+                      Color(0xFF11002A), // 아래쪽 색상
                     ],
                   ),
                 ),
@@ -48,7 +48,7 @@ class MeditationHome extends GetView<HomeController> {
                 child: Image.asset(
                   HOME_BG,
                   width: ScreenUtil().screenWidth, // 핸드폰 전체 너비로
-                  fit: BoxFit.fitWidth, // 너비에 맞추기
+                  fit: BoxFit.cover, // 너비에 맞추기
                 ),
               ),
 

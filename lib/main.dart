@@ -77,6 +77,7 @@ Future<void> main() async {
   final String initialRoute = (lastUser != null || hasVisitedBefore)
       ? Routes.MEDITATION_HOME
       : Routes.SPLASH;
+  // final String initialRoute = Routes.SPLASH;
 
   await localService.saveAppVisitState(true);
   Get.lazyPut<AppAPI>(() => AppAPI());
@@ -103,6 +104,7 @@ Future<void> main() async {
         designSize: const Size(360, 690),
         builder: (BuildContext context, Widget? child) {
           return GetMaterialApp(
+            debugShowCheckedModeBanner: false,
             title: "meditationFriend",
             locale: const Locale('ko'),
             supportedLocales: const [
