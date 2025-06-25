@@ -31,8 +31,8 @@ android {
         applicationId = "com.jenny.meditation_friend"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = 3 // 2025-06-13
-        versionName = "1.0.1" // 2025-06-13
+        versionCode = 4 // 2025-06-25
+        versionName = "1.0.4" // 2025-06-25
     }
 
     signingConfigs {

@@ -125,3 +125,10 @@ flutter pub run build_runner build --delete-conflicting-outputs
 # 이제 남은거
 
 에러처리
+
+# 배포모드에서 돌려보기
+
+flutter run --release
+또는
+flutter build apk --release
+adb install build/app/outputs/flutter-apk/app-release.apk
