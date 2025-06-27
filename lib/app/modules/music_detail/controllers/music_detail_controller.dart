@@ -290,29 +290,32 @@ class MusicDetailController extends GetxController {
 
 // music_detail_controller.dart
   Future<void> selectMusic(Music selectedMusic) async {
+    // 음악 변경 중이면 무시
+    if (_isChangingMusic) {
+      logInfo('음악 변경 중이므로 선택 요청 무시');
+      return;
+    }
+
     try {
+      _isChangingMusic = true; // ← 동시 실행 방지
+      appService.playerError.value = '';
       logInfo('음악 선택: ${selectedMusic.title}');
+      // 1. 현재 재생 중인 음악 안전하게 정지
+      await _safeStop();
 
-      // 1. 현재 재생 중인 음악 정지
-      await appService.audioPlayer.stop();
-      await appService.audioPlayer.seek(Duration.zero); // 재생 위치를 0으로 초기화
-
-      // 2. URL 추적 변수 초기화 (새로운 음악이므로)
-      _currentLoadedUrl = null;
-
-      // 3. 선택한 음악을 현재 음악으로 설정
+      // 2. 선택한 음악을 현재 음악으로 설정
       appService.curMusic?.value = selectedMusic;
 
-      // 4. 잠시 대기 (상태 정리)
+      // 3. 잠시 대기 (상태 정리)
       await Future.delayed(Duration(milliseconds: 100));
 
-      // 5. 새로운 음악 자동 재생
+      // 4. 새로운 음악 자동 재생
       if (selectedMusic.musicUrl != null) {
         final apiBaseUrl = dotenv.env['DEV_BASE_URL_WT_API'];
         final url = '$apiBaseUrl${selectedMusic.musicUrl}';
 
         logInfo('새로운 음악 URL 설정: $url');
-        await appService.audioPlayer.setUrl(url);
+        await _safeSetUrl(url); // ← 안전한 URL 설정 사용
         _currentLoadedUrl = url;
 
         await appService.audioPlayer.play();
