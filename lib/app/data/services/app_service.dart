@@ -22,7 +22,7 @@ class AppService extends GetxService {
   final AppRepository _appRepository;
   final LocalAppDataService _localAppDataService;
 
-  final AudioPlayer audioPlayer = AudioPlayer();
+  AudioPlayer audioPlayer = AudioPlayer();
   Rx<MeditationFriendUser?> user = Rx<MeditationFriendUser?>(null);
   Rx<bool> isOfflineMode = false.obs;
   DateTime? currentBackPressTime;

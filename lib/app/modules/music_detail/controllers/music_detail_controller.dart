@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:meditation_friend/app/data/models/music.dart';
 import 'package:meditation_friend/app/data/services/app_service.dart';
 import 'package:meditation_friend/app/utils/log.dart';
@@ -47,6 +48,36 @@ class MusicDetailController extends GetxController {
     super.onClose();
   }
 
+  Future<void> safePlay(AudioPlayer player, String url) async {
+    try {
+      await player.setUrl(url);
+      logInfo('URL 설정 완료');
+
+      // 준비될 때까지 기다리기
+      await Future.doWhile(() async {
+        final state = player.playerState.processingState;
+        logInfo("🌀 상태 확인 중: $state");
+        if (state == ProcessingState.ready) return false;
+        if (state == ProcessingState.idle ||
+            state == ProcessingState.completed) {
+          throw Exception('❌ player 상태 비정상: $state');
+        }
+        await Future.delayed(Duration(milliseconds: 100));
+        return true;
+      });
+
+      // ✅ 개선: 타임아웃 추가
+      try {
+        player.play();
+        logInfo('🎵 재생 시작됨 - playing: ${player.playing}');
+      } catch (e) {
+        print(e);
+      }
+    } catch (e) {
+      logError('safePlay 오류: $e');
+    }
+  }
+
   // 음악 재생
   Future<void> playMusic() async {
     if (_isChangingMusic) {
@@ -62,16 +93,13 @@ class MusicDetailController extends GetxController {
         _isChangingMusic = true;
         appService.playerError.value = '';
 
-        // 현재 로드된 URL과 다른 경우에만 setUrl 호출
         if (_currentLoadedUrl != url) {
           logInfo('새로운 URL 설정: $url');
-          await appService.audioPlayer.setUrl(url);
-          _currentLoadedUrl = url;
         } else {
           logInfo('동일한 URL이므로 setUrl 스킵: $url');
         }
-
-        await appService.audioPlayer.play();
+        _currentLoadedUrl = url;
+        await safePlay(appService.audioPlayer, url); // ← 핵심!
       } catch (e) {
         logError('재생 오류: $e');
         appService.playerError.value = e.toString();
@@ -84,10 +112,13 @@ class MusicDetailController extends GetxController {
 
   // 안전한 URL 설정
   Future<void> _safeSetUrl(String url) async {
+    logInfo(url);
     try {
       // 현재 재생 중이면 정지
       if (appService.audioPlayer.playing) {
         await appService.audioPlayer.stop();
+        await appService.audioPlayer.dispose();
+        appService.audioPlayer = AudioPlayer();
       }
 
       // 잠시 대기 (리소스 정리)
@@ -151,13 +182,13 @@ class MusicDetailController extends GetxController {
       final apiBaseUrl = dotenv.env['DEV_BASE_URL_WT_API'];
       final url = '$apiBaseUrl${newMusic.musicUrl}';
 
-      await _safeSetUrl(url);
       _currentLoadedUrl = url;
 
-      await appService.audioPlayer.play();
-      logInfo('새로운 음악 재생 시작: ${newMusic.title}');
+      await safePlay(appService.audioPlayer, url); // ✅ 핵심 적용
+
+      logInfo('🎵 새로운 음악 재생 시작: ${newMusic.title}');
     } catch (e) {
-      logError('다음 곡 재생 오류: $e');
+      logError('❌ 다음 곡 재생 오류: $e');
       appService.playerError.value = e.toString();
       _currentLoadedUrl = null;
     } finally {
@@ -170,6 +201,8 @@ class MusicDetailController extends GetxController {
     try {
       if (appService.audioPlayer.playing) {
         await appService.audioPlayer.stop();
+        await appService.audioPlayer.dispose();
+        appService.audioPlayer = AudioPlayer();
       }
       await appService.audioPlayer.seek(Duration.zero);
       await Future.delayed(Duration(milliseconds: 100));
@@ -206,21 +239,22 @@ class MusicDetailController extends GetxController {
   // 첫 번째 음악 재생 (개선)
   Future<void> _playFirstMusic(Music music) async {
     try {
-      if (music.musicUrl != null) {
-        final apiBaseUrl = dotenv.env['DEV_BASE_URL_WT_API'];
-        final url = '$apiBaseUrl${music.musicUrl}';
-
-        await Future.delayed(Duration(milliseconds: 200));
-        await _safeSetUrl(url);
-        _currentLoadedUrl = url;
-
-        await appService.audioPlayer.play();
-        logInfo('첫 번째 음악 자동 재생 시작: ${music.title}');
-      } else {
+      if (music.musicUrl == null) {
         throw Exception('첫 번째 음악의 URL이 없습니다');
       }
+
+      final apiBaseUrl = dotenv.env['DEV_BASE_URL_WT_API'];
+      final url = '$apiBaseUrl${music.musicUrl}';
+      logInfo("url은 ${url}");
+
+      await Future.delayed(Duration(milliseconds: 200)); // 버퍼 정리용 대기
+      _currentLoadedUrl = url;
+
+      await safePlay(appService.audioPlayer, url); // ✅ 안전 재생 적용
+
+      logInfo('🎵 첫 번째 음악 자동 재생 시작: ${music.title}');
     } catch (e) {
-      logError('첫 번째 음악 재생 오류: $e');
+      logError('❌ 첫 번째 음악 재생 오류: $e');
       appService.playerError.value = e.toString();
       _currentLoadedUrl = null;
     }
@@ -248,6 +282,8 @@ class MusicDetailController extends GetxController {
         if (appService.curMusic?.value != null) {
           await appService.audioPlayer.stop();
           await appService.audioPlayer.seek(Duration.zero);
+          await appService.audioPlayer.dispose();
+          appService.audioPlayer = AudioPlayer();
           _currentLoadedUrl = null; // URL 추적 변수 초기화
           logInfo("이전 음악 중지: ${appService.curMusic?.value.title}");
         }
@@ -288,47 +324,44 @@ class MusicDetailController extends GetxController {
     }
   }
 
-// music_detail_controller.dart
+  // music_detail_controller.dart
   Future<void> selectMusic(Music selectedMusic) async {
-    // 음악 변경 중이면 무시
     if (_isChangingMusic) {
       logInfo('음악 변경 중이므로 선택 요청 무시');
       return;
     }
 
     try {
-      _isChangingMusic = true; // ← 동시 실행 방지
+      _isChangingMusic = true;
       appService.playerError.value = '';
-      logInfo('음악 선택: ${selectedMusic.title}');
-      // 1. 현재 재생 중인 음악 안전하게 정지
+      logInfo('🎯 음악 선택: ${selectedMusic.title}');
+
+      // 1. 현재 재생 중인 음악 정지
       await _safeStop();
 
-      // 2. 선택한 음악을 현재 음악으로 설정
+      // 2. 상태 갱신
       appService.curMusic?.value = selectedMusic;
 
-      // 3. 잠시 대기 (상태 정리)
-      await Future.delayed(Duration(milliseconds: 100));
-
-      // 4. 새로운 음악 자동 재생
-      if (selectedMusic.musicUrl != null) {
-        final apiBaseUrl = dotenv.env['DEV_BASE_URL_WT_API'];
-        final url = '$apiBaseUrl${selectedMusic.musicUrl}';
-
-        logInfo('새로운 음악 URL 설정: $url');
-        await _safeSetUrl(url); // ← 안전한 URL 설정 사용
-        _currentLoadedUrl = url;
-
-        await appService.audioPlayer.play();
-        logInfo('새로운 음악 재생 시작: ${selectedMusic.title}');
-      } else {
-        logError('선택한 음악의 URL이 없습니다');
+      // 3. URL 확인 및 재생
+      if (selectedMusic.musicUrl == null) {
+        throw Exception('선택한 음악의 URL이 없습니다');
       }
 
-      logInfo('음악 선택 완료: ${selectedMusic.title}');
+      final apiBaseUrl = dotenv.env['DEV_BASE_URL_WT_API'];
+      final url = '$apiBaseUrl${selectedMusic.musicUrl}';
+
+      _currentLoadedUrl = url;
+
+      logInfo('🎶 새로운 음악 URL 재생 요청: $url');
+      await safePlay(appService.audioPlayer, url);
+
+      logInfo('✅ 음악 선택 완료: ${selectedMusic.title}');
     } catch (e) {
-      logError('음악 선택 오류: $e');
-      // 오류 발생 시 URL 추적 변수 초기화
+      logError('❌ 음악 선택 오류: $e');
+      appService.playerError.value = e.toString();
       _currentLoadedUrl = null;
+    } finally {
+      _isChangingMusic = false;
     }
   }
 }
