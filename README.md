@@ -132,3 +132,22 @@ flutter run --release
 또는
 flutter build apk --release
 adb install build/app/outputs/flutter-apk/app-release.apk
+
+# 릴리즈 빌드 생성
+
+flutter clean
+flutter pub get
+flutter build appbundle --release
+생성되는 경로: C:\Users\MS\Desktop\meditation_getx\build\app\outputs\bundle\release
+
+# 새로운 버전 올릴때
+
+versionCode = 5 // 2025-06-25
+versionName = "1.0.5" // 2025-06-25
+이거바꾸고
+version: 1.0.8+5
+이것도 바꿔야함.
+
+# ad가 빌드에 있는지 확인할려면
+
+<MY_PROJECT>/build/app/intermediates/merged_manifests/release/AndroidManifest.xml

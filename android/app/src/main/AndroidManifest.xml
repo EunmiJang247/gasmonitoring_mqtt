@@ -1,20 +1,32 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
+
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+
     <application
         android:label="명상친구"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:requestLegacyExternalStorage="true"
-        android:usesCleartextTraffic="true"
-        >
+        android:usesCleartextTraffic="true">
+        
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="meditation_friend_daily_alarm" />
+
+        <!-- 광고 ID 사용 여부 메타데이터 추가 -->
+        <meta-data
+            android:name="com.google.android.gms.ads.AD_MANAGER_APP"
+            android:value="true" />
+
         <service
             android:name="androidx.media3.session.MediaSessionService"
             android:exported="true"
@@ -58,6 +70,9 @@
             android:value="2" />
     </application>
     <queries>
+        <!-- 카카오톡 앱 쿼리 추가 (Google Play Store에서 요구) -->
+        <package android:name="com.kakao.talk" />
+        <package android:name="com.kakao.talk.alpha" />
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
