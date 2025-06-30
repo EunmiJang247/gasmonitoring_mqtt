@@ -1,4 +1,4 @@
-import 'dart:async'; // ← 이 import가 누락됨!
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,9 +20,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 class AppService extends GetxService {
   final AppRepository _appRepository;
+  // api 호출하는 리포지토리
   final LocalAppDataService _localAppDataService;
+  // Hive를 관리하는 서비스
 
   AudioPlayer audioPlayer = AudioPlayer();
+  // 디코더를 직접 들고 있는 리모컨
   Rx<MeditationFriendUser?> user = Rx<MeditationFriendUser?>(null);
   Rx<bool> isOfflineMode = false.obs;
   DateTime? currentBackPressTime;
@@ -31,16 +34,11 @@ class AppService extends GetxService {
   Rx<Music>? curMusic = Music().obs;
   RxBool isPlaying = false.obs;
   RxInt currentIndex = 0.obs;
+  // 현재 재생 중인 음악의 musicList 내 위치
 
-  // 재생 상태 관리 추가
   RxBool isLoading = false.obs;
+  // 음악 로딩 상태를 UI에 표시하기 위한 변수
   RxString playerError = ''.obs;
-
-  // 스트림 구독 관리
-  StreamSubscription<bool>? _playingSubscription;
-  StreamSubscription<PlayerState>? _playerStateSubscription;
-  StreamSubscription<Duration?>? _durationSubscription;
-  StreamSubscription<Duration>? _positionSubscription;
 
   NotificationSetting notificationSetting = NotificationSetting(
     notifyHour: 9,
@@ -58,145 +56,18 @@ class AppService extends GetxService {
   Future<void> onInit() async {
     super.onInit();
     await initUser(); // 로그인 유저가 없을경우 hive에 저장된 유저로 로그인 시도
-    await _initAudioPlayer(); // 오디오 플레이어 초기화
-
     await getAttendanceCheck(); // 출석체크 날짜 가져오기
     initFirebaseMessageHandler(); // Firebase 메시지 핸들러 초기화
     await getNotificationSettings(); // 알림 설정 가져오기
   }
 
-  @override
-  void onClose() {
-    _disposeAudioPlayer();
-    super.onClose();
-  }
-
-  // 오디오 플레이어 초기화
-  Future<void> _initAudioPlayer() async {
-    try {
-      // 기존 구독 정리
-      await _disposeSubscriptions();
-
-      // 재생 상태 스트림 리스너
-      _playingSubscription = audioPlayer.playingStream.listen(
-        (playing) {
-          isPlaying.value = playing;
-          logInfo('재생 상태 변경: $playing');
-        },
-        onError: (error) {
-          logError('재생 상태 스트림 오류: $error');
-          playerError.value = error.toString();
-        },
-      );
-
-      // 플레이어 상태 스트림 리스너
-      _playerStateSubscription = audioPlayer.playerStateStream.listen(
-        (state) {
-          logInfo('플레이어 상태: ${state.processingState}');
-
-          switch (state.processingState) {
-            case ProcessingState.idle:
-              isLoading.value = false;
-              playerError.value = '';
-              break;
-            case ProcessingState.loading:
-              isLoading.value = true;
-              playerError.value = '';
-              logInfo('음악 로딩 중...');
-              break;
-            case ProcessingState.buffering: // ← 누락된 케이스 추가
-              isLoading.value = true;
-              playerError.value = '';
-              logInfo('음악 버퍼링 중...');
-              break;
-            case ProcessingState.ready:
-              isLoading.value = false;
-              playerError.value = '';
-              logInfo('음악 재생 준비 완료');
-              break;
-            case ProcessingState.completed:
-              isPlaying.value = false;
-              isLoading.value = false;
-              playerError.value = '';
-              logInfo('음악 재생 완료');
-              _handlePlaybackCompleted();
-              break;
-          }
-        },
-        onError: (error) {
-          logError('플레이어 상태 스트림 오류: $error');
-          isLoading.value = false;
-          playerError.value = error.toString();
-        },
-      );
-
-      // 재생 시간 리스너 (선택사항)
-      _durationSubscription = audioPlayer.durationStream.listen(
-        (duration) {
-          // 총 재생 시간 처리
-        },
-        onError: (error) {
-          logError('재생 시간 스트림 오류: $error');
-        },
-      );
-
-      // 현재 위치 리스너 (선택사항)
-      _positionSubscription = audioPlayer.positionStream.listen(
-        (position) {
-          // 현재 재생 위치 처리
-        },
-        onError: (error) {
-          logError('재생 위치 스트림 오류: $error');
-        },
-      );
-
-      logInfo('오디오 플레이어 초기화 완료');
-    } catch (e) {
-      logError('오디오 플레이어 초기화 오류: $e');
-      playerError.value = e.toString();
-    }
-  }
-
-  // 재생 완료 처리
-  void _handlePlaybackCompleted() {
-    // 자동으로 다음 곡 재생하거나 정지
-    // 필요에 따라 구현
-  }
-
-  // 구독 정리
-  Future<void> _disposeSubscriptions() async {
-    await _playingSubscription?.cancel();
-    await _playerStateSubscription?.cancel();
-    await _durationSubscription?.cancel();
-    await _positionSubscription?.cancel();
-
-    _playingSubscription = null;
-    _playerStateSubscription = null;
-    _durationSubscription = null;
-    _positionSubscription = null;
-  }
-
-  // 오디오 플레이어 정리
-  Future<void> _disposeAudioPlayer() async {
-    try {
-      await _disposeSubscriptions();
-      await audioPlayer.stop();
-      await audioPlayer.dispose();
-      logInfo('오디오 플레이어 정리 완료');
-    } catch (e) {
-      logError('오디오 플레이어 정리 오류: $e');
-    }
-  }
-
-  // getLastLoginUser로 가져온 user만 있고 로그인이 되지는 않은 경우
-  initUser() async {
+  // user백업
+  Future<void> initUser() async {
     if (user.value == null) {
-      // appService에 user가 없는 경우
-      logInfo('유저가 없어요');
-      // 서버에 보내서 로그인 처리
+      // getLastLoginUser로 가져온 user만 있고 로그인이 되지는 않은 경우
       MeditationFriendUser? lastUser = _localAppDataService.getLastLoginUser();
       if (lastUser != null) {
-        logInfo('예전유저는요 ${lastUser.toJson()}');
+        logInfo('유저가 없어요. 예전유저는요 ${lastUser.toJson()}');
 
         String? fcmToken = await getFcmToken() ?? "";
         BaseResponse? response = await signInUsingKakao(
@@ -211,7 +82,17 @@ class AppService extends GetxService {
           // AppService에 사용자 정보 저장
           user.value = _localAppDataService.getLastLoginUser();
         }
-        logInfo('완료추');
+      }
+    }
+  }
+
+  // 출석체크 날짜 가져오기
+  Future<void> getAttendanceCheck() async {
+    if (user.value != null) {
+      BaseResponse? baseResponse = await _appRepository.getAttendanceCheck();
+      if (baseResponse?.data != null && baseResponse!.data is List) {
+        attendanceList.value =
+            (baseResponse!.data as List).map((e) => e.toString()).toList();
       }
     }
   }
@@ -223,7 +104,7 @@ class AppService extends GetxService {
         final notification = message.notification;
 
         final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-            FlutterLocalNotificationsPlugin(); // ✅ 글로벌 플러그인 인스턴스
+            FlutterLocalNotificationsPlugin();
         if (notification != null) {
           flutterLocalNotificationsPlugin.show(
             0,
@@ -361,17 +242,6 @@ class AppService extends GetxService {
     if (user.value != null) {
       BaseResponse? baseResponse = await _appRepository.attendanceCheck();
       return baseResponse;
-    }
-  }
-
-  // 출석체크 날짜 가져오기
-  Future<void> getAttendanceCheck() async {
-    if (user.value != null) {
-      BaseResponse? baseResponse = await _appRepository.getAttendanceCheck();
-      if (baseResponse?.data != null && baseResponse!.data is List) {
-        attendanceList.value =
-            (baseResponse!.data as List).map((e) => e.toString()).toList();
-      }
     }
   }
 

@@ -15,20 +15,6 @@ class AppRepository {
   // 생성자에서 AppAPI를 주입받아 _appAPI 필드에 저장.
   final AppAPI _appAPI;
 
-  // Map<String, dynamic> readAndroidBuildData() {
-  //   return <String, dynamic>{
-  //     'platformVersion': DeviceInformation.platformVersion,
-  //     'apiLevel': DeviceInformation.apiLevel,
-  //     'cpuName': DeviceInformation.cpuName,
-  //     'deviceIMEINumber': DeviceInformation.deviceIMEINumber,
-  //     'deviceManufacturer': DeviceInformation.deviceManufacturer,
-  //     'deviceModel': DeviceInformation.deviceModel,
-  //     'deviceName': DeviceInformation.deviceName,
-  //     'hardware': DeviceInformation.hardware,
-  //     'productName': DeviceInformation.productName,
-  //   };
-  // }
-
   // 카카오 로그인
   Future<BaseResponse?> signInUsingKakao({
     required id,

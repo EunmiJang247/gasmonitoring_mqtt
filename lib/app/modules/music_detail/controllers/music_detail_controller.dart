@@ -56,6 +56,7 @@ class MusicDetailController extends GetxController {
       // 준비될 때까지 기다리기
       await Future.doWhile(() async {
         final state = player.playerState.processingState;
+        logInfo("state: $state");
         logInfo("🌀 상태 확인 중: $state");
         if (state == ProcessingState.ready) return false;
         if (state == ProcessingState.idle ||
@@ -68,8 +69,9 @@ class MusicDetailController extends GetxController {
 
       // ✅ 개선: 타임아웃 추가
       try {
-        player.play();
-        logInfo('🎵 재생 시작됨 - playing: ${player.playing}');
+        logInfo('111나오는거 맞지..?');
+        await player.play();
+        logInfo('222나오는거 맞지..?');
       } catch (e) {
         print(e);
       }
