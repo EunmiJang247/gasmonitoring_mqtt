@@ -74,7 +74,6 @@ class MypageController extends GetxController {
       // 서버에 보내서 로그인 처리
       BaseResponse? response = await appService.signInUsingKakao(
         id: kakaoUser.id.toString(),
-        fcmToken: fcmToken,
         nickname: kakaoUser.properties?['nickname'] ?? '',
         profileImageUrl: kakaoUser.properties?['profile_image'] ?? '',
         thumbnailImageUrl: kakaoUser.properties?['thumbnail_image'] ?? '',

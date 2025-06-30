@@ -34,6 +34,7 @@ class AppService extends GetxService {
   Rx<Music>? curMusic = Music().obs;
   RxBool isPlaying = false.obs;
   RxInt currentIndex = 0.obs;
+  String fcmToken = '';
   // 현재 재생 중인 음악의 musicList 내 위치
 
   RxBool isLoading = false.obs;
@@ -68,16 +69,15 @@ class AppService extends GetxService {
       MeditationFriendUser? lastUser = _localAppDataService.getLastLoginUser();
       if (lastUser != null) {
         logInfo('유저가 없어요. 예전유저는요 ${lastUser.toJson()}');
-
-        String? fcmToken = await getFcmToken() ?? "";
+        fcmToken = await getFcmToken() ?? "";
         BaseResponse? response = await signInUsingKakao(
           id: lastUser.id.toString(),
-          fcmToken: fcmToken,
           nickname: lastUser.nickname ?? '',
           profileImageUrl: lastUser.profileImageUrl ?? '',
           thumbnailImageUrl: lastUser.thumbnailImageUrl ?? '',
           connectedAt: lastUser.connectedAt,
         );
+        logInfo('예전유저로 로그인 완료에요');
         if (response?.result?.code == 200) {
           // AppService에 사용자 정보 저장
           user.value = _localAppDataService.getLastLoginUser();
@@ -98,23 +98,30 @@ class AppService extends GetxService {
   }
 
   void initFirebaseMessageHandler() {
-    // 포그라운드
+    // 앱이 포그라운드, 백그라운드, 종료 상태일 때 각각 FCM 알림을 수신하고 처리하는 로직
+
+    // 포그라운드: 앱이 현재 화면에 떠 있고, 사용자가 보고 있는 상태
     FirebaseMessaging.onMessage.listen((RemoteMessage? message) {
       if (message != null && message.notification != null) {
+        // 푸시 메시지가 실제로 존재하고, 그 안에 notification (알림 제목/내용 등)이 포함되어 있는지 확인
         final notification = message.notification;
 
         final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
             FlutterLocalNotificationsPlugin();
+        // Flutter용 로컬 알림(Local Notification) 플러그인의 클래스
         if (notification != null) {
           flutterLocalNotificationsPlugin.show(
+            // 이것을 통해 내부 알림을 표시한다
             0,
             notification.title,
             notification.body,
             NotificationDetails(
+              // 로컬 알림의 플랫폼별(안드로이드, iOS 등) 세부 옵션을 담은 객체
               android: AndroidNotificationDetails(
+                // Android용 알림 설정을 위한 객체
                 'default_channel',
-                '기본 알림 채널',
-                importance: Importance.max,
+                '명상친구',
+                importance: Importance.max, // 알림의 중요도를 설정
                 priority: Priority.high,
               ),
             ),
@@ -141,6 +148,7 @@ class AppService extends GetxService {
   }
 
   Future<String?> getFcmToken() async {
+    // 현재 디바이스의 FCM 토큰을 가져오는 역할
     FirebaseMessaging messaging = FirebaseMessaging.instance;
     String? token = await messaging.getToken();
     return token;
@@ -216,7 +224,6 @@ class AppService extends GetxService {
   // 카카오 로그인
   Future<BaseResponse?> signInUsingKakao({
     required id,
-    required fcmToken,
     required nickname,
     required profileImageUrl,
     required thumbnailImageUrl,
