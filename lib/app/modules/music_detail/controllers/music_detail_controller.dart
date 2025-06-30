@@ -50,6 +50,12 @@ class MusicDetailController extends GetxController {
 
   Future<void> safePlay(AudioPlayer player, String url) async {
     try {
+      // ✅ 기존 재생 중단
+      if (player.playing) {
+        await player.stop();
+        logInfo('기존 재생 중단');
+      }
+
       await player.setUrl(url);
       logInfo('URL 설정 완료');
 
