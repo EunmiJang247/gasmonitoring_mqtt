@@ -69,8 +69,6 @@ class MypageController extends GetxController {
       // 사용자 정보 가져오기
       final kakaoUser = await UserApi.instance.me();
 
-      String? fcmToken = await appService.getFcmToken() ?? "";
-
       // 서버에 보내서 로그인 처리
       BaseResponse? response = await appService.signInUsingKakao(
         id: kakaoUser.id.toString(),

@@ -20,10 +20,8 @@ class SameCategoryMusics extends StatelessWidget {
         // Obx로 감싸서 musicList 변화 감지
         Obx(() {
           final musicList = controller.appService.musicList;
-          logInfo("musicList는요 ${musicList}");
-
           if (musicList.isEmpty) {
-            return Container(
+            return SizedBox(
               height: 100.h,
               child: Center(
                 child: Text(
@@ -70,8 +68,6 @@ class SameCategoryMusics extends StatelessWidget {
                     itemCount: musicList.length,
                     itemBuilder: (context, index) {
                       final music = musicList[index];
-                      logInfo(music.toJson());
-                      // {id: 1, title: 호흡명상, description: 현재의 나에 집중하는 호흡명상입니다, imageUrl: 1, category: 호흡, musicUrl: /static/result/result1.mp3, duration: 635}
                       return GestureDetector(
                         onTap: () {
                           controller.selectMusic(music);

@@ -192,15 +192,7 @@ class MusicDetailView extends GetView<MusicDetailController> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Obx(() {
-                                        final playing =
-                                            controller.isPlaying.value;
-                                        final musicTitle = controller
-                                                .currentMusic.value?.title ??
-                                            '';
-                                        logInfo(
-                                            'UI 재생 상태: $playing, 현재 음악: $musicTitle');
-
-                                        return playing
+                                        return controller.isPlaying.value
                                             ? IconButton(
                                                 icon: const Icon(
                                                   Icons.pause,
@@ -208,8 +200,6 @@ class MusicDetailView extends GetView<MusicDetailController> {
                                                   color: AppColors.kGray,
                                                 ),
                                                 onPressed: () {
-                                                  logInfo(
-                                                      '일시정지 버튼 클릭 - 현재 상태: $playing');
                                                   controller.pauseMusic();
                                                 },
                                               )
@@ -218,8 +208,6 @@ class MusicDetailView extends GetView<MusicDetailController> {
                                                     "assets/images/play_btn.png",
                                                 size: 48.w,
                                                 onPressed: () async {
-                                                  logInfo(
-                                                      '재생 버튼 클릭 - 현재 상태: $playing');
                                                   try {
                                                     await controller
                                                         .playMusic();

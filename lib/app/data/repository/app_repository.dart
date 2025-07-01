@@ -125,23 +125,6 @@ class AppRepository {
     return response;
   }
 
-  // 비밀번호 찾기
-  Future<String?> findPw({
-    required String email,
-  }) async {
-    String? result;
-    try {
-      Map<String, dynamic> body = {
-        "email": email,
-      };
-      BaseResponse? response = await _appAPI.client.findPw(body);
-      result = response?.result?.message;
-    } catch (err) {
-      logError(err, des: 'AppRepository.findPw(email:$email)');
-    }
-    return result;
-  }
-
   // 음악리스트 불러오기
   Future<List<Music>?> searchMusicList() async {
     try {

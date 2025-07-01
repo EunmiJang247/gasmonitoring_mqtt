@@ -17,9 +17,6 @@ abstract class AppRestAPI {
   @POST("/logout")
   Future<BaseResponse?> logOut();
 
-  @POST("/find_pw")
-  Future<BaseResponse?> findPw(@Queries() Map<String, dynamic> queries);
-
   @GET("/meditation-musics/list")
   Future<BaseResponse?> getMusicList();
 

@@ -59,7 +59,6 @@ class MeditationHome extends GetView<HomeController> {
                   children: [
                     SizedBox(height: 20.h),
                     const QuoteSlider(),
-                    SizedBox(height: 10.h),
                     const StartMeditationPlayerBtn(),
                     SizedBox(height: 10.h),
                     const AttendanceCheck(),

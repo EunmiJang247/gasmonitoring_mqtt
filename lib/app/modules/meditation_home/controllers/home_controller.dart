@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:meditation_friend/app/data/services/app_service.dart';
 import 'package:meditation_friend/app/routes/app_pages.dart';
-import 'package:meditation_friend/app/utils/log.dart';
 
 class HomeController extends GetxController {
   final AppService appService;
@@ -15,7 +14,7 @@ class HomeController extends GetxController {
 
   Future<void> _initializeAttendance() async {
     // 출석체크 하기
-    logInfo("user는요 ${appService.user.toJson()}");
+    // logInfo("user는요 ${appService.user.toJson()}");
     await appService.attendanceCheck();
     await appService.getAttendanceCheck();
   }

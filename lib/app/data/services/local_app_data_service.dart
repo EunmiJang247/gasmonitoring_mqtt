@@ -92,9 +92,9 @@ class LocalAppDataService extends GetxService {
 
 // 앱 방문 기록 확인
   bool hasVisitedBefore() {
+    // 처음 방문했다면 스플레쉬 스크린이 나오게됨
     final visitState = setting_box.get('has_visited_before');
     // 'true' 문자열이면 true 반환, 그 외에는 false 반환
-    logInfo("visitState: ${visitState}");
     return visitState == 'true';
   }
 

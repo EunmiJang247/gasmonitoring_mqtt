@@ -31,15 +31,14 @@ class AppService extends GetxService {
   DateTime? currentBackPressTime;
   RxList<Music> musicList = <Music>[].obs;
   RxList<String> attendanceList = <String>[].obs;
-  Rx<Music>? curMusic = Music().obs;
+  Rx<Music?> curMusic = Rx<Music?>(null);
   RxBool isPlaying = false.obs;
   RxInt currentIndex = 0.obs;
-  String fcmToken = '';
   // 현재 재생 중인 음악의 musicList 내 위치
+  late String fcmToken;
 
   RxBool isLoading = false.obs;
   // 음악 로딩 상태를 UI에 표시하기 위한 변수
-  RxString playerError = ''.obs;
 
   NotificationSetting notificationSetting = NotificationSetting(
     notifyHour: 9,
@@ -56,10 +55,23 @@ class AppService extends GetxService {
   @override
   Future<void> onInit() async {
     super.onInit();
+    await initFcmToken();
     await initUser(); // 로그인 유저가 없을경우 hive에 저장된 유저로 로그인 시도
     await getAttendanceCheck(); // 출석체크 날짜 가져오기
     initFirebaseMessageHandler(); // Firebase 메시지 핸들러 초기화
-    await getNotificationSettings(); // 알림 설정 가져오기
+    await getNotificationSettings(); // 마이페이지에서 알림사건 보여주기 위함
+  }
+
+  Future<void> initFcmToken() async {
+    // 현재 디바이스의 FCM 토큰을 가져온 후 초기화
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    try {
+      // FCM 토큰을 가져오고, null인 경우 빈 문자열로 초기화
+      fcmToken = await messaging.getToken() ?? "";
+      logInfo('FCM 토큰: $fcmToken');
+    } catch (e) {
+      logError('FCM 토큰 가져오기 실패: $e');
+    }
   }
 
   // user백업
@@ -67,9 +79,8 @@ class AppService extends GetxService {
     if (user.value == null) {
       // getLastLoginUser로 가져온 user만 있고 로그인이 되지는 않은 경우
       MeditationFriendUser? lastUser = _localAppDataService.getLastLoginUser();
+      logInfo('예전유저는요 ${lastUser?.toJson()}');
       if (lastUser != null) {
-        logInfo('유저가 없어요. 예전유저는요 ${lastUser.toJson()}');
-        fcmToken = await getFcmToken() ?? "";
         BaseResponse? response = await signInUsingKakao(
           id: lastUser.id.toString(),
           nickname: lastUser.nickname ?? '',
@@ -89,11 +100,13 @@ class AppService extends GetxService {
   // 출석체크 날짜 가져오기
   Future<void> getAttendanceCheck() async {
     if (user.value != null) {
+      // 유저가 있는 경우에만
       BaseResponse? baseResponse = await _appRepository.getAttendanceCheck();
       if (baseResponse?.data != null && baseResponse!.data is List) {
         attendanceList.value =
             (baseResponse!.data as List).map((e) => e.toString()).toList();
       }
+      logInfo("attendanceList는 ${attendanceList.toString()}");
     }
   }
 
@@ -147,55 +160,31 @@ class AppService extends GetxService {
     });
   }
 
-  Future<String?> getFcmToken() async {
-    // 현재 디바이스의 FCM 토큰을 가져오는 역할
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    String? token = await messaging.getToken();
-    return token;
-  }
+  // Future<void> sendFirebaseToken() async {
+  //   // 서버에 fcmToken 전송(only 테스트)
+  //   await _appRepository.sendFirebaseToken(
+  //     fcmToken: fcmToken,
+  //   );
+  // }
 
-  Future<String?> sendFirebaseToken() async {
-    String? fcmToken = await getFcmToken() ?? "";
-    // 서버에 fcmToken 전송
-    fcmToken = await _appRepository.sendFirebaseToken(
-      fcmToken: fcmToken,
-    );
-    return fcmToken;
-  }
+  // Future<void> sendAlaram() async {
+  //   // 권한 확인(테스트)
+  //   FirebaseMessaging messaging = FirebaseMessaging.instance;
+  //   NotificationSettings settings = await messaging.requestPermission(
+  //     alert: true,
+  //     announcement: true,
+  //     badge: true,
+  //     carPlay: false,
+  //     criticalAlert: false,
+  //     provisional: false,
+  //     sound: true,
+  //   );
 
-  Future<void> sendAlaram() async {
-    // 권한 확인
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      announcement: true,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
-
-    if (await Permission.notification.isDenied) {
-      await Permission.notification.request();
-    }
-    await _appRepository.sendAlarm();
-  }
-
-  clearLastLoginUser() {
-    _localAppDataService.clearLastLoginUser();
-    user.value = null;
-  }
-
-  Future<Music> getRandomMusic() async {
-    if (musicList.isNotEmpty) {
-      int randomIndex =
-          DateTime.now().millisecondsSinceEpoch % musicList.length;
-      return musicList[randomIndex];
-    } else {
-      return Music();
-    }
-  }
+  //   if (await Permission.notification.isDenied) {
+  //     await Permission.notification.request();
+  //   }
+  //   await _appRepository.sendAlarm();
+  // }
 
   void onPop(context) {
     // 뒤로가기 두 번 클릭으로 앱 종료하기 기능
@@ -217,10 +206,6 @@ class AppService extends GetxService {
     }
   }
 
-  String createId() {
-    return DateTime.now().toString().replaceAll(RegExp(r"[\s-:.]"), "");
-  }
-
   // 카카오 로그인
   Future<BaseResponse?> signInUsingKakao({
     required id,
@@ -229,9 +214,6 @@ class AppService extends GetxService {
     required thumbnailImageUrl,
     connectedAt,
   }) async {
-    // 온라인 일경우
-    // await EasyLoading.show(dismissOnTap: true);
-    // 로딩 인디케이터 표시
     BaseResponse? baseResponse = await _appRepository.signInUsingKakao(
       id: id,
       fcmToken: fcmToken,
@@ -245,10 +227,9 @@ class AppService extends GetxService {
   }
 
   // 출석체크 하는함수
-  Future<BaseResponse?> attendanceCheck() async {
+  Future<void> attendanceCheck() async {
     if (user.value != null) {
-      BaseResponse? baseResponse = await _appRepository.attendanceCheck();
-      return baseResponse;
+      await _appRepository.attendanceCheck();
     }
   }
 
@@ -273,7 +254,8 @@ class AppService extends GetxService {
       user.value = null;
       currentIndex.value = 0;
       // 1. 로컬 데이터 정리
-      await clearLastLoginUser();
+      await _localAppDataService.clearLastLoginUser();
+      user.value = null;
 
       // 2. 서버 로그아웃 요청
       // BaseResponse? baseResponse = await _appRepository.logOut();
@@ -281,23 +263,13 @@ class AppService extends GetxService {
       //   result = baseResponse?.result?.message;
       // }
 
-      // 3. 로그인 페이지로 이동
+      // 3. 메인 페이지로 이동
       await Get.offAllNamed(Routes.MEDITATION_HOME);
     } catch (e) {
       print('로그아웃 실패: $e');
       result = '로그아웃 중 오류가 발생했습니다.';
     }
-
     return result;
-  }
-
-  Future<String?> findPw({String? email}) async {
-    if (email != null) {
-      String? result = await _appRepository.findPw(email: email);
-      return result;
-    } else {
-      return "";
-    }
   }
 
   // 음악 리스트 가져오는 부분
@@ -311,35 +283,44 @@ class AppService extends GetxService {
     }
   }
 
-  // 카테고리별 명상 음악 요청 메서드 (AppService에 추가)
-  // 카테고리별 명상 음악 요청 메서드 (HomeController에서 수정)
-  Future<List<Music>> fetchMeditationByCategory(String category) async {
-    logInfo("카테고리별 명상 음악 요청: $category");
+  // 카테고리별 음악 로드(카테고리가 ""인 경우 전체 음악 로드)
+  Future<void> fetchMeditationByCategory(String category) async {
     try {
-      // 전체 음악 목록 가져오기
       final allMusic = await _getMusicList();
 
       if (allMusic != null) {
-        // 카테고리로 필터링
         final filteredMusic = category.isEmpty
-            ? allMusic // 모든 음악 반환
-            : allMusic
-                .where((music) => music.category == category)
-                .toList(); // 특정 카테고리 필터링
+            ? allMusic
+            : allMusic.where((music) {
+                return music.category == category;
+              }).toList();
 
-        // 앱 서비스에 저장
-        musicList.assignAll(filteredMusic);
-        return filteredMusic;
+        if (filteredMusic.isEmpty) {
+          logError("해당 카테고리에 음악이 없습니다: $category");
+          Get.snackbar('오류', '해당 카테고리에 음악이 없습니다.');
+
+          musicList.value = [];
+          curMusic.value = null;
+          return;
+        }
+
+        musicList.value = filteredMusic;
+        curMusic.value = filteredMusic.first;
       } else {
-        // 에러 처리
-        logError("명상 음악 로드 실패");
+        logError("_getMusicList() 반환값이 null");
         Get.snackbar('오류', '인터넷 연결을 확인해주세요.');
-        return <Music>[];
+
+        musicList.value = [];
+        curMusic.value = null;
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      // ✅ 스택 트레이스도 함께 로그
       logError("카테고리별 음악 로드 중 예외 발생: $e");
+      logError("스택 트레이스: $stackTrace");
       Get.snackbar('오류', '서버 연결에 문제가 발생했습니다.');
-      return <Music>[];
+
+      musicList.value = [];
+      curMusic.value = null;
     }
   }
 

@@ -9,11 +9,7 @@ class QuoteSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(
-        maxHeight: 80.h,
-      ),
-      child: ImageSlideshow(
+    return ImageSlideshow(
         indicatorBackgroundColor: Colors.transparent,
         indicatorColor: Colors.transparent,
         onPageChanged: (page) {},
@@ -21,9 +17,9 @@ class QuoteSlider extends StatelessWidget {
         isLoop: true,
         children: List.generate(quotes.length, (i) {
           return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 0.h),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(quotes[i].quote,
@@ -44,8 +40,6 @@ class QuoteSlider extends StatelessWidget {
               ],
             ),
           );
-        }),
-      ),
-    );
+        }));
   }
 }
