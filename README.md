@@ -137,7 +137,7 @@ adb install build/app/outputs/flutter-apk/app-release.apk
 
 flutter clean
 flutter pub get
-flutter build appbundle --release
+flutter build appbundle --release \*\* 이게찐!!
 생성되는 경로: C:\Users\MS\Desktop\meditation_getx\build\app\outputs\bundle\release
 
 # 새로운 버전 올릴때
