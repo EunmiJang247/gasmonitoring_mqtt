@@ -6,7 +6,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:meditation_friend/app/data/models/alaram_time.dart';
 import 'package:meditation_friend/app/data/models/music.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../routes/app_pages.dart';
 import '../../utils/log.dart';
@@ -19,6 +18,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class AppService extends GetxService {
+  StreamSubscription<PlayerState>? _playerStateSubscription;
   final AppRepository _appRepository;
   // api 호출하는 리포지토리
   final LocalAppDataService _localAppDataService;
@@ -60,6 +60,25 @@ class AppService extends GetxService {
     await getAttendanceCheck(); // 출석체크 날짜 가져오기
     initFirebaseMessageHandler(); // Firebase 메시지 핸들러 초기화
     await getNotificationSettings(); // 마이페이지에서 알림사건 보여주기 위함
+    _setupAudioListeners(); // 앱 전체에서 사용하는 리스너
+  }
+
+  void _setupAudioListeners() {
+    logInfo("듣고있어요");
+    _playerStateSubscription =
+        audioPlayer.playerStateStream.listen((playerState) {
+      logInfo('🎵 AppService - 재생 상태 변경: ${playerState.processingState}');
+
+      if (playerState.processingState == ProcessingState.completed) {
+        logInfo('🎵 AppService - 음악 재생 완료!');
+        _onMusicCompleted();
+      }
+    });
+  }
+
+  void _onMusicCompleted() {
+    isPlaying.value = false;
+    logInfo('👉 AppService - 음악 끝났습니다!');
   }
 
   Future<void> initFcmToken() async {

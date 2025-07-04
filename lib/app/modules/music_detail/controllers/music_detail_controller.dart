@@ -112,9 +112,14 @@ class MusicDetailController extends GetxController {
         final state = player.playerState.processingState;
         logInfo("🌀 상태: $state");
         if (state == ProcessingState.ready) return false;
-        if (state == ProcessingState.idle ||
-            state == ProcessingState.completed) {
+        if (state == ProcessingState.idle) {
           throw Exception('❌ player 상태 비정상: $state');
+        }
+
+        // ✅ completed는 정상 상태로 처리 (오류 아님)
+        if (state == ProcessingState.completed) {
+          logInfo('음악이 이미 완료된 상태입니다');
+          return false;
         }
         await Future.delayed(Duration(milliseconds: 100));
         return true;
@@ -131,6 +136,7 @@ class MusicDetailController extends GetxController {
       }
     } catch (e) {
       logError('safePlay 오류: $e');
+      appService.isPlaying.value = false; // ← 오류 시 상태 정리
     }
   }
 
@@ -138,8 +144,16 @@ class MusicDetailController extends GetxController {
   Future<void> playMusic() async {
     if (currentMusic.value?.musicUrl != null) {
       try {
+        final currentState = appService.audioPlayer.playerState.processingState;
+        if (currentState == ProcessingState.completed) {
+          logInfo('🔄 완료된 음악을 처음부터 재생합니다.');
+          await appService.audioPlayer.seek(Duration.zero);
+        }
+
+        logInfo('111');
         appService.isPlaying.value = true;
         await appService.audioPlayer.play();
+        logInfo('222');
       } catch (e) {
         logError('재생 오류: $e');
         _currentLoadedUrl = null;
@@ -174,8 +188,6 @@ class MusicDetailController extends GetxController {
     try {
       if (appService.audioPlayer.playing) {
         await appService.audioPlayer.stop();
-        // await appService.audioPlayer.dispose();
-        // appService.audioPlayer = AudioPlayer();
       }
       await appService.audioPlayer.seek(Duration.zero);
       await Future.delayed(Duration(milliseconds: 100));
