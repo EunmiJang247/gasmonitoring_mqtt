@@ -14,7 +14,7 @@ abstract class AppRestAPI {
   @POST("/notification/save-alarm")
   Future<BaseResponse?> saveAlarmSettings(@Body() Map<String, dynamic> body);
 
-  @POST("/logout")
+  @POST("/setting/signout")
   Future<BaseResponse?> logOut();
 
   @GET("/meditation-musics/list")

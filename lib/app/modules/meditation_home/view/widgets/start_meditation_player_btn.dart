@@ -18,6 +18,7 @@ class StartMeditationPlayerBtn extends GetView<HomeController> {
             child: MeditationCard(
               onTap: () async {
                 controller.appService.currentIndex.value = 1;
+                print("1번이에요!!");
                 Get.toNamed('/music-detail', arguments: {
                   'category': '바디스캐닝',
                   'continue_current': false,

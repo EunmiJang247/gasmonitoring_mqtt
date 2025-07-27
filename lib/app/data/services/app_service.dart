@@ -278,10 +278,7 @@ class AppService extends GetxService {
       user.value = null;
 
       // 2. 서버 로그아웃 요청
-      // BaseResponse? baseResponse = await _appRepository.logOut();
-      // if (baseResponse?.result?.code != 100) {
-      //   result = baseResponse?.result?.message;
-      // }
+      await _appRepository.logOut();
 
       // 3. 메인 페이지로 이동
       await Get.offAllNamed(Routes.MEDITATION_HOME);

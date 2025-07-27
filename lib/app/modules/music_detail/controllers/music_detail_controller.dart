@@ -26,16 +26,23 @@ class MusicDetailController extends GetxController {
     // addPostFrameCallback을 쓰면 화면이 다 그려진 다음(= build 이후)
     // 실행하고 싶은 코드를 넣을 수 있음
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      print("🔥 turnOnMusic 시작됨111");
       turnOnMusic();
     });
   }
 
   Future<void> turnOnMusic() async {
+    print("🔥 turnOnMusic 시작됨");
     final args = Get.arguments;
+    print("🧪 전달받은 args: $args");
+    print("🧪 continue_current: ${args['continue_current']}");
+
     if (args != null && args is Map<String, dynamic>) {
       // 카테고리 정보 추출
       category.value = args['category'] ?? '';
       final continueCurrent = args['continue_current'] ?? false;
+
+      print("계속 재생: $continueCurrent");
 
       if (continueCurrent) {
         // 재생중이었던 음악이 있으면 이미 로드된 음악이 있으면 그대로 사용

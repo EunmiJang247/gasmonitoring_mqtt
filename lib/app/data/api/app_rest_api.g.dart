@@ -104,7 +104,7 @@ class _AppRestAPI implements AppRestAPI {
     )
         .compose(
           _dio.options,
-          '/logout',
+          '/setting/signout',
           queryParameters: queryParameters,
           data: _data,
         )
