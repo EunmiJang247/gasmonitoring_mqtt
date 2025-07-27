@@ -126,8 +126,6 @@ class AppAPI extends GetxService {
                 }
               }
 
-              // logInfo('🟢 추출된 sessionId: $sessionId');
-              // logInfo('🟡 추출된 csrfToken: $csrfToken');
               // ✅ 요청에 사용될 쿠키 문자열 구성하여 저장
               if (sessionId != null && csrfToken != null) {
                 cookie = "sessionid=$sessionId; csrftoken=$csrfToken";

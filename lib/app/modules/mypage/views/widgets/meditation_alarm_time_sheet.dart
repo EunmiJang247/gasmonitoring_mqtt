@@ -9,6 +9,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 Future<dynamic> meditationAlramTimeBottomSheet(BuildContext context) {
+  // 리턴으로 아무 타입(dynamic) 도 가능하다는 뜻
+
   // 컨트롤러 가져오기
   final mypageController = Get.find<MypageController>();
 
@@ -16,7 +18,10 @@ Future<dynamic> meditationAlramTimeBottomSheet(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
+        // return 뒤의 화면이 그려진 뒤에 아래 코드를 실행해라! 라는 뜻
         FirebaseMessaging messaging = FirebaseMessaging.instance;
+        // Firebase Cloud Messaging(FCM)의 인스턴스를 가져옴.
+        // 푸시 알림 관련 작업을 하기 위해 FirebaseMessaging 객체가 필요함
 
         // Firebase 권한 요청
         NotificationSettings settings = await messaging.requestPermission(
@@ -24,10 +29,16 @@ Future<dynamic> meditationAlramTimeBottomSheet(BuildContext context) {
           badge: true,
           sound: true,
         );
+        // alert: true: 팝업 알림 허용
+        // badge: true: 앱 아이콘에 배지 표시 허용
+        // sound: true: 알림 사운드 허용
+        // 이 줄이 실행되면, 사용자에게 시스템 권한 요청 팝업이 뜰 수 있습니다.
 
-        // 필요할 경우에만 permission_handler 사용
         final status = await Permission.notification.status;
+        // permission_handler 패키지를 이용해서 현재 알림 권한 상태를 가져옴
+
         if (status.isDenied) {
+          // 만약 알림 권한이 거부된 상태라면 다시 요청함
           await Permission.notification.request();
         }
       });

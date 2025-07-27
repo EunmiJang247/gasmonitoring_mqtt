@@ -148,6 +148,7 @@ class AppRepository {
       BaseResponse? response = await _appAPI.client.getNotificationSettings();
       return response;
     } catch (e) {
+      print("에러 났어요 ${e.toString()}");
       logError(e, des: 'getNotificationSettings Error!');
       rethrow;
     }

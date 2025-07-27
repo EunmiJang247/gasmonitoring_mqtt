@@ -20,7 +20,13 @@ class _WeekDaySelectButtonsState extends State<WeekDaySelectButtons> {
   @override
   void initState() {
     super.initState();
-    selectedDays = _parseNotifyDays(widget.notificationSetting.notifyDays);
+    // notifyDays가 없거나 빈 문자열이면 모두 선택(1111111)
+    print("알람 요일: ${widget.notificationSetting.notifyDays}");
+    if (widget.notificationSetting.notifyDays.trim().isEmpty) {
+      selectedDays = 0;
+    } else {
+      selectedDays = _parseNotifyDays(widget.notificationSetting.notifyDays);
+    }
   }
 
   String _selectedDayBits() {

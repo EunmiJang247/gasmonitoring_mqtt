@@ -130,7 +130,7 @@ class AppService extends GetxService {
   }
 
   void initFirebaseMessageHandler() {
-    // 앱이 포그라운드, 백그라운드, 종료 상태일 때 각각 FCM 알림을 수신하고 처리하는 로직
+    // 앱이 포그라운드, 백그라운드, 종료 상태일 때 각각 FCM 알림을 수신하고 내부 알람으로 처리하는 로직
 
     // 포그라운드: 앱이 현재 화면에 떠 있고, 사용자가 보고 있는 상태
     FirebaseMessaging.onMessage.listen((RemoteMessage? message) {
@@ -172,9 +172,10 @@ class AppService extends GetxService {
     // 종료 상태에서 푸시 클릭했을 때
     FirebaseMessaging.instance
         .getInitialMessage()
-        .then((RemoteMessage? message) {
+        .then((RemoteMessage? message) async {
       if (message != null && message.notification != null) {
-        print(message.data["click_action"]);
+        // 앱이 완전히 종료된 상태에서 푸시 알림을 클릭했을 때
+        await Get.offAllNamed(Routes.MEDITATION_HOME);
       }
     });
   }

@@ -205,3 +205,11 @@ MP3조각은 버퍼에 들어와서 디코더가 읽기 전까지 존재한다.
 지금 사용 중인 건 버퍼 1개지만
 5개를 번갈아가며 계속 돌려 썼고
 총 12842번 전달해서 디코딩/재생한 거예요
+
+
+# 카카오등록할때
+헤시값 등록하고
+KakaoSdk.init nativeAppKey: 여기에 네이티브 앱키 등록하고
+AndroidManifest.xml에 등록하고 
+Kakao Developers > 내 애플리케이션 > 플랫폼 > Android 등록
+

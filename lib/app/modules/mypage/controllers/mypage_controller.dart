@@ -28,7 +28,7 @@ class MypageController extends GetxController {
   Rx<String?> errorText = Rx(null);
 
   // 알람 설정 관련 변수
-  RxString alarmDays = "0000000".obs; // 월~일 순서로 비트 플래그 (0: 선택 안함, 1: 선택함)
+  RxString alarmDays = "1111100".obs; // 월~일 순서로 비트 플래그 (0: 선택 안함, 1: 선택함)
   RxInt alarmHour = 12.obs;
   RxInt alarmMinute = 30.obs;
   RxBool isAlarmEnabled = false.obs;
@@ -112,9 +112,7 @@ class MypageController extends GetxController {
       alarmHour: alarmHour.value,
       alarmMinute: alarmMinute.value,
     );
-
     // 로컬스토리지에 이 시간 저장하는 부분
-
     Get.back(); // BottomSheet 닫기
     Future.delayed(Duration(milliseconds: 100), () {
       Get.snackbar('알림 설정', '저장되었습니다.', snackPosition: SnackPosition.BOTTOM);
