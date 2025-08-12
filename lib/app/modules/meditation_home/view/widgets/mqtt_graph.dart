@@ -9,6 +9,7 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
 import 'package:meditation_friend/services/notification_service.dart';
 import 'package:meditation_friend/services/threshold_settings.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class MqttGraph extends StatefulWidget {
   const MqttGraph({super.key});
@@ -23,6 +24,7 @@ class _Reading {
 }
 
 class _MqttGraphState extends State<MqttGraph> {
+  double? _tempMin, _tempMax, _humMin, _humMax;
   // ====== 여기만 필요 시 바꾸면 됨 ======
   static const int _port = 1883; // Docker로 연 브로커: 1883
   static const bool _useTls = false; // 로컬 Docker는 TLS 없음
@@ -82,7 +84,21 @@ class _MqttGraphState extends State<MqttGraph> {
   /// 서비스 초기화
   Future<void> _initializeServices() async {
     await NotificationService.initialize();
+    await _loadThresholds();
     print('🔔 Notification service initialized');
+  }
+
+  Future<void> _loadThresholds() async {
+    final tMin = await ThresholdSettings.getTempMinThreshold();
+    final tMax = await ThresholdSettings.getTempMaxThreshold();
+    final hMin = await ThresholdSettings.getHumMinThreshold();
+    final hMax = await ThresholdSettings.getHumMaxThreshold();
+    setState(() {
+      _tempMin = tMin;
+      _tempMax = tMax;
+      _humMin = hMin;
+      _humMax = hMax;
+    });
   }
 
   void _tryConnectNextHost() {
@@ -302,8 +318,99 @@ class _MqttGraphState extends State<MqttGraph> {
 
   /// 임계치 설정 다이얼로그 표시 (현재는 간단한 토글만)
   void _showThresholdSettings() {
-    // 향후 임계치 설정 UI 구현 예정
-    print('임계치 설정 기능 - 향후 구현 예정');
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('임계값 설정'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 온도 설정
+            Text('온도 범위 (°C)'),
+            SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    initialValue: _tempMin?.toString() ?? '18',
+                    decoration: InputDecoration(labelText: '최소'),
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      final temp = double.tryParse(value);
+                      if (temp != null) _tempMin = temp;
+                    },
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: TextFormField(
+                    initialValue: _tempMax?.toString() ?? '28',
+                    decoration: InputDecoration(labelText: '최대'),
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      final temp = double.tryParse(value);
+                      if (temp != null) _tempMax = temp;
+                    },
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            // 습도 설정
+            Text('습도 범위 (%)'),
+            SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    initialValue: _humMin?.toString() ?? '40',
+                    decoration: InputDecoration(labelText: '최소'),
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      final hum = double.tryParse(value);
+                      if (hum != null) _humMin = hum;
+                    },
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: TextFormField(
+                    initialValue: _humMax?.toString() ?? '70',
+                    decoration: InputDecoration(labelText: '최대'),
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      final hum = double.tryParse(value);
+                      if (hum != null) _humMax = hum;
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('취소'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              // 설정 저장
+              if (_tempMin != null && _tempMax != null) {
+                await ThresholdSettings.setTempThresholds(_tempMin!, _tempMax!);
+              }
+              if (_humMin != null && _humMax != null) {
+                await ThresholdSettings.setHumThresholds(_humMin!, _humMax!);
+              }
+              // setState(() {}); // UI 업데이트
+              await _loadThresholds();
+              Navigator.pop(context);
+            },
+            child: const Text('저장'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -377,6 +484,56 @@ class _MqttGraphState extends State<MqttGraph> {
                   ],
                 ],
               ),
+              SizedBox(height: 6.h),
+              // 임계값 표시
+              if (_tempMin != null &&
+                  _tempMax != null &&
+                  _humMin != null &&
+                  _humMax != null)
+                Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                  decoration: BoxDecoration(
+                    color: Colors.black26,
+                    borderRadius: BorderRadius.circular(8.r),
+                    border: Border.all(color: Colors.white24, width: 0.5),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        '설정된 임계값',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: 4.h),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Temp: ${_tempMin!.toStringAsFixed(1)}°C ~ ${_tempMax!.toStringAsFixed(1)}°C',
+                            style: TextStyle(
+                              color: Colors.cyanAccent,
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(width: 12.w),
+                          Text(
+                            'Hum: ${_humMin!.toStringAsFixed(0)}% ~ ${_humMax!.toStringAsFixed(0)}%',
+                            style: TextStyle(
+                              color: Colors.greenAccent,
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               SizedBox(height: 6.h),
               // 알림 상태 및 설정 버튼
               Row(
@@ -459,41 +616,44 @@ class _MqttGraphState extends State<MqttGraph> {
               ),
               SizedBox(height: 6.h),
               // 알림 상태 표시
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                decoration: BoxDecoration(
-                  color: _alertsEnabled
-                      ? Colors.green.withOpacity(0.2)
-                      : Colors.grey.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8.r),
-                  border: Border.all(
-                    color: _alertsEnabled
-                        ? Colors.greenAccent.withOpacity(0.5)
-                        : Colors.grey.withOpacity(0.5),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      _alertsEnabled
-                          ? Icons.notifications_active
-                          : Icons.notifications_off,
-                      color: _alertsEnabled ? Colors.greenAccent : Colors.grey,
-                      size: 12.sp,
-                    ),
-                    SizedBox(width: 4.w),
-                    Text(
-                      _alertsEnabled ? '알림 활성화' : '알림 비활성화',
-                      style: TextStyle(
-                        color:
-                            _alertsEnabled ? Colors.greenAccent : Colors.grey,
-                        fontSize: 10.sp,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
+              //   padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+              //   decoration: BoxDecoration(
+              //     color: _alertsEnabled
+              //         ? Colors.green.withOpacity(0.2)
+              //         : Colors.grey.withOpacity(0.2),
+              //     borderRadius: BorderRadius.circular(8.r),
+              //     border: Border.all(
+              //       color: _alertsEnabled
+              //           ? Colors.greenAccent.withOpacity(0.5)
+              //           : Colors.grey.withOpacity(0.5),
+              //     ),
+              //   ),
+              //   child: Row(
+              //     mainAxisSize: MainAxisSize.min,
+              //     children: [
+              //       Icon(
+              //         _alertsEnabled
+              //             ? Icons.notifications_active
+              //             : Icons.notifications_off,
+              //         color: _alertsEnabled ? Colors.greenAccent : Colors.grey,
+              //         size: 12.sp,
+              //       ),
+              //       SizedBox(width: 4.w),
+              //       Text(
+              //         _alertsEnabled ? '알림 활성화' : '알림 비활성화',
+              //         style: TextStyle(
+              //           color:
+              //               _alertsEnabled ? Colors.greenAccent : Colors.grey,
+              //           fontSize: 10.sp,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // SizedBox(
+              //   height: 8,
+              // )
             ],
           ),
 
@@ -525,23 +685,46 @@ class _MqttGraphState extends State<MqttGraph> {
                       style: TextStyle(color: Colors.white70, fontSize: 12.sp),
                     ),
                   )
-                : CustomPaint(
-                    painter: _SparklinePainter(_temps),
-                    child: Align(
-                      alignment: Alignment.bottomRight,
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 8.h),
-                        child: Text(
-                          '${_temps.last.toStringAsFixed(1)}°C',
-                          style: TextStyle(
-                            color: AppColors.kBrighYellow,
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.bold,
-                            shadows: const [
-                              Shadow(blurRadius: 6, color: Colors.black54)
-                            ],
-                          ),
-                        ),
+                // : CustomPaint(
+                //     painter: _SparklinePainter(_temps),
+                //     child: Align(
+                //       alignment: Alignment.bottomRight,
+                //       child: Padding(
+                //         padding: EdgeInsets.only(top: 8.h),
+                //         child: Text(
+                //           '${_temps.last.toStringAsFixed(1)}°C',
+                //           style: TextStyle(
+                //             color: AppColors.kBrighYellow,
+                //             fontSize: 18.sp,
+                //             fontWeight: FontWeight.bold,
+                //             shadows: const [
+                //               Shadow(blurRadius: 6, color: Colors.black54)
+                //             ],
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // : LineChart(
+                //     _buildLineChartData(
+                //       _temps,
+                //       color: Colors.cyanAccent,
+                //       labelSuffix: '°C',
+                //       minLine: _tempMin,
+                //       maxLine: _tempMax,
+                //       maxPoints: _maxPoints,
+                //     ),
+                //   ),
+                : ClipRRect(
+                    borderRadius: BorderRadius.circular(20.r), // 카드와 동일
+                    child: LineChart(
+                      _buildLineChartData(
+                        _temps,
+                        color: Colors.cyanAccent,
+                        labelSuffix: '°C',
+                        minLine: _tempMin,
+                        maxLine: _tempMax,
+                        maxPoints: _maxPoints,
                       ),
                     ),
                   ),
@@ -577,24 +760,34 @@ class _MqttGraphState extends State<MqttGraph> {
                       style: TextStyle(color: Colors.white70, fontSize: 12.sp),
                     ),
                   )
-                : CustomPaint(
-                    painter: _HumidityPainter(_hums),
-                    child: Align(
-                      alignment: Alignment.bottomRight,
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 8.h),
-                        child: Text(
-                          '${_hums.last.toStringAsFixed(0)}%',
-                          style: TextStyle(
-                            color: Colors.greenAccent,
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.bold,
-                            shadows: const [
-                              Shadow(blurRadius: 6, color: Colors.black54)
-                            ],
-                          ),
-                        ),
-                      ),
+                // : CustomPaint(
+                //     painter: _HumidityPainter(_hums),
+                //     child: Align(
+                //       alignment: Alignment.bottomRight,
+                //       child: Padding(
+                //         padding: EdgeInsets.only(top: 8.h),
+                //         child: Text(
+                //           '${_hums.last.toStringAsFixed(0)}%',
+                //           style: TextStyle(
+                //             color: Colors.greenAccent,
+                //             fontSize: 18.sp,
+                //             fontWeight: FontWeight.bold,
+                //             shadows: const [
+                //               Shadow(blurRadius: 6, color: Colors.black54)
+                //             ],
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                : LineChart(
+                    _buildLineChartData(
+                      _hums,
+                      color: Colors.greenAccent,
+                      labelSuffix: '%',
+                      minLine: _humMin,
+                      maxLine: _humMax,
+                      maxPoints: _maxPoints,
                     ),
                   ),
           ),
@@ -604,104 +797,149 @@ class _MqttGraphState extends State<MqttGraph> {
   }
 }
 
-class _SparklinePainter extends CustomPainter {
-  final List<double> values;
-  _SparklinePainter(this.values);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (values.length < 2) return;
-    final minV = values.reduce(math.min);
-    final maxV = values.reduce(math.max);
-    final span = (maxV - minV).abs() < 1e-9 ? 1.0 : (maxV - minV);
-
-    final path = Path();
-    for (int i = 0; i < values.length; i++) {
-      final x = i * (size.width / (values.length - 1));
-      final norm = (values[i] - minV) / span;
-      final y = size.height * (1 - norm);
-      if (i == 0)
-        path.moveTo(x, y);
-      else
-        path.lineTo(x, y);
-    }
-
-    final linePaint = Paint()
-      ..color = Colors.cyanAccent.withOpacity(0.9)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
-    canvas.drawPath(path, linePaint);
-
-    final fillPath = Path.from(path)
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
-      ..close();
-    final shader = const LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: [Color(0x6625F0FF), Color(0x0025F0FF)],
-    ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
-    canvas.drawPath(fillPath, Paint()..shader = shader);
-
-    final lastX = size.width;
-    final lastNorm = (values.last - minV) / span;
-    final lastY = size.height * (1 - lastNorm);
-    canvas.drawCircle(
-        Offset(lastX, lastY), 3.5, Paint()..color = Colors.amberAccent);
+LineChartData _buildLineChartData(
+  List<double> series, {
+  required Color color,
+  required String labelSuffix,
+  double? minLine,
+  double? maxLine,
+  required int maxPoints, // maxPoints를 매개변수로 전달
+}) {
+  if (series.isEmpty) {
+    return LineChartData(
+      lineBarsData: [],
+      titlesData: const FlTitlesData(show: false),
+      gridData: const FlGridData(show: false),
+      borderData: FlBorderData(show: false),
+    );
   }
 
-  @override
-  bool shouldRepaint(covariant _SparklinePainter oldDelegate) =>
-      !identical(oldDelegate.values, values);
-}
+  final n = series.length;
+  final maxPointsDouble = maxPoints.toDouble(); // 전달받은 매개변수 사용
 
-class _HumidityPainter extends CustomPainter {
-  final List<double> values;
-  _HumidityPainter(this.values);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (values.length < 2) return;
-    final minV = values.reduce(math.min);
-    final maxV = values.reduce(math.max);
-    final span = (maxV - minV).abs() < 1e-9 ? 1.0 : (maxV - minV);
-
-    final path = Path();
-    for (int i = 0; i < values.length; i++) {
-      final x = i * (size.width / (values.length - 1));
-      final norm = (values[i] - minV) / span;
-      final y = size.height * (1 - norm);
-      if (i == 0)
-        path.moveTo(x, y);
-      else
-        path.lineTo(x, y);
-    }
-
-    final linePaint = Paint()
-      ..color = Colors.greenAccent.withOpacity(0.9)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
-    canvas.drawPath(path, linePaint);
-
-    final fillPath = Path.from(path)
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
-      ..close();
-    final shader = const LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: [Color(0x6625FF25), Color(0x0025FF25)],
-    ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
-    canvas.drawPath(fillPath, Paint()..shader = shader);
-
-    final lastX = size.width;
-    final lastNorm = (values.last - minV) / span;
-    final lastY = size.height * (1 - lastNorm);
-    canvas.drawCircle(
-        Offset(lastX, lastY), 3.5, Paint()..color = Colors.lightGreenAccent);
+  // X축을 전체 범위에 균등하게 분배
+  final spots = <FlSpot>[];
+  for (int i = 0; i < n; i++) {
+    // 데이터를 오른쪽부터 채우기 (최신 데이터가 오른쪽에 위치)
+    final x = maxPointsDouble - (n - 1 - i);
+    spots.add(FlSpot(x, series[i]));
   }
 
-  @override
-  bool shouldRepaint(covariant _HumidityPainter oldDelegate) =>
-      !identical(oldDelegate.values, values);
+  // 값 + 임계치 모두 포함하도록 y범위 계산
+  double yMin = series.reduce(math.min);
+  double yMax = series.reduce(math.max);
+  if (minLine != null) yMin = math.min(yMin, minLine);
+  if (maxLine != null) yMax = math.max(yMax, maxLine);
+  final pad = (yMax - yMin).abs() < 1e-6 ? 1.0 : (yMax - yMin) * 0.12;
+  yMin -= pad;
+  yMax += pad;
+
+  return LineChartData(
+    minX: 0,
+    maxX: maxPointsDouble,
+    minY: yMin,
+    maxY: yMax,
+    gridData: FlGridData(
+      show: true,
+      drawHorizontalLine: true,
+      drawVerticalLine: false,
+      horizontalInterval:
+          ((yMax - yMin) / 4).abs() < 1e-6 ? 1.0 : (yMax - yMin) / 4,
+      getDrawingHorizontalLine: (v) => FlLine(
+        color: Colors.white24,
+        strokeWidth: 0.6,
+      ),
+    ),
+    titlesData: FlTitlesData(
+      leftTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: true,
+          reservedSize: 40,
+          interval: ((yMax - yMin) / 4).abs() < 1e-6 ? 1.0 : (yMax - yMin) / 4,
+          getTitlesWidget: (value, meta) {
+            return Text(
+              '${value.toStringAsFixed(1)}$labelSuffix',
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+              ),
+            );
+          },
+        ),
+      ),
+      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      bottomTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+    ),
+    borderData: FlBorderData(show: false),
+    lineBarsData: [
+      LineChartBarData(
+        spots: spots,
+        isCurved: series.length >= 6, // 데이터 6개 전까진 직선
+        curveSmoothness: 0.15, // 기본(0.35)보다 낮춰 과도한 꺾임 완화
+        preventCurveOverShooting: true,
+        color: color,
+        barWidth: 2.2,
+        isStrokeCapRound: true,
+        dotData: const FlDotData(show: false),
+        belowBarData: BarAreaData(
+          show: true,
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [color.withOpacity(0.35), color.withOpacity(0.0)],
+          ),
+        ),
+      ),
+    ],
+    extraLinesData: ExtraLinesData(
+      // 임계치를 그리는 부분
+      horizontalLines: [
+        if (minLine != null)
+          HorizontalLine(
+            y: minLine,
+            color: Colors.amberAccent,
+            strokeWidth: 2,
+            dashArray: [6, 4],
+            label: HorizontalLineLabel(
+              show: true,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 6),
+              style: const TextStyle(color: Colors.amberAccent, fontSize: 10),
+              labelResolver: (_) =>
+                  'MIN ${minLine.toStringAsFixed(1)}$labelSuffix',
+            ),
+          ),
+        if (maxLine != null)
+          HorizontalLine(
+            y: maxLine,
+            color: Colors.amberAccent,
+            strokeWidth: 2,
+            dashArray: [6, 4],
+            label: HorizontalLineLabel(
+              show: true,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 6),
+              style: const TextStyle(color: Colors.amberAccent, fontSize: 10),
+              labelResolver: (_) =>
+                  'MAX ${maxLine.toStringAsFixed(1)}$labelSuffix',
+            ),
+          ),
+      ],
+    ),
+    lineTouchData: LineTouchData(
+      enabled: true,
+      touchTooltipData: LineTouchTooltipData(
+        getTooltipColor: (touchedSpot) => Colors.black87,
+        fitInsideVertically: true,
+        fitInsideHorizontally: true,
+        getTooltipItems: (touchedSpots) => touchedSpots.map((s) {
+          final v = s.y.toStringAsFixed(labelSuffix == '%' ? 0 : 1);
+          return LineTooltipItem(
+              '$v$labelSuffix', const TextStyle(color: Colors.white));
+        }).toList(),
+      ),
+    ),
+  );
 }
