@@ -7,6 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:meditation_friend/app/constant/app_color.dart';
+import 'package:meditation_friend/services/notification_service.dart';
+import 'package:meditation_friend/services/threshold_settings.dart';
 
 class MqttGraph extends StatefulWidget {
   const MqttGraph({super.key});
@@ -67,10 +69,20 @@ class _MqttGraphState extends State<MqttGraph> {
   int _hostIndex = 0;
   String _currentHost = '';
 
+  // 알림 관련
+  bool _alertsEnabled = true;
+
   @override
   void initState() {
     super.initState();
+    _initializeServices();
     _tryConnectNextHost();
+  }
+
+  /// 서비스 초기화
+  Future<void> _initializeServices() async {
+    await NotificationService.initialize();
+    print('🔔 Notification service initialized');
   }
 
   void _tryConnectNextHost() {
@@ -112,20 +124,27 @@ class _MqttGraphState extends State<MqttGraph> {
           if (!_disposed) {
             _rawLogs.insert(0, text);
             if (_rawLogs.length > 100) _rawLogs.removeLast();
+
             if (r.temp != null) {
               _latestTemp = r.temp;
               _temps.add(r.temp!);
               if (_temps.length > _maxPoints) {
                 _temps.removeRange(0, _temps.length - _maxPoints);
               }
+              // 온도 임계치 체크
+              _checkTemperatureThreshold(r.temp!);
             }
+
             if (r.hum != null) {
               _latestHum = r.hum;
               _hums.add(r.hum!);
               if (_hums.length > _maxPoints) {
                 _hums.removeRange(0, _hums.length - _maxPoints);
               }
+              // 습도 임계치 체크
+              _checkHumidityThreshold(r.hum!);
             }
+
             setState(() {});
           }
         }
@@ -242,6 +261,51 @@ class _MqttGraphState extends State<MqttGraph> {
     return _Reading(temp: lone, hum: null);
   }
 
+  /// 온도 임계치 체크 및 알림
+  Future<void> _checkTemperatureThreshold(double temperature) async {
+    if (!_alertsEnabled) return;
+
+    try {
+      final tempMin = await ThresholdSettings.getTempMinThreshold();
+      final tempMax = await ThresholdSettings.getTempMaxThreshold();
+      final cooldown = await ThresholdSettings.getAlertCooldown();
+
+      if (temperature < tempMin || temperature > tempMax) {
+        await NotificationService.showTemperatureAlert(
+            temperature, tempMin, tempMax, cooldown);
+        print(
+            '🚨 Temperature alert sent: $temperature°C (범위: $tempMin~$tempMax°C)');
+      }
+    } catch (e) {
+      print('❌ Error checking temperature threshold: $e');
+    }
+  }
+
+  /// 습도 임계치 체크 및 알림
+  Future<void> _checkHumidityThreshold(double humidity) async {
+    if (!_alertsEnabled) return;
+
+    try {
+      final humMin = await ThresholdSettings.getHumMinThreshold();
+      final humMax = await ThresholdSettings.getHumMaxThreshold();
+      final cooldown = await ThresholdSettings.getAlertCooldown();
+
+      if (humidity < humMin || humidity > humMax) {
+        await NotificationService.showHumidityAlert(
+            humidity, humMin, humMax, cooldown);
+        print('🚨 Humidity alert sent: $humidity% (범위: $humMin~$humMax%)');
+      }
+    } catch (e) {
+      print('❌ Error checking humidity threshold: $e');
+    }
+  }
+
+  /// 임계치 설정 다이얼로그 표시 (현재는 간단한 토글만)
+  void _showThresholdSettings() {
+    // 향후 임계치 설정 UI 구현 예정
+    print('임계치 설정 기능 - 향후 구현 예정');
+  }
+
   @override
   void dispose() {
     _disposed = true;
@@ -312,7 +376,124 @@ class _MqttGraphState extends State<MqttGraph> {
                             fontWeight: FontWeight.w600)),
                   ],
                 ],
-              )
+              ),
+              SizedBox(height: 6.h),
+              // 알림 상태 및 설정 버튼
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // 알림 상태 표시
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                    decoration: BoxDecoration(
+                      color: _alertsEnabled
+                          ? Colors.green.withOpacity(0.2)
+                          : Colors.grey.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(
+                        color: _alertsEnabled
+                            ? Colors.greenAccent.withOpacity(0.5)
+                            : Colors.grey.withOpacity(0.5),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          _alertsEnabled
+                              ? Icons.notifications_active
+                              : Icons.notifications_off,
+                          color:
+                              _alertsEnabled ? Colors.greenAccent : Colors.grey,
+                          size: 12.sp,
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          _alertsEnabled ? '알림 활성화' : '알림 비활성화',
+                          style: TextStyle(
+                            color: _alertsEnabled
+                                ? Colors.greenAccent
+                                : Colors.grey,
+                            fontSize: 10.sp,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  // 설정 버튼
+                  GestureDetector(
+                    onTap: _showThresholdSettings,
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(
+                          color: Colors.blueAccent.withOpacity(0.5),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.settings,
+                            color: Colors.blueAccent,
+                            size: 12.sp,
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            '임계치 설정',
+                            style: TextStyle(
+                              color: Colors.blueAccent,
+                              fontSize: 10.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 6.h),
+              // 알림 상태 표시
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: _alertsEnabled
+                      ? Colors.green.withOpacity(0.2)
+                      : Colors.grey.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(
+                    color: _alertsEnabled
+                        ? Colors.greenAccent.withOpacity(0.5)
+                        : Colors.grey.withOpacity(0.5),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _alertsEnabled
+                          ? Icons.notifications_active
+                          : Icons.notifications_off,
+                      color: _alertsEnabled ? Colors.greenAccent : Colors.grey,
+                      size: 12.sp,
+                    ),
+                    SizedBox(width: 4.w),
+                    Text(
+                      _alertsEnabled ? '알림 활성화' : '알림 비활성화',
+                      style: TextStyle(
+                        color:
+                            _alertsEnabled ? Colors.greenAccent : Colors.grey,
+                        fontSize: 10.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
 
