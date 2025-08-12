@@ -3,10 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:meditation_friend/app/constant/constants.dart';
 import 'package:meditation_friend/app/modules/meditation_home/controllers/home_controller.dart';
-import 'package:meditation_friend/app/modules/meditation_home/view/widgets/attendance_check.dart';
-import 'package:meditation_friend/app/modules/meditation_home/view/widgets/quote_slider.dart';
-import 'package:meditation_friend/app/modules/meditation_home/view/widgets/recommend_sessions.dart';
-import 'package:meditation_friend/app/modules/meditation_home/view/widgets/start_meditation_player_btn.dart';
+import 'package:meditation_friend/app/modules/meditation_home/view/widgets/mqtt_graph.dart';
 import 'package:meditation_friend/app/widgets/under_tab_bar.dart';
 
 class MeditationHome extends GetView<HomeController> {
@@ -56,15 +53,7 @@ class MeditationHome extends GetView<HomeController> {
                 // 하단 패딩으로 탭바 영역 확보
                 padding: EdgeInsets.only(bottom: 80.h),
                 child: Column(
-                  children: [
-                    SizedBox(height: 20.h),
-                    const QuoteSlider(),
-                    const StartMeditationPlayerBtn(),
-                    SizedBox(height: 10.h),
-                    const AttendanceCheck(),
-                    SizedBox(height: 10.h),
-                    const RecommendSessions(),
-                  ],
+                  children: [SizedBox(height: 20.h), MqttGraph()],
                 ),
               ),
               // 4. 하단 탭바 (항상 위에 표시)

@@ -350,6 +350,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.3"
+  event_bus:
+    dependency: transitive
+    description:
+      name: event_bus
+      sha256: "1a55e97923769c286d295240048fc180e7b0768902c3c2e869fe059aafa15304"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   fake_async:
     dependency: transitive
     description:
@@ -467,6 +475,38 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_background_service:
+    dependency: "direct main"
+    description:
+      name: flutter_background_service
+      sha256: "70a1c185b1fa1a44f8f14ecd6c86f6e50366e3562f00b2fa5a54df39b3324d3d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.0"
+  flutter_background_service_android:
+    dependency: "direct main"
+    description:
+      name: flutter_background_service_android
+      sha256: ca0793d4cd19f1e194a130918401a3d0b1076c81236f7273458ae96987944a87
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.3.1"
+  flutter_background_service_ios:
+    dependency: transitive
+    description:
+      name: flutter_background_service_ios
+      sha256: "6037ffd45c4d019dab0975c7feb1d31012dd697e25edc05505a4a9b0c7dc9fba"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.3"
+  flutter_background_service_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_background_service_platform_interface
+      sha256: ca74aa95789a8304f4d3f57f07ba404faa86bed6e415f83e8edea6ad8b904a41
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.2"
   flutter_cache_manager:
     dependency: transitive
     description:
@@ -962,6 +1002,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  mqtt_client:
+    dependency: "direct main"
+    description:
+      name: mqtt_client
+      sha256: "85fa7e9aad03fbd6a54fcaf46127579f3e049b4834557a06e49aea7869b04c94"
+      url: "https://pub.dev"
+    source: hosted
+    version: "10.8.0"
   nm:
     dependency: transitive
     description:

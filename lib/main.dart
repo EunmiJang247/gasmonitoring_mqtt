@@ -82,9 +82,7 @@ Future<void> main() async {
   // hive에서 has_visited_before값을 가져옴. 방문한적이 있다면 true, 없다면 false
 
   // ✅ 유저가 저장되어 있거나 방문기록이 있으면 홈으로 시작, 아니면 스플래시
-  final String initialRoute = (lastUser != null || hasVisitedBefore)
-      ? Routes.MEDITATION_HOME
-      : Routes.SPLASH;
+  final String initialRoute = Routes.MEDITATION_HOME;
   // final String initialRoute = Routes.SPLASH;
 
   await localService.saveAppVisitState(true);
