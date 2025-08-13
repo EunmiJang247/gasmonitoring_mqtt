@@ -41,16 +41,14 @@ class _MqttGraphState extends State<MqttGraph> {
     // 실행 환경에 따라 우선순위
     try {
       if (Platform.isAndroid)
-        list.addAll(['10.0.2.2', '127.0.0.1']);
+        list.addAll(['192.168.0.241', '10.0.2.2', '127.0.0.1']);
       else if (Platform.isIOS)
-        list.addAll(['localhost', '127.0.0.1']);
+        list.addAll(['192.168.0.241', 'localhost', '127.0.0.1']);
       else
         list.addAll(['localhost', '127.0.0.1']);
     } catch (_) {
       list.addAll(['localhost']);
     }
-    // 실기기 테스트용: 맥북 IP
-    list.add('192.168.0.241');
     return list.toSet().toList(); // 중복 제거
   }
 
