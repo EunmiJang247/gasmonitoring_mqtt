@@ -213,3 +213,206 @@ KakaoSdk.init nativeAppKey: 여기에 네이티브 앱키 등록하고
 AndroidManifest.xml에 등록하고 
 Kakao Developers > 내 애플리케이션 > 플랫폼 > Android 등록
 
+2초에 한번 mqtt 해주는코드 py
+=====================================================================================================
+# app/run.py
+#퍼블리셔는 스레드에서 계속 돌고, 브로커는 asyncio 루프에서 돌면서,
+#메인은 종료 신호가 올 때까지 유지되는 구조.
+
+import os, json, time, signal, threading, asyncio, socket
+from amqtt.broker import Broker
+from dotenv import load_dotenv
+import paho.mqtt.client as paho
+from datetime import datetime, timezone, timedelta
+
+load_dotenv()
+
+MQTT_PORT = int(os.getenv("MQTT_PORT", "1883")) // 포트 1883으로 열었음
+ALLOW_ANON = os.getenv("ALLOW_ANON", "true").lower() == "true"
+CITY = os.getenv("TOPIC_CITY", "seoul")
+ROOM = os.getenv("TOPIC_ROOM", "livingroom")
+DEVTYPE = os.getenv("TOPIC_DEVTYPE", "tempSensor")
+DEVID = os.getenv("TOPIC_DEVID", "001")
+PUB_INTERVAL = float(os.getenv("PUBLISH_INTERVAL_SEC", "2.0"))
+PUB_MAX = int(os.getenv("PUBLISH_MAX", "0"))  # 0 = infinite
+STATUS_RETAIN = True
+
+# 브로커 설정: auth_file 플러그인 명시적으로 끔
+BROKER_CONFIG = {
+     "listeners": {
+        "default": {"type": "tcp", "bind": f"0.0.0.0:{MQTT_PORT}"}
+        <!-- MQTT_PORT 기본값이 1883이라, Docker 컨테이너가 1883 포트를 열고 있음 -->
+    },
+    "sys_interval": 0,
+    "auth": {
+        "allow-anonymous": True  # 실험 단계에선 무조건 허용
+    },
+    "topic-check": {
+        "enabled": False         # 토픽 검증 끔 (와일드카드 이슈 배제)
+    },
+    # 플러그인 전부 끔 (auth_file 등)
+    "plugins": {}
+}
+
+stop_event = threading.Event()
+broker_ready = threading.Event()
+
+def wait_port(host: str, port: int, timeout: float = 10.0) -> bool:
+    """브로커 리슨 대기: host:port가 열릴 때까지 대기"""
+    end = time.time() + timeout
+    while time.time() < end and not stop_event.is_set():
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(0.5)
+            try:
+                if s.connect_ex((host, port)) == 0:
+                    return True
+            except OSError:
+                pass
+        time.sleep(0.2)
+    return False
+
+# ---------- 퍼블리셔 ----------
+def publisher_loop():
+    # 브로커 준비될 때까지 대기
+    if not broker_ready.wait(timeout=15):
+        print("[PUB] broker not marked ready; probing port ...", flush=True)
+        if not wait_port("127.0.0.1", MQTT_PORT, timeout=15):
+            print("[PUB] broker port not open. aborting.", flush=True)
+            return
+
+    client = paho.Client(client_id="pub-sensor-01")
+    #MQTT 퍼블리셔/서브스크라이버 역할을 할 클라이언트 객체를 만드는 코드
+    #Flutter 앱도 클라이언트 (센서 데이터 읽어서 보내거나, 메시지 받음)
+    #Python 서버 코드 속 paho 객체도 클라이언트 (데이터 발행)
+
+    # 재시도 연결
+    delay = 0.2
+    while not stop_event.is_set():
+        try:
+            client.connect("127.0.0.1", MQTT_PORT, keepalive=60)
+            break
+        except Exception as e:
+            print(f"[PUB] connect failed: {e}; retry in {delay:.1f}s", flush=True)
+            time.sleep(delay)
+            delay = min(delay * 2, 5.0)
+    else:
+        return
+
+    client.loop_start()
+
+    status_topic = f"home/{CITY}/{ROOM}/{DEVTYPE}/{DEVID}/status"
+    data_topic = f"home/{CITY}/{ROOM}/{DEVTYPE}/{DEVID}/data"
+
+    # 상태 retain
+    client.publish(status_topic, # home/seoul/livingroom/tempSensor/001/data
+      json.dumps({"online": True, "battery": 95}),
+      qos=1, retain=STATUS_RETAIN)
+    #클라이너트 객체가 상태메시지를 발행하는 부분이다
+    #배터리 정보는 딱 한 번, 퍼블리셔 시작할 때 상태 메시지(status_topic)에만 넣음
+
+    # --- ▼ 왕복 시뮬레이션 파라미터 ▼ ---
+    kst = timezone(timedelta(hours=9))
+
+    temp_min, temp_max = 20.0, 35.0
+    temp_step = 0.2
+    temp = temp_min
+    temp_dir = +1  # +1 오름 / -1 내림
+
+    hum_min, hum_max = 20, 90   # ← 여기!
+    hum_step = 1
+    hum = hum_min
+    hum_dir = +1
+    # --- ▲ 왕복 시뮬레이션 파라미터 ▲ ---
+
+    try:
+        while not stop_event.is_set():
+            # 시간
+            now_kst = datetime.now(kst)
+            ts_iso = now_kst.isoformat(timespec="seconds")  # "YYYY-MM-DDTHH:MM:SS+09:00"
+            ts_epoch = int(now_kst.timestamp())  # epoch 초 (UTC 기준)
+
+            # 페이로드
+            payload = {
+                "ts": ts_iso,            # KST ISO8601
+                "ts_epoch": ts_epoch,    # 선택 필드(호환용). 필요 없으면 제거 가능
+                "temp": round(temp, 1),
+                "hum": int(hum)
+            }
+
+            client.publish(data_topic, json.dumps(payload), qos=0) # 그후로 2초마다 센서 데이터 발행
+            print("[PUB]", data_topic, payload, flush=True)
+
+            # 온도 업데이트 (20↔35 왕복)
+            temp += temp_dir * temp_step
+            if temp >= temp_max:
+                temp = temp_max
+                temp_dir = -1
+            elif temp <= temp_min:
+                temp = temp_min
+                temp_dir = +1
+
+            # 습도 업데이트 (20↔90 왕복)
+            hum += hum_dir * hum_step
+            if hum >= hum_max:
+                hum = hum_max
+                hum_dir = -1
+            elif hum <= hum_min:
+                hum = hum_min
+                hum_dir = +1
+
+            if PUB_MAX and (temp_dir == -1 and temp == temp_max):
+                # 필요시 루프 중단 조건 커스텀 가능
+                pass
+
+            stop_event.wait(PUB_INTERVAL)
+
+    finally:
+        client.publish(status_topic, json.dumps({"online": False}),
+                       qos=1, retain=STATUS_RETAIN)
+        client.loop_stop()
+        client.disconnect()
+
+# ---------- 브로커 ----------
+async def broker_task():
+    broker = Broker(BROKER_CONFIG) # amqtt 라이브러리의 Broker 객체 생성
+    await broker.start() # 브로커 시작 → 포트 바인딩 & 연결 대기
+
+   #지정된 포트(1883)에서 TCP 소켓 열기
+   #MQTT 프로토콜 핸드셰이크 대기
+   #Publisher/Subscriber 연결을 받아서 메시지 라우팅
+
+    # 리슨 시작 표시
+    broker_ready.set() # "브로커 준비 완료" 플래그 설정
+    try:
+        await asyncio.get_running_loop().run_in_executor(None, stop_event.wait)
+
+        #메인 asyncio 이벤트 루프를 멈추지 않고, stop_event가 꺼질 때까지 기다린다
+        #broker_task()는 async def 함수니까 asyncio 환경 안에서 실행
+        #run_in_executor()는 동기(블로킹) 함수를 별도의 스레드나 프로세스에서 실행
+        #첫 번째 인자 None → 기본 ThreadPoolExecutor 사용 (스레드에서 실행)
+        #두 번째 인자 stop_event.wait → threading.Event 객체의 wait() 메서드를 실행.
+        #이 wait()는 stop_event가 .set()될 때까지 블로킹 상태가 됨.
+    finally:
+        await broker.shutdown()
+
+def handle_signal(signum, frame):
+    stop_event.set()
+
+def main():
+    signal.signal(signal.SIGTERM, handle_signal)
+    signal.signal(signal.SIGINT, handle_signal)
+
+    pub_thread = threading.Thread(target=publisher_loop, daemon=True)
+    pub_thread.start()
+
+    asyncio.run(broker_task())
+    pub_thread.join(timeout=3)
+
+if __name__ == "__main__":
+    main()root@325776fcf66c:/app# 
+
+requirement.txt
+root@325776fcf66c:/app# cat requirements.txt 
+amqtt==0.11.0
+paho-mqtt==1.6.1
+

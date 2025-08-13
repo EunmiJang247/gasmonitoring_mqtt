@@ -75,6 +75,19 @@ Future<void> main() async {
   // final String keyHash = await KakaoSdk.origin;
   // print('키해시: $keyHash'); // 이 값을 복사해두세요
 
+  print('🚀 백그라운드 서비스 시작됨');
+
+  // 배터리 최적화 비활성화 요청 (Android)
+  try {
+    if (Platform.isAndroid) {
+      // 이 부분은 실제 앱에서는 permission_handler 패키지를 사용하거나
+      // native Android 코드로 구현해야 합니다.
+      print('📱 배터리 최적화 비활성화를 수동으로 설정해주세요');
+    }
+  } catch (e) {
+    print('❌ 배터리 최적화 설정 오류: $e');
+  }
+
   final localService = await Get.putAsync(() => LocalAppDataService().init());
 
   final lastUser = localService.getLastLoginUser();

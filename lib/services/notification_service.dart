@@ -12,25 +12,35 @@ class NotificationService {
   static DateTime? _lastHumAlert;
 
   static Future<void> initialize() async {
+    // 알림 발송 자체가 아니라, “알림 기능을 사용할 준비”를 하는 단계
+    // 클래스명.initialize()로 바로 호출 가능
     if (_isInitialized) return;
+    // 중복 초기화 방지
 
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
+    // 앱의 기본 아이콘을 알림 아이콘으로 사용
 
     const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
+      requestAlertPermission: true, // 팝업 알림 허용 요청
+      requestBadgePermission: true, // 앱 아이콘에 빨간 뱃지 표시 권한 요청
+      requestSoundPermission: true, // 알림 소리 재생 권한 요청
     );
+    // iOS/macOS에서 사용할 알림 초기 세팅
+    // 실행 시, iOS에서는 “앱이 알림을 보내려고 합니다” 팝업이 뜨게 됨
 
     const InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
     );
+    // 안드로이드/IOS 설정을 하나의 객체로 합침.
 
     await _notificationsPlugin.initialize(initializationSettings);
+    // _notificationsPlugin → FlutterLocalNotificationsPlugin의 인스턴스
+    // 알림 시스템을 앱에서 쓸 수 있도록 준비
+
     _isInitialized = true;
   }
 

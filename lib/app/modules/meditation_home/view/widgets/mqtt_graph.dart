@@ -55,6 +55,9 @@ class _MqttGraphState extends State<MqttGraph> {
   }
 
   late MqttServerClient _client;
+  // mqtt_client 패키지에서 제공하는 클래스
+  // MQTT 프로토콜을 통해 브로커(MQTT 서버)와 네트워크 연결을 하고 메시지를 송수신하는 기능을 제공
+  // late: 나중에 초기화 하겠다 라는 의미임
 
   final _temps = <double>[];
   final _hums = <double>[];
@@ -89,10 +92,11 @@ class _MqttGraphState extends State<MqttGraph> {
   }
 
   Future<void> _loadThresholds() async {
-    final tMin = await ThresholdSettings.getTempMinThreshold();
-    final tMax = await ThresholdSettings.getTempMaxThreshold();
-    final hMin = await ThresholdSettings.getHumMinThreshold();
-    final hMax = await ThresholdSettings.getHumMaxThreshold();
+    // ThresholdSettings는 온도·습도 경계값을 저장/로드하는 서비스 클래스.
+    final tMin = await ThresholdSettings.getTempMinThreshold(); // 온도 상한
+    final tMax = await ThresholdSettings.getTempMaxThreshold(); // 온도 하한
+    final hMin = await ThresholdSettings.getHumMinThreshold(); // 습도 상한
+    final hMax = await ThresholdSettings.getHumMaxThreshold(); // 습도 하한
     setState(() {
       _tempMin = tMin;
       _tempMax = tMax;
@@ -102,7 +106,10 @@ class _MqttGraphState extends State<MqttGraph> {
   }
 
   void _tryConnectNextHost() {
+    // MQTT 연결을 시도하는 출발점
+    // 다음 호스트로 연결 시도를 시작
     if (_hostIndex >= _hostCandidates.length) {
+      // _connect()에서 실패를 반복해 _hostIndex가 증가된 뒤 여기 재호출됐을 때 발생
       _stateText = 'All hosts failed. Check IP/port/firewall.';
       setState(() {});
       return;
@@ -111,16 +118,24 @@ class _MqttGraphState extends State<MqttGraph> {
     _stateText = 'Connecting to $_currentHost:$_port…';
     setState(() {});
     _client = MqttServerClient.withPort(
-        _currentHost, _clientId, _useTls ? 8883 : _port)
-      ..logging(on: true) // 진단 로그 ON
-      ..keepAlivePeriod = _keepAlive
-      ..connectTimeoutPeriod = 5000 // 5s 타임아웃
-      ..setProtocolV311(); // ★ MQTT 3.1.1 사용 (중요!)
+        // MQTT 브로커에 연결할 때 호스트 주소, 클라이언트 ID, 포트 번호를 지정하는 생성자
+        _currentHost, // 127.0.0.1
+        _clientId, // 중복되면 안 되는 고유 식별자(브로커는 클라이언트를 구분하기 위해 clientId를 씀)
+        _useTls ? 8883 : _port)
+      ..logging(on: true) // 라이브러리 내부에서 통신 과정, 상태 변화, 에러 메시지 등을 콘솔에 출력.
+      ..keepAlivePeriod =
+          _keepAlive // 30으로, 설정값(초 단위)보다 긴 시간 동안 아무 통신이 없으면 브로커가 연결을 끊을 수 있음
+      ..connectTimeoutPeriod = 5000 // 5초 동안 브로커와 TCP/MQTT 연결이 안 되면 실패 처리
+      // 5초 동안 응답 없으면 TimeoutException 같은 오류 발생.
+      ..setProtocolV311(); // MQTT 프로토콜 버전을 3.1.1로 설정하는 메서드 호출(IoT 디바이스 표준)
     _connect(_currentHost);
+    // 현재 저장된 호스트 주소로 연결을 시도하는 함수 호출
   }
 
   Future<void> _connect(String host) async {
+    // host: 연결하려는 브로커 주소 127.0.0.1
     _client.onConnected = () {
+      // 연결 성공 시 자동 호출이 되는 코드이다
       print('✅ MQTT Connected to $_currentHost');
       _stateText = 'Connected ($_currentHost)';
       _retryAttempt = 0;
@@ -128,15 +143,34 @@ class _MqttGraphState extends State<MqttGraph> {
 
       // 연결 성공 후 구독
       _client.subscribe(_topic, MqttQos.atMostOnce);
-      _sub?.cancel();
+      // MQTT에서 특정 토픽을 구독하는 코드
+      // _topic: 'home/seoul/livingroom/tempSensor/001/data'
+      // 나는 _topic에서 발행되는 메시지를 받고 싶다”는 요청
+      // MqttQos.atMostOnce: “최대 한 번” 전달 보장 (가장 가벼움)
+      _sub?.cancel(); // 기존 구독하고 있던 _sub 변수가 있으면 취소한다
       _sub = _client.updates?.listen((events) {
+        // listen은 스트림 구독을 시작하는 메서드
+        // MQTT 브로커에서 받은 메시지 스트림을 구독해서 처리하는 부분
+        // MQTT 클라이언트가 구독 중인 토픽으로부터 오는 수신 이벤트 스트림
+        // 새 메시지가 도착할 때마다 events라는 데이터가 들어옴
+        // events 안에는 발행된 MQTT 메시지 정보가 들어 있음
+        // 토픽 이름, 메시지 페이로드, QoS, retain 여부
+        // print("길이에요 ${events.length}"); 1 나옴. 메세지를 1개만 보내니까
         for (final e in events) {
+          // print(
+          //     "e에요 ---> ${e}"); // Instance of 'MqttReceivedMessage<MqttMessage>'
+          // print(
+          //     "e에요 ---> ${e.payload}"); // MQTTMessage of type MqttMessageType.publish
+          // print(
+          //     "e에요 ---> ${e.topic}"); // home/seoul/livingroom/tempSensor/001/data
           final msg = e.payload as MqttPublishMessage;
           final bytes = msg.payload.message;
           final text = utf8.decode(bytes);
-          print('📨 Received: $text');
+          // print('📨 Received: $text');
+          // {"ts": "2025-08-13T17:22:02+09:00", "ts_epoch": 1755073322, "temp": 24.8, "hum": 49}
 
           final r = _parseReading(text); // {temp, hum}
+          print("r은: ${r}");
           if (!_disposed) {
             _rawLogs.insert(0, text);
             if (_rawLogs.length > 100) _rawLogs.removeLast();
@@ -195,6 +229,9 @@ class _MqttGraphState extends State<MqttGraph> {
     try {
       print('🔄 Attempting to connect to $_currentHost:$_port');
       await _client.connect(_username, _password);
+      // 실제 연결 시도하는 부분
+      // 성공 → onConnected() 자동 호출
+      // 실패 → onDisconnected() 또는 예외
 
       final status = _client.connectionStatus;
       print(
