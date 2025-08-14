@@ -139,7 +139,7 @@ class _MqttGraphState extends State<MqttGraph> {
       _retryAttempt = 0;
       setState(() {});
 
-      // 연결 성공 후 구독
+      // 연결 성공 후 구독 요청
       _client.subscribe(_topic, MqttQos.atMostOnce);
       // MQTT에서 특정 토픽을 구독하는 코드
       // _topic: 'home/seoul/livingroom/tempSensor/001/data'
@@ -168,10 +168,14 @@ class _MqttGraphState extends State<MqttGraph> {
           // {"ts": "2025-08-13T17:22:02+09:00", "ts_epoch": 1755073322, "temp": 24.8, "hum": 49}
 
           final r = _parseReading(text); // {temp, hum}
-          print("r은: ${r}");
+          // print("r은: ${r}"); // Instance of '_Reading'
           if (!_disposed) {
-            _rawLogs.insert(0, text);
-            if (_rawLogs.length > 100) _rawLogs.removeLast();
+            // _disposed가 false라는 것은 위젯이 아직 살아있고 활성 상태라는 의미
+            // 위젯이 아직 살아있을 때만 데이터를 처리하고 UI를 업데이트하라
+            _rawLogs.insert(0, text); // 최신 메시지를 맨 앞에 추가
+            // MQTT 브로커로부터 받은 JSON 문자열을 그대로 저장하는 배열
+            if (_rawLogs.length > 100)
+              _rawLogs.removeLast(); // 100개 초과시 오래된 것 삭제
 
             if (r.temp != null) {
               _latestTemp = r.temp;
@@ -181,6 +185,7 @@ class _MqttGraphState extends State<MqttGraph> {
               }
               // 온도 임계치 체크
               _checkTemperatureThreshold(r.temp!);
+              // 온도 임계치를 넘으면 알림을 보내는 함수 호출
             }
 
             if (r.hum != null) {
@@ -191,6 +196,7 @@ class _MqttGraphState extends State<MqttGraph> {
               }
               // 습도 임계치 체크
               _checkHumidityThreshold(r.hum!);
+              // 습도 임계치를 넘으면 알림을 보내는 함수 호출
             }
 
             setState(() {});
@@ -207,6 +213,7 @@ class _MqttGraphState extends State<MqttGraph> {
     };
 
     _client.onSubscribed = (topic) {
+      // _client.subscribe(~) 를 사용해서 구독 요청 후 브로커 응답 시 실행됨
       print('📡 Subscribed to $topic');
     };
 
@@ -256,17 +263,23 @@ class _MqttGraphState extends State<MqttGraph> {
   }
 
   void _scheduleReconnect() {
+    // 브로커 연결이 끊기면 같은 host로 연결 재시도하는 부분임
     if (_retryAttempt >= 3) {
       // 3번 실패하면 다음 호스트로 넘어가기
       print('🔄 Max retries reached for $_currentHost, trying next host');
       _retryAttempt = 0;
       _hostIndex++;
       _tryConnectNextHost();
+      // 다음 호스트에 연결시도 하는 코드
       return;
     }
 
     _retryAttempt = math.min(_retryAttempt + 1, 5);
+    // 재시도 횟수가 5를 넘지 않도록 상한선을 설정하는 안전장치
+    // 3이 아닌 5로 한 것은 방어적 프로그래밍 차원
     final delay = [2, 4, 8, 16, 30][_retryAttempt - 1];
+    // 연결이 반복적으로 실패할수록 점점 더 오래 기다렸다가 재시도하게.
+    // 3회차는 8초 대기, 4회차는 16초 대기, 5회차는 30초 대기
     _stateText =
         'Reconnecting to $_currentHost in ${delay}s… (${_retryAttempt}/3)';
     setState(() {});
@@ -312,7 +325,7 @@ class _MqttGraphState extends State<MqttGraph> {
     return _Reading(temp: lone, hum: null);
   }
 
-  /// 온도 임계치 체크 및 알림
+  /// 온도 임계치 체크 및 알림보내기
   Future<void> _checkTemperatureThreshold(double temperature) async {
     if (!_alertsEnabled) return;
 
@@ -332,7 +345,7 @@ class _MqttGraphState extends State<MqttGraph> {
     }
   }
 
-  /// 습도 임계치 체크 및 알림
+  /// 습도 임계치 체크 및 알림보내기
   Future<void> _checkHumidityThreshold(double humidity) async {
     if (!_alertsEnabled) return;
 
@@ -720,36 +733,6 @@ class _MqttGraphState extends State<MqttGraph> {
                       style: TextStyle(color: Colors.white70, fontSize: 12.sp),
                     ),
                   )
-                // : CustomPaint(
-                //     painter: _SparklinePainter(_temps),
-                //     child: Align(
-                //       alignment: Alignment.bottomRight,
-                //       child: Padding(
-                //         padding: EdgeInsets.only(top: 8.h),
-                //         child: Text(
-                //           '${_temps.last.toStringAsFixed(1)}°C',
-                //           style: TextStyle(
-                //             color: AppColors.kBrighYellow,
-                //             fontSize: 18.sp,
-                //             fontWeight: FontWeight.bold,
-                //             shadows: const [
-                //               Shadow(blurRadius: 6, color: Colors.black54)
-                //             ],
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // : LineChart(
-                //     _buildLineChartData(
-                //       _temps,
-                //       color: Colors.cyanAccent,
-                //       labelSuffix: '°C',
-                //       minLine: _tempMin,
-                //       maxLine: _tempMax,
-                //       maxPoints: _maxPoints,
-                //     ),
-                //   ),
                 : ClipRRect(
                     borderRadius: BorderRadius.circular(20.r), // 카드와 동일
                     child: LineChart(
@@ -795,26 +778,6 @@ class _MqttGraphState extends State<MqttGraph> {
                       style: TextStyle(color: Colors.white70, fontSize: 12.sp),
                     ),
                   )
-                // : CustomPaint(
-                //     painter: _HumidityPainter(_hums),
-                //     child: Align(
-                //       alignment: Alignment.bottomRight,
-                //       child: Padding(
-                //         padding: EdgeInsets.only(top: 8.h),
-                //         child: Text(
-                //           '${_hums.last.toStringAsFixed(0)}%',
-                //           style: TextStyle(
-                //             color: Colors.greenAccent,
-                //             fontSize: 18.sp,
-                //             fontWeight: FontWeight.bold,
-                //             shadows: const [
-                //               Shadow(blurRadius: 6, color: Colors.black54)
-                //             ],
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //   ),
                 : LineChart(
                     _buildLineChartData(
                       _hums,
@@ -833,6 +796,7 @@ class _MqttGraphState extends State<MqttGraph> {
 }
 
 LineChartData _buildLineChartData(
+  // 온도/ 습도 그래프 그리는 부분
   List<double> series, {
   required Color color,
   required String labelSuffix,
@@ -849,25 +813,41 @@ LineChartData _buildLineChartData(
     );
   }
 
+  // print("series: $series");
+  // series는 아래와 같이 출력됨! temp, hum이 나오는 것이다
+  // I/flutter (  305): series: [22.8, 23.0, 23.2, 23.4, 23.6, 23.8, 24.0]
+  // I/flutter (  305): series: [66.0, 65.0, 64.0, 63.0, 62.0, 61.0, 60.0]
+
   final n = series.length;
-  final maxPointsDouble = maxPoints.toDouble(); // 전달받은 매개변수 사용
+  final maxPointsDouble = maxPoints.toDouble();
+  // 온도(_temps) 또는 습도(_hums) 값 배열에 최대 몇 개의 데이터만 저장할지를 의미
 
   // X축을 전체 범위에 균등하게 분배
-  final spots = <FlSpot>[];
+  final spots = <FlSpot>[]; // 그래프에 그릴 점(좌표)들을 담을 리스트
   for (int i = 0; i < n; i++) {
-    // 데이터를 오른쪽부터 채우기 (최신 데이터가 오른쪽에 위치)
+    // 데이터 개수(n)만큼 반복
     final x = maxPointsDouble - (n - 1 - i);
+    // i=0 → x=154, i=1 → x=155, ..., i=6 → x=160 (오른쪽 끝)
+    // 오래된 데이터는 왼쪽, 최신 데이터는 오른쪽에 위치
     spots.add(FlSpot(x, series[i]));
   }
 
   // 값 + 임계치 모두 포함하도록 y범위 계산
   double yMin = series.reduce(math.min);
+  // 데이터 배열(series)에서 가장 작은 값을 찾아서 y축의 최소값으로 설정
   double yMax = series.reduce(math.max);
+  // 데이터 배열에서 가장 큰 값을 찾아서 y축의 최대값으로 설정
   if (minLine != null) yMin = math.min(yMin, minLine);
+  // 만약 임계값(minLine)이 있으면, y축의 최소값을 데이터와 임계값 중 더 작은 값으로 설정
   if (maxLine != null) yMax = math.max(yMax, maxLine);
+  // 임계값(maxLine)이 있으면, y축의 최대값을 데이터와 임계값 중 더 큰 값으로 설정
+
   final pad = (yMax - yMin).abs() < 1e-6 ? 1.0 : (yMax - yMin) * 0.12;
+  // 데이터의 최대값과 최소값 차이가 거의 없으면(거의 평평한 그래프) → pad를 1.0으로 고정
   yMin -= pad;
+  // Y축의 최소값을 pad만큼 더 낮게 설정
   yMax += pad;
+  // Y축의 최대값을 pad만큼 더 높게 설정 (위로 여유)
 
   return LineChartData(
     minX: 0,
@@ -877,7 +857,7 @@ LineChartData _buildLineChartData(
     gridData: FlGridData(
       show: true,
       drawHorizontalLine: true,
-      drawVerticalLine: false,
+      drawVerticalLine: true,
       horizontalInterval:
           ((yMax - yMin) / 4).abs() < 1e-6 ? 1.0 : (yMax - yMin) / 4,
       getDrawingHorizontalLine: (v) => FlLine(
@@ -905,7 +885,7 @@ LineChartData _buildLineChartData(
       ),
       rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      bottomTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      bottomTitles: const AxisTitles(sideTitles: SideTitles(showTitles: true)),
     ),
     borderData: FlBorderData(show: false),
     lineBarsData: [
@@ -937,14 +917,14 @@ LineChartData _buildLineChartData(
             color: Colors.amberAccent,
             strokeWidth: 2,
             dashArray: [6, 4],
-            label: HorizontalLineLabel(
-              show: true,
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.only(right: 6),
-              style: const TextStyle(color: Colors.amberAccent, fontSize: 10),
-              labelResolver: (_) =>
-                  'MIN ${minLine.toStringAsFixed(1)}$labelSuffix',
-            ),
+            // label: HorizontalLineLabel(
+            //   show: true,
+            //   alignment: Alignment.centerRight,
+            //   padding: const EdgeInsets.only(right: 6),
+            //   style: const TextStyle(color: Colors.amberAccent, fontSize: 10),
+            // labelResolver: (_) =>
+            //     'MIN ${minLine.toStringAsFixed(1)}$labelSuffix',
+            // ),
           ),
         if (maxLine != null)
           HorizontalLine(
@@ -952,14 +932,14 @@ LineChartData _buildLineChartData(
             color: Colors.amberAccent,
             strokeWidth: 2,
             dashArray: [6, 4],
-            label: HorizontalLineLabel(
-              show: true,
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.only(right: 6),
-              style: const TextStyle(color: Colors.amberAccent, fontSize: 10),
-              labelResolver: (_) =>
-                  'MAX ${maxLine.toStringAsFixed(1)}$labelSuffix',
-            ),
+            // label: HorizontalLineLabel(
+            //   show: true,
+            //   alignment: Alignment.centerRight,
+            //   padding: const EdgeInsets.only(right: 6),
+            //   style: const TextStyle(color: Colors.amberAccent, fontSize: 10),
+            // labelResolver: (_) =>
+            //     'MAX ${maxLine.toStringAsFixed(1)}$labelSuffix',
+            // ),
           ),
       ],
     ),
